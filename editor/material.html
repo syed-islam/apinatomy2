@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Material Editor</title>
+<link rel="stylesheet" href="app.css">
+<h1>Material Editor</h1>
+
+<div id="page-container">
+    <section id="app">
+        <div id="app-body">
+            <div class="panel">
+                <div id="edit-pane" class="param-pane">
+                    <h2>Material parameters:</h2>
+                    <div>
+                        <label for="materialID" class="parameterLabel">ID:</label>
+                        <input type="text" id="materialID" style="width: 140px;">
+                    </div>
+                    <div>
+                        <label for="materialName" class="parameterLabel">Name:</label>
+                        <input type="text" id="materialName" style="width: 140px;">
+                    </div>
+                    <div>
+                        <label for="materialColour" class="parameterLabel">Colour:</label>
+                        <input type="color" id="materialColour">
+                    </div>
+                    <div>
+                        <label for="materialType" class="parameterLabel">Type:</label>
+                        <datalist id="materialTypes">
+                            <option value="composite">
+                            <option value="simple">
+                            <option value="AU">
+                        </datalist>
+                        <input type="text" id="materialType" style="width: 140px;" list="materialTypes">
+                    </div>
+                    <h3>Asymmetric Unit:</h3>
+                    <div>
+                        <label for="auID" class="parameterLabel">ID:</label>
+                        <datalist id="auSet"></datalist>
+                        <input type="text" id="auID" style="width: 140px;" list="auSet">
+                    </div>
+                    <div>
+                        <label for="auName" class="parameterLabel">Name:</label>
+                        <input type="text" id="auName" style="width: 140px;" readonly="true">
+                    </div>
+                    <br/>
+                    <div>
+                        <button class="parameterButton" id="materialClone">Add</button>
+                        <button class="parameterButton" id="materialUpdate">Update</button>
+                        <button class="parameterButton" id="materialRestore">Restore</button>
+                        <button class="parameterButton" id="materialDelete">Delete</button>
+                    </div>
+                    <br/>
+                    <h2>Sub-material parameters:</h2>
+                    <div>
+                        <label for="childID" class="parameterLabel">ID:</label>
+                        <datalist id="materials"></datalist>
+                        <input type="text" id="childID" style="width: 140px;" list="materials">
+                    </div>
+                    <div>
+                        <label for="childName" class="parameterLabel">Name:</label>
+                        <input type="text" id="childName" style="width: 140px;" readonly="true">
+                    </div>
+                    <br/>
+                    <div>
+                        <button class="parameterButton" id="childAdd">Add</button>
+                        <button class="parameterButton" id="childUpdate">Update</button>
+                        <button class="parameterButton" id="childRestore">Restore</button>
+                        <button class="parameterButton" id="childDelete">Delete</button>
+                        <button class="parameterButton" id="childEdit">Edit</button>
+                    </div>
+                    <br/>
+                    <h2>Visual parameters:</h2>
+                    <div>
+                        <label for="vpLength" class="parameterLabel">
+                            Length scale: <span id="vpLength-value"></span>
+                        </label>
+                        <input type="range" min="100" max="500" id="vpLength"/>
+                    </div>
+                    <div>
+                        <label for="vpThickness" class="parameterLabel">
+                            Width scale: <span id="vpThickness-value"></span>
+                        </label>
+                        <input type="range" min="20" max="50" id="vpThickness"/>
+                    </div>
+                </div>
+            </div>
+            <div class="chart" id="chart"></div>
+            <div class="panel" style="left: 880px;">
+                <div id="material-pane" class="repo-pane">
+                    <h2>Materials</h2>
+                    <div class="repo">
+                        <div class="materialRepo"></div>
+                    </div>
+                </div>
+                <div id="au-pane" class="repo-pane">
+                    <h2>Asymmetric Units</h2>
+                    <div class="repo">
+                        <div class="auRepo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="apinatomy2-data.js"></script>
+<script src="repositories.js"></script>
+<script src="material-editor.js"></script>

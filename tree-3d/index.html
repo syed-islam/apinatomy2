@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js canvas - interactive - cubes tween</title>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="three.min.js"></script>
+		<script src="algorithm.js"></script>
+
+		<script>
+			var container;
+			var camera, scene, projector, renderer;
+
+			var objects = [];
+			
+			function init() {
+				container = document.createElement('div');
+				document.body.appendChild(container);
+
+				camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 500;
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
+
+				var light = new THREE.DirectionalLight( 0xffffff );
+				light.position = camera.position;
+				scene.add(light);
+
+				projector = new THREE.Projector();
+				renderer = new THREE.WebGLRenderer( { antialias: false, clearColor: 0x333333, 
+					clearAlpha: 1, alpha: false } );
+				
+				generateLungs();
+				
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor( scene.fog.color, 1 );
+				renderer.sortObjects = true;		
+								
+				container.appendChild(renderer.domElement);  
+				window.addEventListener('resize', onWindowResize, false );
+    			window.addEventListener('mousemove', function (e) {onMouseMove(e); }, false);
+   				window.addEventListener('mousedown', function (e) {onMouseDown(e);}, false);
+    			window.addEventListener('mouseup', function (e) {onMouseUp(e);}, false);
+				window.addEventListener( 'mousewheel', function (e) {onMouseWheel(e);}, false );
+				window.addEventListener( 'DOMMouseScroll', function (e) {onMouseWheel(e);}, false ); 
+				window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+			}
+			
+			function onDocumentKeyDown(evt){
+				var keyCode = evt.which;
+				if (keyCode == 72){//Help
+					alert("Navigation: " +
+						  "\nonMouseMove: shift camera position left/right or up/down" +
+						  "\nonMouseWheel: zoom in/out" +
+						  "\nonMouseClick: select branch (and deselect the previously selected)" +
+						  "\n\nSettings: " + 	
+						  "\nRight: increase start layer" + 
+						  "\nLeft: decrease start layer" +
+						  "\nUp: increase start level" + 
+						  "\nDown: decrease start level" + 
+						  "\nShift + Right: increase end layer" + 
+						  "\nShift + Left: decrease end layer" +
+						  "\nShift + Up: increase end level" + 
+						  "\nShift + Down: decrease end level" + 
+						  "\nCtrl + [Shift] + Right/Left/Up/Down: regenerate the tree with new parameters" +
+						  "\nCtrl + d: decrease the number of branches by factor of 2" +
+						  "\nCtrl + m: increase the number of branches by factor of 2" +
+						  "\ni: show info" +
+						  "\nh: show help"						  
+						  );
+				}
+				if (keyCode == 73){//Info
+					alert("Start level: " + startLevel + 
+						  "\nEnd level: " + endLevel +
+						  "\nStart layer: " + startLayer +
+						  "\nEnd layer: " + endLayer +
+						  "\nMax number of branches: " + numParticles);
+				}
+				if (evt.ctrlKey){
+					deselectObject();	
+					if (keyCode == 68){//Divide (d)
+						numParticles = Math.floor(numParticles / 2);
+						generateLungs();
+					}							
+					if (keyCode == 77){//Multiply (m)
+						numParticles *= 2;
+						generateLungs();
+					}
+					if (evt.shiftKey){
+						switch(keyCode){
+							case 37: // Left arrow - decrease endLayer
+								if (endLayer > startLayer){
+									endLayer -= 1;
+									generateLungs();
+								}
+								break;
+							case 39: //Right arrow - increase endLayer
+								if (endLayer < 3){
+									endLayer += 1;
+									generateLungs();
+								}
+								break;
+							case 40: // Down arrow - decrease endLevel
+								if (endLevel > startLevel){
+									endLevel -= 1;
+									generateLungs();
+								}
+								break;
+							case 38: // Up arrow - increase endLevel
+								if (endLevel < 23){
+									endLevel += 1;
+									generateLungs();
+								}
+						}
+					}
+					else {
+						switch(keyCode){
+							case 37: // Left arrow - decrease startLayer
+								if (startLayer > 0){
+									startLayer -= 1;
+									generateLungs();
+								}
+								break;
+							case 39: //Right arrow - increase startLayer
+								if (startLayer < endLayer){
+									startLayer += 1;
+									generateLungs();								
+								}
+								break;
+							case 38: // Up arrow - decrease start level
+								if (startLevel > 0){
+									startLevel -= 1;
+									generateLungs();
+								}
+								break;
+							case 40: // Down arrow - increase start level
+								if (startLevel < endLevel){
+									startLevel += 1;
+									generateLungs();
+								}
+						}	
+					}
+					return;
+				}
+				if (evt.shiftKey){
+					switch(keyCode){
+						case 37: // Left arrow - decrease endLayer
+							if (endLayer > startLayer){
+								deselectObject();
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].layer == endLayer)
+										objects[i].visible = false;
+								}
+								endLayer -= 1;
+							}
+							break;
+						case 39: //Right arrow - increase endLayer
+							if (endLayer < 3){
+								deselectObject();
+								endLayer += 1;
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].layer == endLayer)
+										objects[i].visible = true;
+								}
+							}
+							break;
+						case 40: // Down arrow - decrease endLevel
+							if (endLevel > startLevel){
+								deselectObject();
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].level == endLevel)
+										objects[i].visible = false;
+								}
+								endLevel -= 1;
+							}
+							break;
+						case 38: // Up arrow - increase endLevel
+							if (endLevel < 23){
+								deselectObject();
+								endLevel += 1;
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].level == endLevel)
+										objects[i].visible = true;
+								}
+							}
+					}
+				}
+				else {
+					switch(keyCode){
+						case 37: // Left arrow - decrease startLayer
+							if (startLayer > 0){
+								deselectObject();
+								startLayer -= 1;
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].layer == startLayer)
+											objects[i].visible = true;
+								}
+							}
+							break;
+						case 39: //Right arrow - increase startLayer
+							if (startLayer < endLayer){
+								deselectObject();
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].layer == startLayer)
+										objects[i].visible = false;
+								}
+								startLayer += 1;
+							}
+							break;
+						case 40: // Down arrow - decrease start level
+							if (startLevel > 0){
+								deselectObject();
+								startLevel -= 1;
+								for (i = 0; i < objects.length; i++){
+									if (objects[i].level == startLevel)
+										objects[i].visible = true;
+								}
+							}
+							break;
+						case 38: // Up arrow - increase start level
+							if (startLevel < endLevel){
+								deselectObject();
+								for (var i = 0; i < objects.length; i++){
+									if (objects[i].level == startLevel)
+										objects[i].visible = false;
+								}
+								startLevel += 1;
+							}
+					}	
+				}					
+			}
+			
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+			
+			var mouseDown = false,
+				mouseX = 0,
+        		mouseY = 0;
+
+    		function onMouseMove(evt) {
+        		if (!mouseDown) return;
+        		evt.preventDefault();
+        		var deltaX = evt.clientX - mouseX,
+					deltaY = evt.clientY - mouseY;
+        		mouseX = evt.clientX;
+        		mouseY = evt.clientY;
+        		rotateScene(deltaX, deltaY);
+    		}
+
+			var prevSelected = null, prevMaterial = null;
+			
+    		function onMouseDown(evt) {
+        		evt.preventDefault();
+        		mouseDown = true;
+        		mouseX = evt.clientX;
+        		mouseY = evt.clientY;
+				
+				var vector = new THREE.Vector3((evt.clientX / window.innerWidth) * 2 - 1, 
+					-( evt.clientY / window.innerHeight) * 2 + 1, 0.5 );
+				projector.unprojectVector(vector, camera);
+				var raycaster = new THREE.Raycaster(camera.position, 
+					vector.sub(camera.position).normalize());
+				var intersects = raycaster.intersectObjects(objects);
+
+				if (intersects.length > 0) {
+					//restore material ob previously selected object
+					deselectObject();
+					//save a newly selected object and its material
+					var index = 0;
+					for (index = 0; index < intersects.length &&
+						!intersects[index].object.visible; index++);
+					prevSelected = intersects[index].object;
+					prevMaterial = intersects[index].object.material.clone();
+					//set new material for the highlighted object
+					var newMaterial = intersects[index].object.material.clone();
+					newMaterial.color.setHex(0.5 * 0xffffff);
+					intersects[index].object.material = newMaterial;
+				} else deselectObject();
+    		}
+			
+			function deselectObject(){
+				if (prevSelected != null && prevMaterial != null) {
+					prevSelected.material = prevMaterial;
+					prevSelected = null;
+					prevMaterial = null;
+				}
+			}
+
+			function onMouseUp(evt) {
+        		evt.preventDefault();
+				mouseDown = false;
+    		}
+			
+			function onMouseWheel(evt){
+				evt.preventDefault();
+				var e = window.event || evt; //equalize event object
+				camera.position.z += e.detail? e.detail * (-10) : e.wheelDelta;
+				camera.lookAt(scene.position);
+			}
+                        
+			function rotateScene(deltaX, deltaY) {
+ 				camera.position.x += deltaX;
+    			camera.position.y += deltaY;
+				camera.lookAt(scene.position);
+			}
+
+			function render() {
+				renderer.render(scene, camera );
+			}			
+
+			init();
+			animate();
+		</script>
+	</body>
+</html>

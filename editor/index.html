@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>ApiNATOMY graph editor</title>
+<link rel="stylesheet" href="app.css">
+
+<h1>ApiNATOMY graph editor</h1>
+
+<div id="page-container">
+    <section id="app">
+        <div id="app-body">
+            <div class="panel">
+                <div id="edit-pane" class="param-pane">
+                    <h2>Graph parameters:</h2>
+                    <div>
+                        <label for="graphID" class="parameterLabel">ID:</label>
+                        <input type="text" id="graphID" style="width: 140px;">
+                    </div>
+                    <div>
+                        <label for="graphName" class="parameterLabel">Name:</label>
+                        <input type="text" id="graphName" size="200" style="width: 140px;"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <button class="parameterButton" id="graphClone">Add</button>
+                        <button class="parameterButton" id="graphUpdate">Update</button>
+                        <button class="parameterButton" id="graphRestore">Restore</button>
+                        <button class="parameterButton" id="graphDelete">Delete</button>
+                    </div>
+                    <br/>
+                    <h2>Edge parameters:</h2>
+                    <h3>Asymmetric Unit:</h3>
+                    <div>
+                        <label for="auID" class="parameterLabel">ID:</label>
+                        <datalist id="auSet"></datalist>
+                        <input type="text" id="auID" style="width: 140px;" list="auSet" readonly="true">
+                    </div>
+                    <div>
+                        <label for="auName" class="parameterLabel">Name:</label>
+                        <input type="text" id="auName" size="200" style="width: 140px;" readonly="true"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <button class="parameterButton" id="auUpdate">Assign</button>
+                        <button class="parameterButton" id="auRestore">Restore</button>
+                        <button class="parameterButton" id="auDelete">Delete</button>
+                    </div>
+                    <br/>
+                    <h2>Node parameters:</h2>
+                    <div>
+                       <h3>Generated tree parameters:</h3>
+                        <div>
+                            <label for="treeLevels" class="parameterLabel">Number of levels:</label>
+                            <input type="number" id="treeLevels" min="1" max="24" value="1" style="width: 46px;">
+                        </div>
+                        <div>
+                            <label for="treeBranching" class="parameterLabel">Branching factor:</label>
+                            <input type="number" id="treeBranching" min="1" max="2" step="0.1" value="1" style="width: 46px;"/>
+                        </div>
+                        <br/>
+                        <div>
+                            <button class="parameterButton" id="treeGenerate">Generate</button>
+                            <button class="parameterButton" id="treeRestore">Restore</button>
+                            <button class="parameterButton" id="treeDelete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="instructions">
+                        <h2>Instructions:</h2>
+                        <ul class="unstyled">
+                            <li>Click in the open space to <strong>add a state</strong></li>
+                            <li>Drag between states to <strong>add a transition</strong></li>
+                            <li>Ctrl-drag a state to <strong>move</strong> graph layout</li>
+                            <li>Click a state or a transition to <strong>select</strong> it</li>
+                            <li>When a state/transition is selected:
+                                <ul>
+                                    <li><strong>Delete</strong> removes the state/transition</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="graph"></div>
+            <div class="panel" style="left: 880px;">
+                <div id="graph-pane" class="repo-pane">
+                    <h2>Graphs</h2>
+                    <div class="repo">
+                        <div class="graphRepo"></div>
+                    </div>
+                </div>
+                <div id="au-pane" class="repo-pane">
+                    <h2>Asymmetric Units</h2>
+                    <div class="repo">
+                        <div class="auRepo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
+<script src="d3.v3.min.js"></script>
+<script src="apinatomy2-data.js"></script>
+<script src="repositories.js"></script>
+<script src="graph-construction.js"></script>

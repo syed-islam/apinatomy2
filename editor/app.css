@@ -1,0 +1,205 @@
+path.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 4px;
+    cursor: default;
+}
+
+h2 {
+    font-size: 1.3em;
+    margin: 8px;
+}
+
+h3, h4 {
+    margin: 8px;
+}
+
+.node rect {
+    cursor: pointer;
+    fill: #fff;
+    fill-opacity: .5;
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
+.node text {
+    font: 10px sans-serif;
+    pointer-events: none;
+}
+
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 3px;
+}
+
+svg:not(.active):not(.ctrl) path.link {
+    cursor: pointer;
+}
+
+path.link.selected {
+    stroke-dasharray: 10,2;
+}
+
+path.link.dragline {
+    pointer-events: none;
+}
+
+path.link.hidden {
+    stroke-width: 0;
+}
+
+circle.node {
+    stroke-width: 1.5px;
+    cursor: pointer;
+}
+
+circle.node.reflexive {
+    stroke: #000 !important;
+    stroke-width: 2.5px;
+}
+
+text {
+    font: 12px sans-serif;
+    pointer-events: none;
+}
+
+text.id {
+    text-anchor: middle;
+    font-weight: bold;
+}
+
+#app {
+    position: relative;
+}
+
+#model-link {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#page-container {
+    width: 1200px;
+    position: relative;
+    margin: 0 auto;
+}
+
+#app-body {
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    width: 100%;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+}
+
+#app-body .graph {
+    width: 540px;
+    height: 600px;
+    position: absolute;
+    left: 340px;
+}
+
+#app-body .tree {
+    width: 540px;
+    height: 600px;
+    position: absolute;
+    left: 340px;
+}
+
+#app-body .chart {
+    width: 540px;
+    height: 600px;
+    position: absolute;
+    left: 340px;
+}
+
+#app-body .panel {
+    width: 300px;
+    height: 600px;
+    padding: 0px 10px 10px 10px;
+    background-color: #f5f5f5;
+    border-right: 1px solid #e3e3e3;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    position: absolute;
+    left: 0;
+}
+
+#app-body .panel .param-pane {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#app-body .panel .repo-pane {
+    height: 50%;
+    position: relative;
+    overflow: hidden;
+}
+
+#app-body .panel .repo-pane .repo {
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px solid #e3e3e3;
+    background-color: #eee;
+}
+
+.instructions {
+    position: absolute;
+    bottom: 0;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid #e3e3e3;
+}
+
+.instructions > ul {
+    margin-bottom: 0;
+}
+
+.instructions > ul > li:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+.parameterLabel {
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+}
+
+.parameterButton {
+    float: right;
+}
+
+.parameterGroup {
+    padding-left: 140px;
+}
+
+.labelText {
+    fill: #fff;
+    stroke-width: 1;
+    font-size: 12px;
+    text-anchor: middle;
+}
+
+.nodeTree {
+    cursor: pointer;
+}
+
+.nodeTree text {
+    font: 10px sans-serif;
+    pointer-events: none;
+}
+
+.nodeTree circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 3px;
+}
+
+.linkTree {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+}

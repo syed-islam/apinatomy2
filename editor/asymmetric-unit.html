@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Asymmetric Unit Editor</title>
+<link rel="stylesheet" href="app.css">
+<h1>Asymmetric Unit Editor</h1>
+
+<div id="page-container">
+    <section id="app">
+        <div id="app-body">
+            <div class="panel">
+                <div id="edit-pane" class="param-pane">
+                    <h2>AU parameters:</h2>
+                    <div>
+                        <label for="auID" class="parameterLabel">
+                            ID:
+                        </label>
+                        <input type="text" id="auID" size=40 style="width: 140px;"/>
+                    </div>
+                    <div>
+                        <label for="auName" class="parameterLabel">
+                            Name:
+                        </label>
+                        <input type="text" id="auName" size="200" style="width: 140px;"/>
+                    </div>
+                    <div>
+                        <label for="auLength" class="parameterLabel">
+                            Length:
+                        </label>
+                        <input type="number" id="auLength" min="1" max="10" style="width: 46px;"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <button class="parameterButton" id="auClone">Add</button>
+                        <button class="parameterButton" id="auUpdate">Update</button>
+                        <button class="parameterButton" id="auRestore">Restore</button>
+                        <button class="parameterButton" id="auDelete">Delete</button>
+                    </div>
+                    <br/>
+                    <h3>Layer parameters:</h3>
+                    <div>
+                        <label for="layerID" class="parameterLabel">
+                            ID:
+                        </label>
+                        <input type="text" id="layerID" size=40 style="width: 140px;"/>
+                    </div>
+                    <div>
+                        <label for="layerName" class="parameterLabel">
+                            Name:
+                        </label>
+                        <input type="text" id="layerName" size="200" style="width: 140px;"/>
+                    </div>
+                    <div>
+                        <label for="layerThickness" class="parameterLabel">
+                            Thickness:
+                        </label>
+                        <input type="number" id="layerThickness" min="1" max="10" style="width: 46px;"/>
+                    </div>
+                    <label class="parameterLabel">
+                        <h4>Material:</h4>
+                    </label>
+                    <div>
+                        <label for="materialID" class="parameterLabel">
+                            ID:
+                        </label>
+                        <datalist id="materials"></datalist>
+                        <input type="text" id="materialID" style="width: 140px;" list="materials">
+                    </div>
+                    <div>
+                        <label for="materialName" class="parameterLabel">Name:</label>
+                        <input type="text" id="materialName" style="width: 140px;" readonly="true">
+                    </div>
+                    <div>
+                        <button class="parameterButton" id="layerClone">Add</button>
+                        <button class="parameterButton" id="layerUpdate">Update</button>
+                        <button class="parameterButton" id="layerRestore">Restore</button>
+                        <button class="parameterButton" id="layerDelete">Delete</button>
+                    </div>
+                    <br/>
+                    <h2>Visual parameters:</h2>
+                    <div>
+                        <label for="vpOrientation" class="parameterLabel">
+                            Orientation:
+                        </label>
+                        <form id="vpOrientation" class="parameterGroup">
+                            <input type="radio" name="vpOrientation" id="vpOrientation_h" value="horizontal" checked=true>Horizontal<br>
+                            <input type="radio" name="vpOrientation" id="vpOrientation_v">Vertical
+                        </form>
+                    </div>
+                    <div>
+                        <label for="vpLength" class="parameterLabel">
+                            Length scale: <span id="vpLength-value"></span>
+                        </label>
+                        <input type="range" min="100" max="500" id="vpLength"/>
+                    </div>
+                    <div>
+                        <label for="vpThickness" class="parameterLabel">
+                            Width scale: <span id="vpThickness-value"></span>
+                        </label>
+                        <input type="range" min="20" max="80" id="vpThickness"/>
+                    </div>
+                </div>
+            </div>
+            <div class="chart" id="chart"></div>
+            <div class="panel" style="left: 880px;">
+                <div id="au-pane" class="repo-pane">
+                    <h2>Asymmetric Units</h2>
+                    <div class="repo">
+                        <div class="auRepo"></div>
+                    </div>
+                </div>
+                <div id="material-pane" class="repo-pane">
+                    <h2>Materials</h2>
+                    <div class="repo">
+                        <div class="materialRepo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="apinatomy2-data.js"></script>
+<script src="repositories.js"></script>
+<script src="au-editor.js"></script>
