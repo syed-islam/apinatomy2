@@ -115,9 +115,48 @@ var nodes = [
     links = [
         new Link(nodes[0], nodes[1]),
         new Link(nodes[1], nodes[2])
-    ];
+    ],
+    nodes1 = [
+            new Node(0, 100, 100, null),
+            new Node (1, 200, 200, null),
+            new Node (2, 300, 300, null),
+            new Node (3, 400, 400, tree)
+    ],
+    links1 = [
+            new Link(nodes1[0], nodes1[1]),
+            new Link(nodes1[1], nodes1[2]),
+            new Link(nodes1[2], nodes1[3])
+    ]
+;
 
 var graph = new Graph("Graph 1", "Testing graph", nodes, links);
+var graph1 = new Graph("Syed 1", "Syed Testing", nodes1, links1);
 
-var graphRepo = new GraphRepo([graph]);
 
+
+//Syed Attempting file import.
+
+
+var nodes= [];
+var link = [];
+d3.csv("Test.csv", function(data) {
+    var dataset = data.map(function(d) { return [ +d["id"], +d["x"], +d["y"] ]; });
+    for (var i =0; i < dataset.length;i++){
+        nodes.push(new Node(dataset[i][0],dataset[i][1], dataset[i][2],null));
+    }
+    console.log(nodes);
+});
+
+d3.csv("Test1.csv", function(data) {
+    var dataset = data.map(function(d) { return [ +d["source"], +d["target"] ]; });
+    for (var i =0; i < dataset.length;i++){
+        link.push(new Link(nodes[Number(dataset[i][0])], nodes[Number(dataset[i][1])]));
+    }
+    console.log(link);
+});
+
+
+
+var graphImported = new Graph("Imported", "Import", nodes, link);
+
+var graphRepo = new GraphRepo([graph, graph1, graphImported]);
