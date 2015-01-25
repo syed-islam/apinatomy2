@@ -594,8 +594,9 @@ function Tree(root){
 }
 
 //graph node
-function Node(id, x, y, tree){
+function Node(id, name, x, y, tree){
     this.id = id;
+    this.name = name;
     this.x = x;
     this.y = y;
     this.tree = tree;
@@ -645,7 +646,7 @@ function Graph(id, name, nodes, links){
 
     this.addNode = function(point){
         var nodeId = this.getNextID();
-        var node = new Node(nodeId, point[0], point[1], null);
+        var node = new Node(nodeId, 0, point[0], point[1], null);
         nodes.push(node);
     }
 
@@ -760,7 +761,7 @@ function Graph(id, name, nodes, links){
                 })
                 .attr('class', 'id')
                 .text(function (d) {
-                    return d.id;
+                    return d.name;
                 });
 
             // drawing paths
