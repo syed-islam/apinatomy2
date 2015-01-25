@@ -54,7 +54,7 @@ $(document).ready(function() {
                     }
                 }
                 return null;
-            }
+            };
 
             var getNodePosition = function (nodes, name){
                 for (i =0; i < nodes.length; i++){
@@ -63,7 +63,9 @@ $(document).ready(function() {
                     }
                 }
                 return null;
-            }
+            };
+
+
 
 
             console.log(graphRepo.graphs.length);
@@ -71,13 +73,19 @@ $(document).ready(function() {
             var graphImported = new Graph("Imported", "Import", nodes, link);
             graphRepo.addAt(graphImported,0);
 
-            var t = graphEditor.graphRepoSvg;
 
-            //graphRepo.draw(graphEditor.graphRepoSvg, graphRepoVP, onSelectGraph);
+            var panelWidth = 300, panelHeight = 500;
+            var graphRepoSvg = d3.select('#app-body .graphRepo').append("svg")
+                .attr("width", panelWidth)
+                .attr("height", panelHeight);
+            var graphRepoVP = new VisualParameters("horizontal", 5, 20, panelWidth, panelHeight, 0);
+
+            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+
             //selectedGraph = newGraph;
             //syncSelectedGraph();
 
-            console.log(graphRepo);
+
 
 
         }
