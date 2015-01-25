@@ -70,6 +70,7 @@ var graphEditor = function () {
         } else {
             svg.select("g.tree").remove();
         }
+        updateNodeParameter(selectedGraph.selected_node);
     }
 
     var onSelectLink = function(d){
@@ -100,6 +101,15 @@ var graphEditor = function () {
             d3.select("#auName").property("value", "");
         }
     }
+
+    function updateNodeParameter(node){
+        if (node != null){
+            d3.select("#nodeName").property("value",node.name);
+        } else {
+            d3.select("#nodeName").property("value","");
+        }
+    }
+
 
     d3.select("#auUpdate").on("click", function() {
         if (selectedGraph.selected_link){
@@ -207,8 +217,29 @@ var graphEditor = function () {
         }
     })
 
+    d3.select("#nodeDelete").on("click", function() {
+        //alert(selectedGraph.selected_node.name);
+        if (selectedGraph.selected_node != null) {
+            selectedGraph.deleteNode(selectedGraph.selected_node);
+            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+        }
+    })
 
-    //Syed Adding
+    d3.select("#nodeUpdate").on("click", function() {
+        if (selectedGraph.selected_node != null) {
+            selectedGraph.selected_node.name = nodeName.value;
+            //graph.id = graphID.value;
+            //graph.name = graphName.value;
+            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+        }
+    })
+
+
+
+    ///////////////////////////////
+    /// File Import Setup
+    ///////////////////////////////
 
     document.getElementById('txtFileUpload').addEventListener('change', upload, false);
 
@@ -226,32 +257,39 @@ var graphEditor = function () {
         if (!browserSupportFileUpload()) {
             alert('The File APIs are not fully supported in this browser!');
         } else {
-            alert('here we go!');
             var file = evt.target.files[0];
-
-
-
             var nodes= [];
             var link = [];
-            d3.csv("Test.csv", function(data) {
-                var dataset = data.map(function(d) { return [ d["node1"] , d["node2"]]; });
+            //console.log(file);
 
-                for (var i =0; i < dataset.length; i++){
-                    if (doesNodesContainNode(nodes,dataset[i][0]) ==  null ) {
-                        nodes.push(new Node(nodes.length, dataset[i][0], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
+            d3.csv(file.name, function(data) {
+                var dataset = data.map(function(d) { return [ d["node1"] , d["node2"], d["entity"] ]; });
+                if (graphRepo.getIndexByID(dataset[0][2]) > -1 ){
+                    alert('This entity is already loaded!');
+                } else {
+                    // It is possible to combine these two loops to make the code faster
+                    for (var i = 0; i < dataset.length; i++) {
+                        if (doesNodesContainNode(nodes, dataset[i][0]) == null) {
+                            nodes.push(new Node(nodes.length, dataset[i][0], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
+                        }
+                        if (doesNodesContainNode(nodes, dataset[i][1]) == null) {
+                            nodes.push(new Node(nodes.length, dataset[i][1], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
+                        }
                     }
-                    if (doesNodesContainNode(nodes,dataset[i][1]) ==  null ) {
-                        nodes.push(new Node(nodes.length, dataset[i][1], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
+
+                    for (var i = 0; i < dataset.length; i++) {
+                        link.push(new Link(nodes[getNodePosition(nodes, dataset[i][0])], nodes[getNodePosition(nodes, dataset[i][1])]));
+
                     }
-                }
+                    var graphImported = new Graph(dataset[0][2], dataset[0][2]+"_import", nodes, link);
+                    graphRepo.addAt(graphImported,0);
+                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
 
-                for (var i =0; i < dataset.length; i++){
-                    link.push(new Link(nodes[getNodePosition(nodes,dataset[i][0])], nodes[getNodePosition(nodes,dataset[i][1])]));
-
+                    //Todo : Update the selected graph following import.
                 }
             });
 
-
+            // function to check whether node has already been loaded
             var doesNodesContainNode = function(nodes, name){
                 for (i =0; i < nodes.length; i++){
                     //console.log(nodes[i].name + "==" + name);
@@ -262,6 +300,7 @@ var graphEditor = function () {
                 return null;
             };
 
+            // identify the node position in the nodes structure
             var getNodePosition = function (nodes, name){
                 for (i =0; i < nodes.length; i++){
                     if (nodes[i].name === name){
@@ -271,24 +310,7 @@ var graphEditor = function () {
                 return null;
             };
 
-            console.log(graphRepo.graphs.length);
-
-            var graphImported = new Graph("Imported", "Import", nodes, link);
-            graphRepo.addAt(graphImported,0);
-
-            console.log(graphRepo.graphs.length);
-            //var panelWidth = 300, panelHeight = 500;
-            //var graphRepoSvg = d3.select('#app-body .graphRepo').append("svg")
-            //    .attr("width", panelWidth)
-            //    .attr("height", panelHeight);
-            //var graphRepoVP = new VisualParameters("horizontal", 5, 20, panelWidth, panelHeight, 0);
-
-            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
-
-            //selectedGraph = newGraph;
-            //syncSelectedGraph();
-
-
+            //console.log(graphRepo.graphs.length);
 
 
         }

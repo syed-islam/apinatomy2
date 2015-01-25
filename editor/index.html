@@ -47,6 +47,15 @@
                     <br/>
                     <h2>Node parameters:</h2>
                     <div>
+                        <label for="nodeName" class="parameterLabel">Name:</label>
+                        <input type="text" id="nodeName" size="200" style="width: 140px;"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <button class="parameterButton" id="nodeUpdate">Update</button>
+                        <button class="parameterButton" id="nodeDelete">Delete</button>
+                    </div>
+                    <div>
                        <h3>Generated tree parameters:</h3>
                         <div>
                             <label for="treeLevels" class="parameterLabel">Number of levels:</label>
@@ -63,20 +72,20 @@
                             <button class="parameterButton" id="treeDelete">Delete</button>
                         </div>
                     </div>
-                    <div class="instructions">
-                        <h2>Instructions:</h2>
-                        <ul class="unstyled">
-                            <li>Click in the open space to <strong>add a state</strong></li>
-                            <li>Drag between states to <strong>add a transition</strong></li>
-                            <li>Ctrl-drag a state to <strong>move</strong> graph layout</li>
-                            <li>Click a state or a transition to <strong>select</strong> it</li>
-                            <li>When a state/transition is selected:
-                                <ul>
-                                    <li><strong>Delete</strong> removes the state/transition</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
+                    <!--<div class="instructions">-->
+                        <!--<h2>Instructions:</h2>-->
+                        <!--<ul class="unstyled">-->
+                            <!--<li>Click in the open space to <strong>add a state</strong></li>-->
+                            <!--<li>Drag between states to <strong>add a transition</strong></li>-->
+                            <!--<li>Ctrl-drag a state to <strong>move</strong> graph layout</li>-->
+                            <!--<li>Click a state or a transition to <strong>select</strong> it</li>-->
+                            <!--<li>When a state/transition is selected:-->
+                                <!--<ul>-->
+                                    <!--<li><strong>Delete</strong> removes the state/transition</li>-->
+                                <!--</ul>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="graph"></div>
@@ -110,4 +119,3 @@
 <script src="apinatomy2-data.js"></script>
 <script src="repositories.js"></script>
 <script src="graph-construction.js"></script>
-<!--<script src="file-import.js"></script>-->
