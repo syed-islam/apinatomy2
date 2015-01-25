@@ -81,6 +81,12 @@
             </div>
             <div class="graph"></div>
             <div class="panel" style="left: 880px;">
+                <div id="dvImportSegments" class="fileupload ">
+                    <fieldset>
+                        <legend>Upload your CSV File</legend>
+                        <input type="file" name="File Upload" id="txtFileUpload" accept=".csv" />
+                    </fieldset>
+                </div>
                 <div id="graph-pane" class="repo-pane">
                     <h2>Graphs</h2>
                     <div class="repo">
@@ -98,7 +104,10 @@
     </section>
 </div>
 <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
+
 <script src="d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="apinatomy2-data.js"></script>
 <script src="repositories.js"></script>
 <script src="graph-construction.js"></script>
+<script src="file-import.js"></script>

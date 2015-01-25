@@ -52,6 +52,17 @@ var materialRepo = new MaterialRepo(
         new Material("#CHEBI_19813", "24-methylenecycloartenol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_51813", "ATTO 520-3", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_35439", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439a", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439b", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439c", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439d", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439e", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439f", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439g", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439h", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439i", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+            new Material("#CHEBI_35439j", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+
         new Material("#CHEBI_19812", "24-methylenecholesterol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null)]
 );
 
@@ -154,10 +165,6 @@ d3.csv("Test.csv", function(data) {
         link.push(new Link(nodes[getNodePosition(nodes,dataset[i][0])], nodes[getNodePosition(nodes,dataset[i][1])]));
 
     }
-
-
-
-
 });
 
 
@@ -185,4 +192,4 @@ var getNodePosition = function (nodes, name){
 
 var graphImported = new Graph("Imported", "Import", nodes, link);
 
-var graphRepo = new GraphRepo([graph, graph1, graphImported]);
+var graphRepo = new GraphRepo([graph, graph1]);
