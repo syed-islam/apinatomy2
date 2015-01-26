@@ -646,7 +646,7 @@ function Graph(id, name, nodes, links){
 
     this.addNode = function(point){
         var nodeId = this.getNextID();
-        var node = new Node(nodeId, 0, point[0], point[1], null);
+        var node = new Node(nodeId,nodeId , point[0], point[1], null);
         nodes.push(node);
     }
 

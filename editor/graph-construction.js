@@ -317,4 +317,56 @@ var graphEditor = function () {
     }
 
 
+    ///////////////////////////////
+    /// File Import Setup
+    ///////////////////////////////
+    //console.log(selectedGraph.links);
+
+
+    var fname = selectedGraph.name+".csv";
+
+    //var csvContent = "data:text/csv;charset=utf-8,";
+    var csvContent ="";
+    $("#download").click(function(){
+        var test_array = [["entity","node1","node2"]];
+        for (i =0; i < selectedGraph.links.length;i++) {
+            //console.log(selectedGraph.links[i].source.name);
+            //console.log(selectedGraph.links[i].target.name);
+            var newEntry = [selectedGraph.id,selectedGraph.links[i].source.name,selectedGraph.links[i].target.name];
+            test_array.push(newEntry);
+        }
+
+        console.log(test_array);
+
+
+        test_array.forEach(function(infoArray, index){
+            dataString = infoArray.join(",");
+            csvContent += dataString+ "\n";
+        });
+
+        //var encodedUri = encodeURI(csvContent);
+        //window.open(encodedUri);
+
+        var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", fname);
+                link.style = "visibility:hidden";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        csvContent ="";
+    });
+
+
+
 }();

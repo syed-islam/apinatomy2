@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/editor/Test1.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/editor/file-import.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/Test.csv" afterPath="$PROJECT_DIR$/editor/Test.csv" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/apinatomy2-data.js" afterPath="$PROJECT_DIR$/editor/apinatomy2-data.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/graph-construction.js" afterPath="$PROJECT_DIR$/editor/graph-construction.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/index.html" afterPath="$PROJECT_DIR$/editor/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -31,17 +29,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.672165" vertical-offset="424" max-vertical-offset="1905">
-              <caret line="50" column="89" selection-start-line="50" selection-start-column="89" selection-end-line="50" selection-end-column="89" />
+            <state vertical-scroll-proportion="-3.0392158" vertical-offset="1255" max-vertical-offset="1935">
+              <caret line="94" column="46" selection-start-line="94" selection-start-column="46" selection-end-line="94" selection-end-column="46" />
               <folding>
                 <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#0;n#div#3;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#0;n#div#4;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#0;n#div#6;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="graph-construction.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.07649254" vertical-offset="5134" max-vertical-offset="5670">
+              <caret line="345" column="0" selection-start-line="345" selection-start-column="0" selection-end-line="345" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="5AUmmuYl.csv" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/editor/5AUmmuYl.csv">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -56,21 +74,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="graph-construction.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3236" max-vertical-offset="4890">
-              <caret line="231" column="43" selection-start-line="230" selection-start-column="14" selection-end-line="231" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Test.csv" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/Test.csv">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="150">
-              <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+              <caret line="0" column="18" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -79,15 +87,13 @@
       <file leaf-file-name="repositories.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/repositories.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="31.703703" vertical-offset="976" max-vertical-offset="1530">
+            <state vertical-scroll-proportion="31.703703" vertical-offset="976" max-vertical-offset="1665">
               <caret line="68" column="92" selection-start-line="68" selection-start-column="87" selection-end-line="68" selection-end-column="92" />
               <folding>
                 <element signature="e#117#7918#0" expanded="false" />
                 <element signature="e#8480#8891#0" expanded="false" />
                 <element signature="e#9507#9571#0" expanded="false" />
-                <element signature="e#10249#10384#0" expanded="false" />
                 <element signature="e#10398#10480#0" expanded="false" />
-                <element signature="e#10495#10684#0" expanded="false" />
                 <element signature="e#10699#10837#0" expanded="false" />
                 <element signature="e#11823#12016#0" expanded="false" />
                 <element signature="e#12062#12194#0" expanded="false" />
@@ -99,8 +105,8 @@
       <file leaf-file-name="apinatomy2-data.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/apinatomy2-data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3362" max-vertical-offset="8700">
-              <caret line="611" column="14" selection-start-line="611" selection-start-column="14" selection-end-line="611" selection-end-column="14" />
+            <state vertical-scroll-proportion="-6.259259" vertical-offset="3341" max-vertical-offset="8700">
+              <caret line="612" column="32" selection-start-line="612" selection-start-column="32" selection-end-line="612" selection-end-column="32" />
               <folding>
                 <element signature="n#!!block;n#Material#0" expanded="false" />
                 <element signature="n#!!block;n#Layer#0" expanded="false" />
@@ -127,8 +133,9 @@
         <option value="$PROJECT_DIR$/editor/file-import.js" />
         <option value="$PROJECT_DIR$/editor/Test.csv" />
         <option value="$PROJECT_DIR$/editor/apinatomy2-data.js" />
-        <option value="$PROJECT_DIR$/editor/graph-construction.js" />
         <option value="$PROJECT_DIR$/editor/index.html" />
+        <option value="$PROJECT_DIR$/editor/kBWxBgoV.csv" />
+        <option value="$PROJECT_DIR$/editor/graph-construction.js" />
       </list>
     </option>
   </component>
@@ -348,9 +355,7 @@
             <element signature="e#117#7918#0" expanded="false" />
             <element signature="e#8480#8891#0" expanded="false" />
             <element signature="e#9507#9571#0" expanded="false" />
-            <element signature="e#10249#10384#0" expanded="false" />
             <element signature="e#10398#10480#0" expanded="false" />
-            <element signature="e#10495#10684#0" expanded="false" />
             <element signature="e#10699#10837#0" expanded="false" />
             <element signature="e#11823#12016#0" expanded="false" />
             <element signature="e#12062#12194#0" expanded="false" />
@@ -421,32 +426,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/editor/Test.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="150">
-          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/editor/repositories.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="31.703703" vertical-offset="976" max-vertical-offset="1530">
-          <caret line="68" column="92" selection-start-line="68" selection-start-column="87" selection-end-line="68" selection-end-column="92" />
-          <folding>
-            <element signature="e#117#7918#0" expanded="false" />
-            <element signature="e#8480#8891#0" expanded="false" />
-            <element signature="e#9507#9571#0" expanded="false" />
-            <element signature="e#10249#10384#0" expanded="false" />
-            <element signature="e#10398#10480#0" expanded="false" />
-            <element signature="e#10495#10684#0" expanded="false" />
-            <element signature="e#10699#10837#0" expanded="false" />
-            <element signature="e#11823#12016#0" expanded="false" />
-            <element signature="e#12062#12194#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/editor/app.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-65.0" vertical-offset="0" max-vertical-offset="3165">
@@ -455,10 +434,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/editor/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.0392158" vertical-offset="1255" max-vertical-offset="1935">
+          <caret line="94" column="46" selection-start-line="94" selection-start-column="46" selection-end-line="94" selection-end-column="46" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#3;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#4;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#6;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/editor/Test.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="536">
+          <caret line="0" column="18" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/editor/apinatomy2-data.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3362" max-vertical-offset="8700">
-          <caret line="611" column="14" selection-start-line="611" selection-start-column="14" selection-end-line="611" selection-end-column="14" />
+        <state vertical-scroll-proportion="-6.259259" vertical-offset="3341" max-vertical-offset="8700">
+          <caret line="612" column="32" selection-start-line="612" selection-start-column="32" selection-end-line="612" selection-end-column="32" />
           <folding>
             <element signature="n#!!block;n#Material#0" expanded="false" />
             <element signature="n#!!block;n#Layer#0" expanded="false" />
@@ -470,24 +470,35 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
+    <entry file="file://$PROJECT_DIR$/editor/repositories.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3236" max-vertical-offset="4890">
-          <caret line="231" column="43" selection-start-line="230" selection-start-column="14" selection-end-line="231" selection-end-column="43" />
+        <state vertical-scroll-proportion="31.703703" vertical-offset="976" max-vertical-offset="1665">
+          <caret line="68" column="92" selection-start-line="68" selection-start-column="87" selection-end-line="68" selection-end-column="92" />
+          <folding>
+            <element signature="e#117#7918#0" expanded="false" />
+            <element signature="e#8480#8891#0" expanded="false" />
+            <element signature="e#9507#9571#0" expanded="false" />
+            <element signature="e#10398#10480#0" expanded="false" />
+            <element signature="e#10699#10837#0" expanded="false" />
+            <element signature="e#11823#12016#0" expanded="false" />
+            <element signature="e#12062#12194#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/editor/5AUmmuYl.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="536">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/editor/index.html">
+    <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.672165" vertical-offset="424" max-vertical-offset="1905">
-          <caret line="50" column="89" selection-start-line="50" selection-start-column="89" selection-end-line="50" selection-end-column="89" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#3;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#4;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#6;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.07649254" vertical-offset="5134" max-vertical-offset="5670">
+          <caret line="345" column="0" selection-start-line="345" selection-start-column="0" selection-end-line="345" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
