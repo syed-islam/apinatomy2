@@ -260,33 +260,37 @@ var graphEditor = function () {
             var file = evt.target.files[0];
             var nodes= [];
             var link = [];
-            //console.log(file);
 
             //Todo: Using d3 to upload file is causing the file to upload from the server directory rather than users.
             d3.csv(file.name, function(data) {
-                var dataset = data.map(function(d) { return [ d["node1"] , d["node2"], d["entity"] ]; });
+                var dataset = data.map(function(d) { return [ d["node1"] , d["node2"], d["entity"], +d["node1x"], +d["node1y"], +d["node2x"], +d["node2y"] ]; });
                 if (graphRepo.getIndexByID(dataset[0][2]) > -1 ){
                     alert('This entity is already loaded!');
                 } else {
                     // It is possible to combine these two loops to make the code faster
                     for (var i = 0; i < dataset.length; i++) {
                         if (doesNodesContainNode(nodes, dataset[i][0]) == null) {
-                            nodes.push(new Node(nodes.length, dataset[i][0], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
+                            nodes.push(new Node(nodes.length, dataset[i][0], dataset[i][3], dataset[i][4], null));
                         }
                         if (doesNodesContainNode(nodes, dataset[i][1]) == null) {
-                            nodes.push(new Node(nodes.length, dataset[i][1], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
+                            nodes.push(new Node(nodes.length, dataset[i][1], dataset[i][5], dataset[i][6], null));
                         }
                     }
 
+                    //Adding edges to the graph
                     for (var i = 0; i < dataset.length; i++) {
                         link.push(new Link(nodes[getNodePosition(nodes, dataset[i][0])], nodes[getNodePosition(nodes, dataset[i][1])]));
-
                     }
-                    var graphImported = new Graph(dataset[0][2], dataset[0][2]+"_import", nodes, link);
-                    graphRepo.addAt(graphImported,0);
-                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
 
-                    //Todo : Update the selected graph following import.
+                    //creating graph from imported data
+                    var graphImported = new Graph(dataset[0][2], dataset[0][2]+"_import", nodes, link);
+
+                    //adding graph, selecting graph, drawing graphrepo and graph.
+                    graphRepo.addAt(graphImported,0);
+                    selectedGraph = graphRepo.graphs[0];
+                    selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                    updateGraphParameters(selectedGraph);
                 }
             });
 
@@ -310,10 +314,6 @@ var graphEditor = function () {
                 }
                 return null;
             };
-
-            //console.log(graphRepo.graphs.length);
-
-
         }
     }
 
@@ -323,31 +323,29 @@ var graphEditor = function () {
     ///////////////////////////////
     //console.log(selectedGraph.links);
 
-
-
-
-    //var csvContent = "data:text/csv;charset=utf-8,";
-    var csvContent ="";
     $("#download").click(function(){
+        var csvContent ="";
         var fname = selectedGraph.id+".csv";
-        var test_array = [["entity","node1","node2"]];
+        var test_array = [["entity","node1","node2","node1x","node1y","node2x", "node2y"]];
+
+        // push data for each node and associated edge into the array
         for (i =0; i < selectedGraph.links.length;i++) {
-            //console.log(selectedGraph.links[i].source.name);
-            //console.log(selectedGraph.links[i].target.name);
-            var newEntry = [selectedGraph.id,selectedGraph.links[i].source.name,selectedGraph.links[i].target.name];
+            var newEntry = [    selectedGraph.id,
+                                selectedGraph.links[i].source.name,
+                                selectedGraph.links[i].target.name,
+                                selectedGraph.links[i].source.x,
+                                selectedGraph.links[i].source.y,
+                                selectedGraph.links[i].target.x,
+                                selectedGraph.links[i].target.y
+                            ];
             test_array.push(newEntry);
         }
 
-        console.log(test_array);
-
-
+        //Creating String to save as file
         test_array.forEach(function(infoArray, index){
             dataString = infoArray.join(",");
             csvContent += dataString+ "\n";
         });
-
-        //var encodedUri = encodeURI(csvContent);
-        //window.open(encodedUri);
 
         var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         if (navigator.msSaveBlob) { // IE 10+

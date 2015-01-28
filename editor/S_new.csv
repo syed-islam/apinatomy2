@@ -1,0 +1,5 @@
+entity,node1,node2,node1x,node1y,node2x,node2y
+S_new,0,1,100,100,402,168
+S_new,1,2,402,168,88,288
+S_new,2,3,88,288,400,400
+S_new,0,4,100,100,200,184
