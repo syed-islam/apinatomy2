@@ -705,7 +705,9 @@ function Graph(id, name, nodes, links){
             circle.selectAll('circle')
                 .style('fill', function (d) {
                     return (d === graph.selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id);
-                });
+                })
+            ;
+
 
             var g = circle.enter().append('g').attr('class', 'graph');
 
@@ -750,6 +752,8 @@ function Graph(id, name, nodes, links){
                     graph.selected_node = null;
                     update();
                 })
+                .append("svg:title")
+                .text(function(d){return d.id;});
             ;
 
             g.append('text')
@@ -799,7 +803,13 @@ function Graph(id, name, nodes, links){
                     graph.selected_node = null;
                     onSelectLink();
                     update();
-                });
+                })
+                .append("svg:title")
+                .text(function(d) {
+                    var s = d.source.name + " "+d.target.name;
+                    return s;
+                })
+            ;
 
             path.enter().append('text')
                 .attr('x', function (d) {
