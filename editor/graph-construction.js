@@ -27,7 +27,7 @@ var graphEditor = function () {
     var graphRepoVP = new VisualParameters("horizontal", 5, 20, panelWidth, panelHeight, 0);
 
     //TODO: how to determine correct offset (top left position of svg) for correct drag-and-drop
-    var svgOffset = [340, 70];
+    var svgOffset = [695, 50];
 
     ////////////////////////////////////////////////
     var selectedGraph = null;
