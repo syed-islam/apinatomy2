@@ -262,6 +262,7 @@ var graphEditor = function () {
             var link = [];
             //console.log(file);
 
+            //Todo: Using d3 to upload file is causing the file to upload from the server directory rather than users.
             d3.csv(file.name, function(data) {
                 var dataset = data.map(function(d) { return [ d["node1"] , d["node2"], d["entity"] ]; });
                 if (graphRepo.getIndexByID(dataset[0][2]) > -1 ){
@@ -318,16 +319,17 @@ var graphEditor = function () {
 
 
     ///////////////////////////////
-    /// File Import Setup
+    /// File Export Setup
     ///////////////////////////////
     //console.log(selectedGraph.links);
 
 
-    var fname = selectedGraph.name+".csv";
+
 
     //var csvContent = "data:text/csv;charset=utf-8,";
     var csvContent ="";
     $("#download").click(function(){
+        var fname = selectedGraph.id+".csv";
         var test_array = [["entity","node1","node2"]];
         for (i =0; i < selectedGraph.links.length;i++) {
             //console.log(selectedGraph.links[i].source.name);
@@ -349,7 +351,7 @@ var graphEditor = function () {
 
         var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         if (navigator.msSaveBlob) { // IE 10+
-            navigator.msSaveBlob(blob, filename);
+            navigator.msSaveBlob(blob, fname);
         } else {
             var link = document.createElement("a");
             if (link.download !== undefined) { // feature detection
