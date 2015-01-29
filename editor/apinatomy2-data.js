@@ -603,10 +603,14 @@ function Node(id, name, x, y, tree){
 }
 
 //graph link
-function Link(source, target, au){
+function Link(source, target, au,type, edgeid, description, fma){
     this.source = source;
     this.target = target;
     this.au = au;
+    this.type = type;
+    this.edgeid = edgeid;
+    this.description = description;
+    this.fma = fma;
 }
 
 //create Graph
@@ -806,7 +810,9 @@ function Graph(id, name, nodes, links){
                 })
                 .append("svg:title")
                 .text(function(d) {
-                    var s = d.source.name + " "+d.target.name;
+                    var s = "Edge ID:" + d.edgeid + "\n";
+                    s += "Description:" + d.description + "\n";
+                    s += "FMA:" + d.fma+ "\n";
                     return s;
                 })
             ;

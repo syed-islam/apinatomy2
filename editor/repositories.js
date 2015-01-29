@@ -119,77 +119,28 @@ var tree = new Tree(treeRoot);
 ///////////////////////////////////////////////////////////
 
 var nodes = [
-        new Node("0", "0", 100, 100, null),
-        new Node (1,"1", 200, 200, null),
+        new Node (0, "0", 100, 100, null),
+        new Node (1, "1", 200, 200, null),
         new Node (2, "2", 300, 300, tree)
     ],
     links = [
-        new Link(nodes[0], nodes[1]),
-        new Link(nodes[1], nodes[2])
+        new Link(nodes[0], nodes[1],null,"2","3453","Hello I am an edge", "8787"),
+        new Link(nodes[1], nodes[2],null,"2","5634","artificial artery", "222")
     ],
     nodes1 = [
-            new Node(0, "0",100, 100, null),
+            new Node (0, "0",100, 100, null),
             new Node (1, "1",200, 200, null),
             new Node (2, "2",300, 300, null),
-            new Node (3, "3",400, 400, tree)
+            new Node (3, "3",400, 400, null)
     ],
     links1 = [
-            new Link(nodes1[0], nodes1[1]),
-            new Link(nodes1[1], nodes1[2]),
-            new Link(nodes1[2], nodes1[3])
+        new Link(nodes1[0], nodes1[1], null, "2", "3453", "Hello I am an edge", "8787"),
+        new Link(nodes1[1], nodes1[2], null, "2", "5634", "artificial artery", "222"),
+        new Link(nodes1[2], nodes1[3], null, "3", "9898", "finally there", "50801")
     ]
 ;
 
-var graph = new Graph("Graph 1", "Testing graph", nodes, links);
-var graph1 = new Graph("Syed 1", "Syed Testing", nodes1, links1);
-
-
-
-
-//Syed Attempting file import.
-var nodes= [];
-var link = [];
-d3.csv("Test.csv", function(data) {
-    var dataset = data.map(function(d) { return [ d["node1"] , d["node2"]]; });
-
-    for (var i =0; i < dataset.length; i++){
-        if (doesNodesContainNode(nodes,dataset[i][0]) ==  null ) {
-            nodes.push(new Node(nodes.length, dataset[i][0], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
-        }
-        if (doesNodesContainNode(nodes,dataset[i][1]) ==  null ) {
-            nodes.push(new Node(nodes.length, dataset[i][1], 50 * (nodes.length + 1), 50 * (nodes.length + 1), null));
-        }
-    }
-
-    for (var i =0; i < dataset.length; i++){
-        link.push(new Link(nodes[getNodePosition(nodes,dataset[i][0])], nodes[getNodePosition(nodes,dataset[i][1])]));
-
-    }
-});
-
-
-var doesNodesContainNode = function(nodes, name){
-    for (i =0; i < nodes.length; i++){
-        //console.log(nodes[i].name + "==" + name);
-        if (nodes[i].name === name){
-            return nodes[i];
-        }
-    }
-    return null;
-}
-
-var getNodePosition = function (nodes, name){
-    for (i =0; i < nodes.length; i++){
-        if (nodes[i].name === name){
-          return i;
-        }
-    }
-    return null;
-}
-
-
-
-
-var graphImported = new Graph("Imported", "Import", nodes, link);
+var graph = new Graph("Graph 1", "Test graph 1", nodes, links);
+var graph1 = new Graph("Graph 2", "Test graph 2", nodes1, links1);
 
 var graphRepo = new GraphRepo([graph, graph1]);
