@@ -237,9 +237,9 @@ var graphEditor = function () {
 
 
 
-    ///////////////////////////////
-    /// File Import Setup
-    ///////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////
+    //////   File Import
+    //////////////////////////////////////////////////////////////////////////////////
 
     document.getElementById('txtFileUpload').addEventListener('change', upload, false);
 
@@ -258,41 +258,62 @@ var graphEditor = function () {
             alert('The File APIs are not fully supported in this browser!');
         } else {
             var file = evt.target.files[0];
-            var nodes= [];
-            var link = [];
 
-            //Todo: Using d3 to upload file is causing the file to upload from the server directory rather than users.
-            d3.csv(file.name, function(data) {
-                var dataset = data.map(function(d) { return [ d["node1"] , d["node2"], d["entity"], +d["node1x"], +d["node1y"], +d["node2x"], +d["node2y"] ]; });
-                if (graphRepo.getIndexByID(dataset[0][2]) > -1 ){
-                    alert('This entity is already loaded!');
+
+            //////////////////
+
+            var data = null;
+            //var file = evt.target.files[0];
+            var reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function(event) {
+                var data = event.target.result;
+                csvData = $.csv.toArrays(data);
+                if (csvData && csvData.length > 0) {
+                    //console.log(data);
+                    var nodes= [];
+                    var link = [];
+                    if (graphRepo.getIndexByID(csvData[1][0]) > -1 ){
+                        alert('This entity is already loaded!');
+                    } else {
+                        console.log(csvData);
+                        // It is possible to combine these two loops to make the code faster
+                        for (var i = 1; i < csvData.length; i++) {
+                            if (doesNodesContainNode(nodes, csvData[i][1]) == null) {
+                                nodes.push(new Node(nodes.length, csvData[i][1], parseInt(csvData[i][3]), parseInt(csvData[i][4]), null));
+                            }
+                            if (doesNodesContainNode(nodes, csvData[i][2]) == null) {
+                                nodes.push(new Node(nodes.length, csvData[i][2], parseInt(csvData[i][5]), parseInt(csvData[i][6]), null));
+                            }
+                        }
+
+                        //Adding edges to the graph
+                        for (var i = 1; i < csvData.length; i++) {
+                            link.push(new Link(nodes[getNodePosition(nodes, csvData[i][1])], nodes[getNodePosition(nodes, csvData[i][2])],csvData[i][7],csvData[i][8],csvData[i][9],csvData[i][10],csvData[i][11]));
+                        }
+                        console.log(link);
+
+                        //creating graph from imported data
+                        var graphImported = new Graph(csvData[1][0], csvData[1][0]+"_import", nodes, link);
+
+                        //adding graph, selecting graph, drawing graphrepo and graph.
+                        graphRepo.addAt(graphImported,0);
+                        selectedGraph = graphRepo.graphs[0];
+                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                        updateGraphParameters(selectedGraph);
+
+
+                    }
+
                 } else {
-                    // It is possible to combine these two loops to make the code faster
-                    for (var i = 0; i < dataset.length; i++) {
-                        if (doesNodesContainNode(nodes, dataset[i][0]) == null) {
-                            nodes.push(new Node(nodes.length, dataset[i][0], dataset[i][3], dataset[i][4], null));
-                        }
-                        if (doesNodesContainNode(nodes, dataset[i][1]) == null) {
-                            nodes.push(new Node(nodes.length, dataset[i][1], dataset[i][5], dataset[i][6], null));
-                        }
-                    }
-
-                    //Adding edges to the graph
-                    for (var i = 0; i < dataset.length; i++) {
-                        link.push(new Link(nodes[getNodePosition(nodes, dataset[i][0])], nodes[getNodePosition(nodes, dataset[i][1])]));
-                    }
-
-                    //creating graph from imported data
-                    var graphImported = new Graph(dataset[0][2], dataset[0][2]+"_import", nodes, link);
-
-                    //adding graph, selecting graph, drawing graphrepo and graph.
-                    graphRepo.addAt(graphImported,0);
-                    selectedGraph = graphRepo.graphs[0];
-                    selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
-                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
-                    updateGraphParameters(selectedGraph);
+                    alert('No data to import!');
                 }
-            });
+            };
+            reader.onerror = function() {
+                alert('Unable to read ' + file.fileName);
+            };
+
 
             // function to check whether node has already been loaded
             var doesNodesContainNode = function(nodes, name){
@@ -318,15 +339,15 @@ var graphEditor = function () {
     }
 
 
-    ///////////////////////////////
-    /// File Export Setup
-    ///////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////
+    ///     File Export
+    //////////////////////////////////////////////////////////////////////////////////
     //console.log(selectedGraph.links);
 
     $("#download").click(function(){
         var csvContent ="";
         var fname = selectedGraph.id+".csv";
-        var test_array = [["entity","node1","node2","node1x","node1y","node2x", "node2y"]];
+        var test_array = [["entity","node1","node2","node1x","node1y","node2x", "node2y","au","type","edge id","description","fma"]];
 
         // push data for each node and associated edge into the array
         for (i =0; i < selectedGraph.links.length;i++) {
@@ -336,7 +357,13 @@ var graphEditor = function () {
                                 selectedGraph.links[i].source.x,
                                 selectedGraph.links[i].source.y,
                                 selectedGraph.links[i].target.x,
-                                selectedGraph.links[i].target.y
+                                selectedGraph.links[i].target.y,
+                                selectedGraph.links[i].au,
+                                selectedGraph.links[i].type,
+                                selectedGraph.links[i].edgeid,
+                                selectedGraph.links[i].description,
+                                selectedGraph.links[i].fma
+
                             ];
             test_array.push(newEntry);
         }
@@ -366,7 +393,4 @@ var graphEditor = function () {
 
         csvContent ="";
     });
-
-
-
 }();
