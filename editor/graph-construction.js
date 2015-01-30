@@ -3,8 +3,8 @@
  */
 // set up SVG for D3
 var graphEditor = function () {
-    var width = 6000,
-        height = 6000;
+    var width = 540,
+        height = 600;
 
     //Init visual parameters
     var panelWidth = 300, panelHeight = 500;

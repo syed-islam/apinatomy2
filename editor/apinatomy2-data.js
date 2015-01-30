@@ -648,7 +648,7 @@ function Graph(id, name, nodes, links){
         return link;
     }
 
-    this.getMaxX = function(){
+    this.getMaxWidth = function(){
         var maxVal=0;
         for (var i =0; i < nodes.length; i++){
             if (nodes[i].x > maxVal) {
@@ -658,7 +658,7 @@ function Graph(id, name, nodes, links){
         return maxVal;
     }
 
-    this.getMaxY = function(){
+    this.getMaxHeight = function(){
         var maxVal=0;
         for (var i =0; i < nodes.length; i++){
             if (nodes[i].y > maxVal) {
@@ -702,8 +702,8 @@ function Graph(id, name, nodes, links){
 
     this.draw = function(svg, offset, onSelectNode, onSelectLink) {
         //console.log((this.getMaxX() +100) + " " + (this.getMaxY() +100) );
-        svg.attr("width", (this.getMaxX() +100));
-        svg.attr("height", (this.getMaxY() +100));
+        svg.attr("width", this.getMaxHeight() < 540 ? 540 : this.getMaxHeight() +50);
+        svg.attr("height", this.getMaxWidth() < 590 ? 590 : this.getMaxWidth() + 50);
 
         var colors = d3.scale.category10();
         var graph = this;
@@ -861,6 +861,10 @@ function Graph(id, name, nodes, links){
         }
 
         var drag = d3.behavior.drag()
+            .origin(function() {
+                var t = d3.select(this).select('circle');
+                return {x: t.attr("x"), y:t.attr("y")}
+            })
             .on("drag", function (d) {
                 var dragTarget = d3.select(this).select('circle');
                 //var new_cx = d.x, new_cy= d.y;
@@ -943,7 +947,7 @@ function Graph(id, name, nodes, links){
             .on('keyup',keyup);
 
         update();
-    }
+    };
 
     this.import = function(){
     }
