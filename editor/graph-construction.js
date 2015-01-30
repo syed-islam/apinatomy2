@@ -5,6 +5,7 @@
 var graphEditor = function () {
     var width = 6000,
         height = 6000;
+
     //Init visual parameters
     var panelWidth = 300, panelHeight = 500;
 
@@ -396,7 +397,6 @@ var graphEditor = function () {
 
 
     var launch_subgraph_ajax = function(){
-        console.log("clicked");
         var startNode = $('#startNode').val().trim();
         var endNode =  $('#endNode').val().trim();
 

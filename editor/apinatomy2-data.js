@@ -648,6 +648,26 @@ function Graph(id, name, nodes, links){
         return link;
     }
 
+    this.getMaxX = function(){
+        var maxVal=0;
+        for (var i =0; i < nodes.length; i++){
+            if (nodes[i].x > maxVal) {
+                maxVal = nodes[i].x;
+            }
+        }
+        return maxVal;
+    }
+
+    this.getMaxY = function(){
+        var maxVal=0;
+        for (var i =0; i < nodes.length; i++){
+            if (nodes[i].y > maxVal) {
+                maxVal = nodes[i].y;
+            }
+        }
+        return maxVal;
+    }
+
     this.addNode = function(point){
         var nodeId = this.getNextID();
         var node = new Node(nodeId,nodeId , point[0], point[1], null);
@@ -681,6 +701,10 @@ function Graph(id, name, nodes, links){
     }
 
     this.draw = function(svg, offset, onSelectNode, onSelectLink) {
+        //console.log((this.getMaxX() +100) + " " + (this.getMaxY() +100) );
+        svg.attr("width", (this.getMaxX() +100));
+        svg.attr("height", (this.getMaxY() +100));
+
         var colors = d3.scale.category10();
         var graph = this;
         var mousedown_link = null,
