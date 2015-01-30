@@ -1,0 +1,30 @@
+{
+ "length": "3",
+ "edges":
+ [
+  {
+    "type": "2",
+    "edgeid": "3453",
+    "from": "7914_0",
+    "to": "8787_3",
+    "description": "Hello I'm an edge",
+    "FMA": "8787"
+  },
+  {
+    "type": "2",
+    "edgeid": "5634",
+    "from": 8787_3",
+    "to": "222_1",
+    "description": "artificial artery",
+    "FMA": "222"
+  },
+  {
+    "type": "3",
+    "edgeid": "9898",
+    "from": "222_1",
+    "to": "269057_1",
+    "description": "finally there",
+    "FMA": "50801"
+  }
+ ]
+}

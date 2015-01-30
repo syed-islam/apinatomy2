@@ -99,6 +99,8 @@ text.id {
     height: 600px;
     position: absolute;
     left: 340px;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 #app-body .tree {
@@ -135,7 +137,8 @@ text.id {
 #app-body .panel .repo-pane {
     height: 50%;
     position: relative;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 #app-body .panel .repo-pane .repo {

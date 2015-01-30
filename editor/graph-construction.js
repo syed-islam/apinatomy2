@@ -3,8 +3,8 @@
  */
 // set up SVG for D3
 var graphEditor = function () {
-    var width = 950,
-        height = 600;
+    var width = 6000,
+        height = 6000;
     //Init visual parameters
     var panelWidth = 300, panelHeight = 500;
 
@@ -218,8 +218,7 @@ var graphEditor = function () {
     })
 
     d3.select("#nodeDelete").on("click", function() {
-        //alert(selectedGraph.selected_node.name);
-        if (selectedGraph.selected_node != null) {
+        if (selectedGraphNode != null) {
             selectedGraph.deleteNode(selectedGraph.selected_node);
             selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
         }
@@ -258,10 +257,6 @@ var graphEditor = function () {
             alert('The File APIs are not fully supported in this browser!');
         } else {
             var file = evt.target.files[0];
-
-
-            //////////////////
-
             var data = null;
             //var file = evt.target.files[0];
             var reader = new FileReader();
@@ -302,8 +297,6 @@ var graphEditor = function () {
                         selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
                         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                         updateGraphParameters(selectedGraph);
-
-
                     }
 
                 } else {
@@ -393,4 +386,143 @@ var graphEditor = function () {
 
         csvContent ="";
     });
+
+
+    $("#loadSubGraph").click(function(){
+
+        launch_subgraph_ajax()
+
+    });
+
+
+    var launch_subgraph_ajax = function(){
+        console.log("clicked");
+        var startNode = $('#startNode').val().trim();
+        var endNode =  $('#endNode').val().trim();
+
+        if ( startNode == "" || endNode == "" ) {
+            alert("Both start and end node have to be specified.");
+            return;
+        }
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5054/lyphpath/" +
+            "?from=" + encodeURIComponent( startNode ) +
+            "&to=" + encodeURIComponent( endNode ),
+
+            jsonp:
+                "callback",
+
+            dataType:
+                "jsonp",
+
+            success: function( response )
+            {
+                var path = response;
+
+                if ( path.hasOwnProperty( "Error" ) )
+                {
+                    if ( path.Error == "No path found" )
+                        alert( "No path found" );
+                    else
+                        alert( "Error: " + path.Error );
+
+                    return;
+                }
+
+                if ( path.length == 0 )
+                {
+                    alert( "You entered the same node twice, so the shortest path is the trivial empty path." );
+                    return;
+                }
+
+                console.log(path);
+                var resultlist = "";
+                var nodes= [];
+                var link = [];
+
+                for ( var i = 0; i < path.length; i++ )
+                {
+                    //resultlist +=
+                    //"Edge id:" + path.edges[i].id + " " +
+                    //"From:" + path.edges[i].from.id + ", " +
+                    //"to:" + path.edges[i].to.id + ", " +
+                    //"au:" + path.edges[i].au + ", " +
+                    //"fma:" + path.edges[i].fma + ", " +
+                    //"Description:" + path.edges[i].name + ", " +
+                    //"Type:" + path.edges[i].type + ", " +
+                    //"\n"
+                    //;
+                    //
+                    //console.log( resultlist + "\n (A total of " + path.length + " steps)" );
+
+                    //console.log(path);
+
+                    // Creating Nodes
+                    if (doesNodesContainNode(nodes, path.edges[i].from.id) == null) {
+                        nodes.push(new Node(nodes.length, path.edges[i].from.id, ((nodes.length +1) *50) , ((nodes.length +1) *50) , null));
+                    }
+
+                    if (doesNodesContainNode(nodes, path.edges[i].to.id) == null) {
+                        nodes.push(new Node(nodes.length, path.edges[i].to.id, ((nodes.length +1) * 50), ((nodes.length +1) * 50), null));
+                    }
+                }
+
+
+                ////Adding edges to the graph
+                for (var i = 0; i < path.length; i++) {
+                    link.push(new Link( nodes[getNodePosition(nodes, path.edges[i].from.id)],
+                                        nodes[getNodePosition(nodes, path.edges[i].to.id)],
+                                        path.edges[i].au ,
+                                        path.edges[i].type,
+                                        path.edges[i].id,
+                                        path.edges[i].name,
+                                        path.edges[i].fma
+                                    )
+                            );
+                }
+
+                //Creating sub-graph from ajax data
+                var graphAjax= new Graph("test", "test_import", nodes, link);
+
+                ////adding graph, selecting graph, drawing graphrepo and graph.
+                graphRepo.addAt(graphAjax,0);
+                selectedGraph = graphRepo.graphs[0];
+                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                updateGraphParameters(selectedGraph);
+
+
+            }
+        });
+
+
+        // function to check whether node has already been loaded
+        var doesNodesContainNode = function doesNodesContainNode (nodes, name){
+            for (i =0; i < nodes.length; i++){
+                //console.log(nodes[i].name + "==" + name);
+                if (nodes[i].name === name){
+                    return nodes[i];
+                }
+            }
+            return null;
+        };
+
+        // identify the node position in the nodes structure
+        var getNodePosition = function (nodes, name){
+            for (i =0; i < nodes.length; i++){
+                if (nodes[i].name === name){
+                    return i;
+                }
+            }
+            return null;
+        };
+
+
+
+    }
+
+
+
 }();

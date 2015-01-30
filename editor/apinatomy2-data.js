@@ -757,7 +757,7 @@ function Graph(id, name, nodes, links){
                     update();
                 })
                 .append("svg:title")
-                .text(function(d){return d.id;});
+                .text(function(d){return "Name:"+ d.name;});
             ;
 
             g.append('text')

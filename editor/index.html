@@ -70,7 +70,9 @@
                             <button class="parameterButton" id="treeGenerate">Generate</button>
                             <button class="parameterButton" id="treeRestore">Restore</button>
                             <button class="parameterButton" id="treeDelete">Delete</button>
+                            <br>
                         </div>
+                        <br>
                     </div>
                     <!--<div class="instructions">-->
                         <!--<h2>Instructions:</h2>-->
@@ -86,18 +88,35 @@
                             <!--</li>-->
                         <!--</ul>-->
                     <!--</div>-->
+                    <div id="dvImportSegments" class="fileupload">
+                        <fieldset>
+                            <legend>Graph Import/Export to disk</legend>
+                            <input type="file" value="Import" name="File Upload" id="txtFileUpload" accept=".csv" />
+                            <input id="download" type="button" value="Export">
+                        </fieldset>
+
+                    </div>
                 </div>
+
             </div>
             <div class="graph"></div>
             <div class="panel" style="left: 880px;">
-                <div id="dvImportSegments" class="fileupload ">
-                    <fieldset>
-                        <legend>Import/Export CSV File</legend>
-                        <input type="file" name="File Upload" id="txtFileUpload" accept=".csv" />
-                        <input id="download" type="button" value="Download">
-                    </fieldset>
-
+                <div>
+                    <h3>Load Subgraph (shortest path):</h3>
+                    <div>
+                        <label for="startNode" class="parameterLabel">Start node:</label>
+                        <input type="text" id="startNode" size="200" style="width: 140px" value="7101_0"; />
+                    </div>
+                    <div>
+                        <label for="endNode" class="parameterLabel">End node:</label>
+                        <input type="text" id="endNode" size="200" style="width: 140px" value="69383_0";/>
+                    </div>
+                    <div>
+                        <button class="parameterButton" id="loadSubGraph">Load subgraph</button>
+                        <br>
+                    </div>
                 </div>
+                <br>
                 <div id="graph-pane" class="repo-pane">
                     <h2>Graphs</h2>
                     <div class="repo">
