@@ -863,18 +863,25 @@ function Graph(id, name, nodes, links){
         var drag = d3.behavior.drag()
             .on("drag", function (d) {
                 var dragTarget = d3.select(this).select('circle');
+                //var new_cx = d.x, new_cy= d.y;
                 var new_cx, new_cy;
                 dragTarget.attr("cx", function () {
                         new_cx = d3.event.dx + parseInt(dragTarget.attr("cx"));
+                        //new_cx = d3.mouse(this)[0] - 681;
+                        //console.log(d3.mouse(this));
                         return new_cx;
                     })
                     .attr("cy", function () {
                         new_cy = d3.event.dy +  parseInt(dragTarget.attr("cy"));
+                        //new_cy = d3.mouse(this)[1] - 80 ;
+                        //console.log("y" +new_cy);
                         return new_cy;
                     });
                 //TODO: transform to relative svg;
                 d.x = new_cx - offset[0];
                 d.y = new_cy - offset[1];
+                //d.x = new_cx ;
+                //d.y = new_cy ;
                 update();
             });
 
