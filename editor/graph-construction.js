@@ -82,6 +82,18 @@ var graphEditor = function () {
         }
     }
 
+
+    //Todo: Add Zoom behaviour to the graph view.
+    //var zoom = d3.behavior.zoom()
+    //    .scaleExtent([1, 10])
+    //    .on("zoom", zoomed);
+    //
+    //function zoomed() {
+    //    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    //}
+
+
+
     //////////////////////////////////////////////////////////
     graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
     auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
@@ -272,7 +284,7 @@ var graphEditor = function () {
                     if (graphRepo.getIndexByID(csvData[1][0]) > -1 ){
                         alert('This entity is already loaded!');
                     } else {
-                        console.log(csvData);
+                        //console.log(csvData);
                         // It is possible to combine these two loops to make the code faster
                         for (var i = 1; i < csvData.length; i++) {
                             if (doesNodesContainNode(nodes, csvData[i][1]) == null) {
@@ -287,7 +299,7 @@ var graphEditor = function () {
                         for (var i = 1; i < csvData.length; i++) {
                             link.push(new Link(nodes[getNodePosition(nodes, csvData[i][1])], nodes[getNodePosition(nodes, csvData[i][2])],csvData[i][7],csvData[i][8],csvData[i][9],csvData[i][10],csvData[i][11]));
                         }
-                        console.log(link);
+                        //console.log(link);
 
                         //creating graph from imported data
                         var graphImported = new Graph(csvData[1][0], csvData[1][0]+"_import", nodes, link);
@@ -437,7 +449,7 @@ var graphEditor = function () {
                     return;
                 }
 
-                console.log(path);
+                //console.log(path);
                 var resultlist = "";
                 var nodes= [];
                 var link = [];
@@ -484,7 +496,7 @@ var graphEditor = function () {
                 }
 
                 //Creating sub-graph from ajax data
-                var graphAjax= new Graph("test", "test_import", nodes, link);
+                var graphAjax= new Graph("Subgraph_"+(graphRepo.graphs.length+1), startNode+" ---> "+endNode, nodes, link);
 
                 ////adding graph, selecting graph, drawing graphrepo and graph.
                 graphRepo.addAt(graphAjax,0);
