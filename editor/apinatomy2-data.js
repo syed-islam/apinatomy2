@@ -783,6 +783,9 @@ function Graph(id, name, nodes, links){
                 .classed('selected', function (d) {
                     return d === graph.selected_link;
                 })
+                .style('stroke', function (d) {
+                    return d3.rgb(colors(d.type));
+                })
                 .attr('d', function (d) {
                     var deltaX = d.target.x - d.source.x,
                         deltaY = d.target.y - d.source.y,
@@ -813,6 +816,8 @@ function Graph(id, name, nodes, links){
                     var s = "Edge ID:" + d.edgeid + "\n";
                     s += "Description:" + d.description + "\n";
                     s += "FMA:" + d.fma+ "\n";
+                    s += "AU:" + d.au+ "\n";
+                    s += "Type:" + d.type+ "\n";
                     return s;
                 })
             ;

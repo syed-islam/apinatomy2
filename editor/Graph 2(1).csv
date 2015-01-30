@@ -1,4 +1,4 @@
 entity,node1,node2,node1x,node1y,node2x,node2y,au,type,edge id,description,fma
-Graph 2,0,1,100,100,200,200,,2,3453,Hello I am an edge,8787
+Graph 2,0,1,100,100,200,200,,1,3453,Hello I am an edge,8787
 Graph 2,1,2,200,200,300,300,,2,5634,artificial artery,222
 Graph 2,2,3,300,300,400,400,,3,9898,finally there,50801
