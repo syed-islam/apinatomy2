@@ -15,7 +15,12 @@
     }
 
     .node.fixed {
-        fill: #f00;
+        stroke: red;
+        stroke-width: 1.5px;
+    }
+
+    .node.selected {
+        fill:red;
     }
 
 </style>
@@ -26,6 +31,12 @@
     var width = 960,
             height = 500;
 
+    d3.select(window)
+            .on("keydown", keydown);
+
+
+    var selectedNode = null;
+
     var force = d3.layout.force()
             .size([width, height])
             .charge(-400)
@@ -35,12 +46,34 @@
     var drag = force.drag()
             .on("dragstart", dragstart);
 
-    var svg = d3.select("body").append("svg")
+
+    var outer = d3.select("body").append("svg:svg")
             .attr("width", width)
-            .attr("height", height);
+            .attr("height", height)
+            .attr("pointer-events", "all");
+
+    var svg = outer.append("svg:g")
+            .call(d3.behavior.zoom().on("zoom", rescale))
+            .on("dblclick.zoom", null);
+//            .append('svg:g')
+//            .on("mousemove", mousemove)
+//            .on("mousedown", mousedown)
+//            .on("mouseup", mouseup);
+
 
     var link = svg.selectAll(".link"),
             node = svg.selectAll(".node");
+
+    // rescale g
+    function rescale() {
+        var trans=d3.event.translate;
+        var scale=d3.event.scale;
+
+        svg.attr("transform",
+                "translate(" + trans + ")"
+                + " scale(" + scale + ")");
+    }
+
 
     d3.json("graph.json", function(error, graph) {
         force
@@ -52,11 +85,19 @@
                 .enter().append("line")
                 .attr("class", "link");
 
-        node = node.data(graph.nodes)
-                .enter().append("circle")
+        node = node.data(graph.nodes);
+
+        node.enter().append("circle")
                 .attr("class", "node")
                 .attr("r", 12)
-                .on("dblclick", dblclick)
+                .on("dblclick", function(d){
+                    d3.select(this).classed("fixed", d.fixed = false);
+                })
+                .on("click", function(d){
+                    node.classed("selected",false);
+                    d3.select(this).classed("selected", true);
+
+                })
                 .call(drag);
     });
 
@@ -70,12 +111,46 @@
                 .attr("cy", function(d) { return d.y; });
     }
 
-    function dblclick(d) {
-        d3.select(this).classed("fixed", d.fixed = false);
-    }
 
     function dragstart(d) {
         d3.select(this).classed("fixed", d.fixed = true);
+        d3.event.sourceEvent.stopPropagation();
+    }
+
+    function mousemove() {
+//        if (!mousedown_node) return;
+//
+//        // update drag line
+//        drag_line
+//                .attr("x1", mousedown_node.x)
+//                .attr("y1", mousedown_node.y)
+//                .attr("x2", d3.svg.mouse(this)[0])
+//                .attr("y2", d3.svg.mouse(this)[1]);
+
+    }
+
+    function mousedown(){
+//        svg.call(d3.behavior.zoom().on("zoom"), rescale());
+    }
+
+    function mouseup() {}
+
+
+    function keydown() {
+
+        if (d3.event.keyCode == 65) {
+            if (!selectedNode) {
+                alert ("no node selected");
+                return;
+            } else {
+
+            }
+
+
+
+        }
+
+
     }
 
 </script>
