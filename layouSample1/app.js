@@ -29,8 +29,9 @@ var force = d3.layout.force()
     .nodes(nodes)
     .links(links)
     .size([width, height])
-    .linkDistance(150)
+    .linkDistance(100)
     .charge(-500)
+    .gravity(0.25)
     .on('tick', tick)
 
 var customDrag = force.drag()
@@ -363,7 +364,7 @@ function keydown() {
             }
             restart();
             break;
-        case 70:
+        case 70: //f
             if (selected_node) {
                 console.log(selected_node.fixed);
                 if (selected_node.fixed){
@@ -375,9 +376,46 @@ function keydown() {
             }
             restart();
             break;
+        case 65: //A
+            if (!selected_link){
+                console.log("Link not selected");
+                return;
+            } else {
+                breakLink();
+            }
+            restart();
+            break;
 
     }
 }
+
+function breakLink(){
+    console.log(selected_link.source);
+    console.log(selected_link.target);
+    console.log(links.indexOf(selected_link));
+
+    //store start and end nodes
+    var startnode = selected_link.source;
+    var lastnode = selected_link.target;
+
+
+    //remove the link between then nodes
+    links.splice(links.indexOf(selected_link),1);
+
+    //insert n nodes and edges
+    for (var i =0; i < 2; i ++){
+        nodes.push({id: ++lastNodeId, fixed: false});
+        var generatedNode = nodes[lastNodeId];
+        links.push({source: startnode, target: generatedNode, left: false, right: true})
+        startnode = generatedNode;
+    }
+    links.push({source: startnode, target: lastnode, left: false, right: true})
+
+    //removing selection of link as the link no longer exists
+    selected_link = null;
+
+}
+
 
 function keyup() {
     lastKeyDown = -1;
