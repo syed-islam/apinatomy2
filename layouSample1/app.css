@@ -41,12 +41,12 @@ circle.node {
 }
 
 circle.node.reflexive {
-    stroke: #000 !important;
+    stroke: black !important;
     stroke-width: 2.5px;
 }
 
 circle.node.fixed {
-    stroke: #000 !important;
+    stroke: black !important;
     stroke-width: 4px;
 }
 

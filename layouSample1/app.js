@@ -4,18 +4,19 @@
                      colors = d3.scale.category10();
 
 var svg = d3.select('body')
-    .append('svg')
+    .append('svg:svg')
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
+    .attr("style", "outline: thin solid red;");
 
 // set up initial nodes and links
 //  - nodes are known by 'id', not by index in array.
-//  - reflexive edges are indicated on the node (as a bold black circle).
+//  - fixed nodes (as a bold red circle).
 //  - links are always source < target; edge directions are set by 'left' and 'right'.
 var nodes = [
-        {id: 0, reflexive: false},
-        {id: 1, reflexive: true },
-        {id: 2, reflexive: false}
+        {id: 0, fixed: false},
+        {id: 1, fixed: false},
+        {id: 2, fixed: false}
     ],
     lastNodeId = 2,
     links = [
@@ -151,10 +152,10 @@ function restart() {
     // NB: the function arg is crucial here! nodes are known by id, not by index!
     circle = circle.data(nodes, function(d) { return d.id; });
 
-    // update existing nodes (reflexive & selected visual states)
+    // update existing nodes
     circle.selectAll('circle')
         .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-        .classed('reflexive', function(d) { return d.reflexive; });
+        .classed('fixed', function(d) { return d.fixed; });
 
     // add new nodes
     var g = circle.enter().append('svg:g');
@@ -164,7 +165,7 @@ function restart() {
         .attr('r', 12)
         .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
         .style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
-        .classed('reflexive', function(d) { return d.reflexive; })
+        .classed('fixed', function(d) { return d.fixed; })
         .on('mouseover', function(d) {
             if(!mousedown_node || d === mousedown_node) return;
             // enlarge target node
@@ -176,7 +177,7 @@ function restart() {
             d3.select(this).attr('transform', '');
         })
         .on('mousedown', function(d) {
-            if(d3.event.keyCode == 65) return;
+            if(d3.event.keyCode == 68) return;
 
             // select node
             mousedown_node = d;
@@ -260,11 +261,11 @@ function mousedown() {
     // because :active only works in WebKit?
     svg.classed('active', true);
 
-    if(d3.event.keyCode == 65 || mousedown_node || mousedown_link) return;
+    if(d3.event.keyCode == 68 || mousedown_node || mousedown_link) return;
 
     // insert new node at point
     var point = d3.mouse(this),
-        node = {id: ++lastNodeId, reflexive: false};
+        node = {id: ++lastNodeId, fixed: false};
     node.x = point[0];
     node.y = point[1];
     nodes.push(node);
@@ -315,7 +316,7 @@ function keydown() {
     lastKeyDown = d3.event.keyCode;
 
     // ctrl
-    if(d3.event.keyCode === 65) {
+    if(d3.event.keyCode === 68) {
         //circle.call(force.drag);
         circle.call(customDrag);
         svg.classed('ctrl', true);
@@ -353,8 +354,8 @@ function keydown() {
             break;
         case 82: // R
             if(selected_node) {
-                // toggle node reflexivity
-                selected_node.reflexive = !selected_node.reflexive;
+                // toggle node fixed
+                selected_node.fixed = !selected_node.fixed;
             } else if(selected_link) {
                 // set link direction to right only
                 selected_link.left = false;
@@ -382,7 +383,7 @@ function keyup() {
     lastKeyDown = -1;
 
     // ctrl
-    if(d3.event.keyCode === 65) {
+    if(d3.event.keyCode === 70) {
         circle
             .on('mousedown.drag', null)
             .on('touchstart.drag', null);
