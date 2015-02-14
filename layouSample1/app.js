@@ -30,8 +30,8 @@ var force = d3.layout.force()
     .links(links)
     .size([width, height])
     .linkDistance(100)
-    .charge(-500)
-    .gravity(0.25)
+    .charge(-350)
+    .gravity(0.35)
     .on('tick', tick)
 
 var customDrag = force.drag()
@@ -113,7 +113,7 @@ function tick() {
     });
 
     circle.attr('transform', function(d) {
-        return 'translate(' + d.x + ',' + d.y + ')';
+        return 'translate(' + Math.min(d.x, width -10)  + ',' + Math.max(d.y, 0+10) + ')';
     });
 }
 
@@ -390,6 +390,7 @@ function keydown() {
 }
 
 function breakLink(){
+
     console.log(selected_link.source);
     console.log(selected_link.target);
     console.log(links.indexOf(selected_link));

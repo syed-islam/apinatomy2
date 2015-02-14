@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/layouSample1/app.js" afterPath="$PROJECT_DIR$/layouSample1/app.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/layouSample1/index.html" afterPath="$PROJECT_DIR$/layouSample1/index.html" />
     </list>
     <ignored path="apinatomy2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,8 +30,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/layouSample1/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-12.5" vertical-offset="0" max-vertical-offset="495">
-              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+            <state vertical-scroll-proportion="-12.5" vertical-offset="0" max-vertical-offset="555">
+              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -49,8 +50,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/layouSample1/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7745665" vertical-offset="5510" max-vertical-offset="6675">
-              <caret line="412" column="0" selection-start-line="412" selection-start-column="0" selection-end-line="412" selection-end-column="0" />
+            <state vertical-scroll-proportion="-1.1098266" vertical-offset="1455" max-vertical-offset="6690">
+              <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -87,8 +88,8 @@
         <option value="$PROJECT_DIR$/editor/graph1.json" />
         <option value="$PROJECT_DIR$/GraphLayout3.html" />
         <option value="$PROJECT_DIR$/editor/force_view.js" />
-        <option value="$PROJECT_DIR$/layouSample1/index.html" />
         <option value="$PROJECT_DIR$/layouSample1/app.css" />
+        <option value="$PROJECT_DIR$/layouSample1/index.html" />
         <option value="$PROJECT_DIR$/layouSample1/app.js" />
       </list>
     </option>
@@ -718,8 +719,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/layouSample1/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.5" vertical-offset="0" max-vertical-offset="495">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        <state vertical-scroll-proportion="-12.5" vertical-offset="0" max-vertical-offset="555">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -734,8 +735,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/layouSample1/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7745665" vertical-offset="5510" max-vertical-offset="6675">
-          <caret line="412" column="0" selection-start-line="412" selection-start-column="0" selection-end-line="412" selection-end-column="0" />
+        <state vertical-scroll-proportion="-1.1098266" vertical-offset="1455" max-vertical-offset="6690">
+          <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
           <folding />
         </state>
       </provider>
