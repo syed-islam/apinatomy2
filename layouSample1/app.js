@@ -3,7 +3,7 @@
                      height = 500,
                      colors = d3.scale.category10();
 
-var svg = d3.select('body')
+var svg = d3.select('#graph')
     .append('svg:svg')
     .attr('width', width)
     .attr('height', height)
@@ -35,7 +35,12 @@ var force = d3.layout.force()
     .on('tick', tick)
 
 var customDrag = force.drag()
-    .on("drag",dragmove);
+    .on("drag",dragmove)
+    .on("dragend",dragended);
+
+function dragended(d){
+    d.fixed = true;
+}
 
 function dragmove(d){
     //console.log(d.px);
@@ -113,7 +118,9 @@ function tick() {
     });
 
     circle.attr('transform', function(d) {
-        return 'translate(' + Math.min(d.x, width -10)  + ',' + Math.max(d.y, 0+10) + ')';
+        //return 'translate(' + Math.min(d.x, width -10)  + ',' + Math.max(d.y, 0+10) + ')';
+        return 'translate(' + Math.max(10, Math.min(width - 10, d.x))  + ',' + Math.max(10, Math.min(height - 10, d.y)) + ')';
+
     });
 }
 
@@ -139,8 +146,13 @@ function restart() {
 
             // select link
             mousedown_link = d;
-            if(mousedown_link === selected_link) selected_link = null;
-            else selected_link = mousedown_link;
+            if(mousedown_link === selected_link) {
+                selected_link = null;
+                $("#ins").text("Deselected Link:" + d.id);
+            } else {
+                selected_link = mousedown_link;
+                $("#ins").text("Selected Link: [" + d.source.id +"," +d.target.id + "]");
+            }
             selected_node = null;
             restart();
         });
@@ -182,8 +194,14 @@ function restart() {
 
             // select node
             mousedown_node = d;
-            if(mousedown_node === selected_node) selected_node = null;
-            else selected_node = mousedown_node;
+            if(mousedown_node === selected_node){
+                selected_node = null;
+                $("#ins").text("Deselected node:" + d.id);
+            }
+            else {
+                selected_node = mousedown_node;
+                $("#ins").text("Selected node:" + d.id);
+            }
             selected_link = null;
 
             // reposition drag line
@@ -414,6 +432,8 @@ function breakLink(){
 
     //removing selection of link as the link no longer exists
     selected_link = null;
+
+
 
 }
 
