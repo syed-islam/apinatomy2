@@ -29,9 +29,9 @@ var force = d3.layout.force()
     .nodes(nodes)
     .links(links)
     .size([width, height])
-    .linkDistance(100)
-    .charge(-350)
-    .gravity(0.35)
+    .linkDistance(55)
+    .charge(-300)
+    //.gravity(-0.1)
     .on('tick', tick)
 
 var customDrag = force.drag()
@@ -353,6 +353,7 @@ function keydown() {
             }
             selected_link = null;
             selected_node = null;
+            //lastNodeId--;
             restart();
             break;
         case 66: // B
@@ -422,9 +423,9 @@ function breakLink(){
     links.splice(links.indexOf(selected_link),1);
 
     //insert n nodes and edges
-    for (var i =0; i < 2; i ++){
-        nodes.push({id: ++lastNodeId, fixed: false});
-        var generatedNode = nodes[lastNodeId];
+    for (var i =0; i < 3; i ++){
+        var generatedNode ={id: ++lastNodeId, fixed: false, x:50, y:50, weight:1 };
+        nodes.push(generatedNode);
         links.push({source: startnode, target: generatedNode, left: false, right: true})
         startnode = generatedNode;
     }
