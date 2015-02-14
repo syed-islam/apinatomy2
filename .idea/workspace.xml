@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/layouSample1/app.js" afterPath="$PROJECT_DIR$/layouSample1/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/layouSample1/index.html" afterPath="$PROJECT_DIR$/layouSample1/index.html" />
     </list>
     <ignored path="apinatomy2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,7 +39,7 @@
       <file leaf-file-name="app.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/layouSample1/app.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-5.769231" vertical-offset="0" max-vertical-offset="1005">
+            <state vertical-scroll-proportion="-0.3846154" vertical-offset="140" max-vertical-offset="1005">
               <caret line="10" column="26" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="26" />
               <folding />
             </state>
@@ -50,8 +49,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/layouSample1/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.1098266" vertical-offset="1455" max-vertical-offset="6690">
-              <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+            <state vertical-scroll-proportion="0.61849713" vertical-offset="5825" max-vertical-offset="6690">
+              <caret line="424" column="30" selection-start-line="424" selection-start-column="30" selection-end-line="424" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -727,7 +726,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/layouSample1/app.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.769231" vertical-offset="0" max-vertical-offset="1005">
+        <state vertical-scroll-proportion="-0.3846154" vertical-offset="140" max-vertical-offset="1005">
           <caret line="10" column="26" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="26" />
           <folding />
         </state>
@@ -735,8 +734,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/layouSample1/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.1098266" vertical-offset="1455" max-vertical-offset="6690">
-          <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.61849713" vertical-offset="5825" max-vertical-offset="6690">
+          <caret line="424" column="30" selection-start-line="424" selection-start-column="30" selection-end-line="424" selection-end-column="30" />
           <folding />
         </state>
       </provider>

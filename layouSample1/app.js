@@ -422,7 +422,7 @@ function keyup() {
     lastKeyDown = -1;
 
     // ctrl
-    if(d3.event.keyCode === 70) {
+    if(d3.event.keyCode === 68) {
         circle
             .on('mousedown.drag', null)
             .on('touchstart.drag', null);
