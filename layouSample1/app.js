@@ -92,6 +92,8 @@ var selected_node = null,
     mousedown_link = null,
     mousedown_node = null,
     mouseup_node = null;
+    multiple_selected_node_1 = null;
+    multiple_selected_node_2 = null;
 
 function resetMouseVars() {
     mousedown_node = null;
@@ -403,6 +405,36 @@ function keydown() {
                 breakLink();
             }
             restart();
+            break;
+        case 67: //C
+
+            if (!selected_node){
+                console.log("Node not selected");
+                return;
+            } else {
+                if (!multiple_selected_node_1){
+                    multiple_selected_node_1 = selected_node;
+                    console.log(multiple_selected_node_1);
+                    return;
+                } else {
+                    multiple_selected_node_2 = selected_node;
+                    console.log(multiple_selected_node_2)
+                }
+
+                if ( multiple_selected_node_1 == multiple_selected_node_2){
+                    console.log("same node selected");
+                    multiple_selected_node_1 = null;
+                    multiple_selected_node_2 = null;
+                } else {
+                    console.log("Find path")
+
+
+                    //reset
+                    multiple_selected_node_1 = null;
+                    multiple_selected_node_2 = null;
+                }
+
+            }
             break;
 
     }
