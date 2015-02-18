@@ -189,6 +189,10 @@ var materialEditor = function () {
         }
         //materialRepo.addAt(newMaterial, materialRepo.materials.length - 1);
         materialRepo.addAt(newMaterial, 0);
+        //console.log(materialRepo.materials);
+        //console.log(materialRepo.materials[0]);
+        //console.log(materialRepo.materials[1]);
+
         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
     })
 
@@ -287,7 +291,11 @@ var materialEditor = function () {
             if (confirm("Delete sub-material " + child.id + " from material " + material.id + "?")){
                 var index = material.getChildIndex(child.id);
                 if (index > -1){
+                    //console.log(materialRepo.materials[0]);
+                    //console.log(materialRepo.materials[1]);
                     material.removeChildAt(index);
+                    //console.log(materialRepo.materials[0]);
+                    //console.log(materialRepo.materials[1]);
                     syncSelectedMaterial();
                 } else {
                     alert("Failed to delete the sub-material: perhaps, it is not the direct child of the selected material!");
@@ -353,6 +361,8 @@ var materialEditor = function () {
 
     d3.select("#childDelete").on("click", function() {
         if (selectedChild != null){
+            //console.log(selectedMaterial);
+            //console.log(selectedChild);
             deleteChild(selectedMaterial, selectedChild);
         }
     })
@@ -425,7 +435,7 @@ var materialEditor = function () {
 
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "mix"){
-                        console.log(data[i]);
+                        //console.log(data[i]);
                         for (var j = 0; j < data[i].layers.length;j++){
                             composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
                         }

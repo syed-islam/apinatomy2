@@ -16,7 +16,7 @@ function Material(id, name, colour, type, children, au) {
     this.au = au;
 
     this.clone = function () {
-        var newMaterial = new Material(this.id, this.name, this.colour, this.type, this.children, this.au);
+        var newMaterial = new Material(this.id, this.name, this.colour, this.type, this.children.slice(0), this.au);
         return newMaterial;
     }
 
@@ -157,10 +157,12 @@ function Material(id, name, colour, type, children, au) {
     }
 
     this.removeChildAt = function(index){
+        //console.log(children);
         if (children != null)
             if (index > -1) {
                 children.splice(index, 1);
             }
+        //console.log(this.id);
     }
 
     this.replaceChildAt = function(child, index){
