@@ -378,4 +378,99 @@ var materialEditor = function () {
         mainVP.widthScale = vpThickness.value;
         syncSelectedMaterial();
     });
+
+
+
+    ///////////////////////////////////
+// Loading Lyph Data from Server
+///////////////////////////////////
+
+    var test = function load_all_materials(){
+        console.log("Loading existing lyphs")
+        $.ajax
+        ({
+            url:
+                "http://open-physiology.org:5054/all_lyphs/",
+            jsonp:
+                "callback",
+            dataType:
+                "jsonp",
+            success: function( response )
+            {
+                var data = response;
+
+                if ( data.hasOwnProperty( "Error" ) )
+                {
+                    if ( path.Error == "No path found" )
+                        alert( "No path found" );
+                    else
+                        alert( "Error: " + path.Error );
+
+                    return;
+                }
+
+                console.log("Lyph Loaded");
+
+
+                //Todo: We should only make a single pass through the dataset.
+                //load all basic types
+                for (var i = 0; i < data.length; i++) {
+                        if (data[i].type === "basic"){
+                                materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                        }
+                }
+
+                var composite_material_content = [];
+                //load all mix types
+
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "mix"){
+                        console.log(data[i]);
+                        for (var j = 0; j < data[i].layers.length;j++){
+                            composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
+                        }
+                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "composite", composite_material_content, null), 0);
+
+                    }
+                }
+                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+
+            //    for (var i = 0; i < data.length; i++){
+            //
+            //
+            //        //identify lyph type
+            //        if (data[i].type === "basic"){// basic
+            //            console.log("basic");
+            //            //console.log(materialRepo);
+            //            materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+            //            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+            //            //console.log(materialRepo);
+            //        } else if (data[i].type === "mix"){//mix
+            //            var m1 = new Material("m:002", "Composite material 2", "#808080", "composite", materialRepo.materials.slice(0, materialRepo.materials.length / 2), null);
+            //            materialRepo.addAt(m1, 0);
+            //            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+            //        } else if (data[i].type === "shell"){//shell
+            //            console.log("shell");
+            //        } else {
+            //            console.log("unknown type encountered");
+            //            return;
+            //        }
+            //
+            //    }
+            }
+
+        });
+
+
+    }();
+
+
+
+
 }();
+
+
+
+
+
+

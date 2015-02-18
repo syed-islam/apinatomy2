@@ -401,6 +401,10 @@ var graphEditor = function () {
     });
 
 
+    //////////////////////////////////////////////////////////////////////////////////
+    ///     Load Shortest Path Graph
+    //////////////////////////////////////////////////////////////////////////////////
+
     $("#loadSubGraph").click(function(){
 
         launch_subgraph_ajax()
@@ -534,6 +538,7 @@ var graphEditor = function () {
 
 
     }
+
 
 
 

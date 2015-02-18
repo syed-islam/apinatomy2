@@ -3,7 +3,9 @@
  */
 //Repository of materials
 var materialRepo = new MaterialRepo(
-        [new Material("#CHEBI_35441", "antiinfective drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        [
+        new Material("Syed_1", "Syed", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        new Material("#CHEBI_35441", "antiinfective drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_35442", "antiparasitic drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_35440", "(1R,2S)-3-phenylcyclohexa-3,5-diene-1,2-diol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_35445", "3,3',5,5'-tetrachlorobiphenyl", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
@@ -52,7 +54,7 @@ var materialRepo = new MaterialRepo(
         new Material("#CHEBI_19813", "24-methylenecycloartenol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_51813", "ATTO 520-3", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         new Material("#CHEBI_35439", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
-            new Material("#CHEBI_35439a", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+
             new Material("#CHEBI_35439b", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
             new Material("#CHEBI_35439c", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
             new Material("#CHEBI_35439d", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
