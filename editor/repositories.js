@@ -4,11 +4,11 @@
 //Repository of materials
 var materialRepo = new MaterialRepo(
         [
-        new Material("Syed_1", "Syed", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
-        new Material("#CHEBI_35441", "antiinfective drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
-        new Material("#CHEBI_35442", "antiparasitic drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
-        new Material("#CHEBI_35440", "(1R,2S)-3-phenylcyclohexa-3,5-diene-1,2-diol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
-        new Material("#CHEBI_35445", "3,3',5,5'-tetrachlorobiphenyl", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        //new Material("Syed_1", "Syed", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        //new Material("#CHEBI_35441", "antiinfective drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        //new Material("#CHEBI_35442", "antiparasitic drug", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        //new Material("#CHEBI_35440", "(1R,2S)-3-phenylcyclohexa-3,5-diene-1,2-diol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
+        //new Material("#CHEBI_35445", "3,3',5,5'-tetrachlorobiphenyl", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_51820", "ATTO 590", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_21695", "N-cyclopropylammelide", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_35446", "chlorobiphenyl", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
@@ -79,16 +79,16 @@ var materialRepo = new MaterialRepo(
 
 //Sample AUs
 var layers = [
-    new Layer("l:001", "Chyme/Chyle", 1, materialRepo.materials[0]),
-    new Layer("l:002", "Mucosa", 1, materialRepo.materials[1]),
-    new Layer("l:003", "Submucosa", 1, materialRepo.materials[2]),
+    //new Layer("l:001", "Chyme/Chyle", 1, materialRepo.materials[0]),
+    //new Layer("l:002", "Mucosa", 1, materialRepo.materials[1]),
+    //new Layer("l:003", "Submucosa", 1, materialRepo.materials[2]),
     //new Layer("l:004", "Internal Muscle", 1, materialRepo.materials[3]),
     //new Layer("l:005", "External Muscle", 1, materialRepo.materials[4]),
     //new Layer("l:006", "Serosa", 1, materialRepo.materials[5])
 ];
 
 //1
-var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers.slice(0,3), 1);
+//var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers.slice(0,3), 1);
 ////2
 //var layers1 = layers.slice(0);
 //var au1 = new AsymmetricUnit("au:002", "Sample AU-1", layers1, 1);
@@ -104,7 +104,7 @@ var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers.slice(0,3
 
 //Repository of AUs
 //var auRepo = new AsymmetricUnitRepo([au, au1, au2, au3]);
-var auRepo = new AsymmetricUnitRepo([au]);
+var auRepo = null //new AsymmetricUnitRepo([au]);
 
 
 //console.log(auRepo);

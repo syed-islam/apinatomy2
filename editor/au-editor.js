@@ -61,23 +61,23 @@ var auEditor = function () {
     ///////////////////////////////////////////////////////
     //Demo
     ///////////////////////////////////////////////////////
-    //Init visual parameters
+    ////Init visual parameters
     var mainVP = new VisualParameters("horizontal", 250, 50, width, height, 10);
     var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
     var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
-    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
-    loadMaterialRepoToDatalist(materialRepo);
-
-    selectedAU = auRepo.auSet[0];
-    if (selectedAU.layers != null && selectedAU.layers.length > 0)
-        selectedLayer = selectedAU.layers[0];
-    if (materialRepo.materials != null && materialRepo.materials.length > 0)
-        selectedMaterial = materialRepo.materials[0];
-    syncSelectedAU();
-    updateLayerParameters(selectedLayer);
-    window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+    //loadMaterialRepoToDatalist(materialRepo);
+    //
+    //selectedAU = auRepo.auSet[0];
+    //if (selectedAU.layers != null && selectedAU.layers.length > 0)
+    //    selectedLayer = selectedAU.layers[0];
+    //if (materialRepo.materials != null && materialRepo.materials.length > 0)
+    //    selectedMaterial = materialRepo.materials[0];
+    //syncSelectedAU();
+    //updateLayerParameters(selectedLayer);
+    //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
     ////////////////////////////////////////////////////////////
     function syncSelectedAU(){
@@ -328,6 +328,7 @@ var auEditor = function () {
 ///////////////////////////////////
 
     var load_all_materials = function (){
+
         console.log("Loading existing lyphs")
         $.ajax
         ({
@@ -340,6 +341,7 @@ var auEditor = function () {
             success: function( response )
             {
                 var data = response;
+
 
                 if ( data.hasOwnProperty( "Error" ) )
                 {
@@ -400,12 +402,41 @@ var auEditor = function () {
 
 
                         //console.log(toto);
-                        auRepo.addAt(toto,0);
+                        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([toto]);
+                        else auRepo.addAt(toto,0);
                         //console.log(auRepo.auSet[0]);
 
                         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                     }
                 }
+
+
+
+
+
+
+
+
+                ////Init visual parameters
+                //var mainVP = new VisualParameters("horizontal", 250, 50, width, height, 10);
+                //var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
+                //var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
+
+                auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                loadMaterialRepoToDatalist(materialRepo);
+
+                selectedAU = auRepo.auSet[0];
+                if (selectedAU.layers != null && selectedAU.layers.length > 0)
+                    selectedLayer = selectedAU.layers[0];
+                if (materialRepo.materials != null && materialRepo.materials.length > 0)
+                    selectedMaterial = materialRepo.materials[0];
+                syncSelectedAU();
+                updateLayerParameters(selectedLayer);
+                window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+
+
+
             }
         });
     };
@@ -453,8 +484,6 @@ var auEditor = function () {
 
 
     });
-
-
 
 
     load_all_materials();

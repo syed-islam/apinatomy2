@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/apinatomy2-data.js" afterPath="$PROJECT_DIR$/editor/apinatomy2-data.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/asymmetric-unit.html" afterPath="$PROJECT_DIR$/editor/asymmetric-unit.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/au-editor.js" afterPath="$PROJECT_DIR$/editor/au-editor.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/material-editor.js" afterPath="$PROJECT_DIR$/editor/material-editor.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/repositories.js" afterPath="$PROJECT_DIR$/editor/repositories.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -34,8 +32,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="20.375" vertical-offset="2259" max-vertical-offset="2259">
-              <caret line="118" column="20" selection-start-line="103" selection-start-column="16" selection-end-line="118" selection-end-column="20" />
+            <state vertical-scroll-proportion="-19.25" vertical-offset="1368" max-vertical-offset="2235">
+              <caret line="122" column="13" selection-start-line="122" selection-start-column="13" selection-end-line="122" selection-end-column="13" />
               <folding>
                 <element signature="n#style#0;n#input#0;n#div#0;n#div#8;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
               </folding>
@@ -46,8 +44,8 @@
       <file leaf-file-name="repositories.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/editor/repositories.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.45454547" vertical-offset="840" max-vertical-offset="2400">
-              <caret line="83" column="41" selection-start-line="83" selection-start-column="41" selection-end-line="83" selection-end-column="41" />
+            <state vertical-scroll-proportion="0.6734007" vertical-offset="285" max-vertical-offset="2400">
+              <caret line="59" column="113" selection-start-line="59" selection-start-column="113" selection-end-line="59" selection-end-column="113" />
               <folding />
             </state>
           </provider>
@@ -56,8 +54,8 @@
       <file leaf-file-name="au-editor.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/au-editor.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.6111112" vertical-offset="5598" max-vertical-offset="7035">
-              <caret line="379" column="85" selection-start-line="379" selection-start-column="85" selection-end-line="379" selection-end-column="85" />
+            <state vertical-scroll-proportion="-22.038462" vertical-offset="5517" max-vertical-offset="7470">
+              <caret line="406" column="55" selection-start-line="406" selection-start-column="55" selection-end-line="406" selection-end-column="55" />
               <folding />
             </state>
           </provider>
@@ -79,10 +77,10 @@
       <file leaf-file-name="apinatomy2-data.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/apinatomy2-data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.09091" vertical-offset="42" max-vertical-offset="10140">
-              <caret line="245" column="1" selection-start-line="245" selection-start-column="1" selection-end-line="245" selection-end-column="1" />
+            <state vertical-scroll-proportion="-3.409091" vertical-offset="0" max-vertical-offset="12510">
+              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding>
-                <element signature="n#!!block;n#Material#0" expanded="false" />
+                <element signature="n#!!block;n#Layer#0" expanded="false" />
                 <element signature="n#!!block;n#AsymmetricUnit#0" expanded="false" />
                 <element signature="n#!!block;n#VisualParameters#0" expanded="false" />
                 <element signature="n#!!block;n#MaterialRepo#0" expanded="false" />
@@ -98,8 +96,8 @@
       <file leaf-file-name="material-editor.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/material-editor.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-24.571428" vertical-offset="4022" max-vertical-offset="9270">
-              <caret line="314" column="0" selection-start-line="275" selection-start-column="4" selection-end-line="314" selection-end-column="0" />
+            <state vertical-scroll-proportion="-10.107142" vertical-offset="4022" max-vertical-offset="9270">
+              <caret line="287" column="27" selection-start-line="275" selection-start-column="4" selection-end-line="314" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -159,8 +157,8 @@
         <option value="$PROJECT_DIR$/editor/material-editor.js" />
         <option value="$PROJECT_DIR$/editor/asymmetric-unit.html" />
         <option value="$PROJECT_DIR$/editor/apinatomy2-data.js" />
-        <option value="$PROJECT_DIR$/editor/repositories.js" />
         <option value="$PROJECT_DIR$/editor/au-editor.js" />
+        <option value="$PROJECT_DIR$/editor/repositories.js" />
       </list>
     </option>
   </component>
@@ -694,28 +692,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/editor/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="20.375" vertical-offset="2259" max-vertical-offset="2259">
-          <caret line="118" column="20" selection-start-line="103" selection-start-column="16" selection-end-line="118" selection-end-column="20" />
-          <folding>
-            <element signature="n#style#0;n#input#0;n#div#0;n#div#8;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.7762477" vertical-offset="7684" max-vertical-offset="8265">
           <caret line="366" column="58" selection-start-line="366" selection-start-column="58" selection-end-line="366" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/editor/material-editor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-24.571428" vertical-offset="4022" max-vertical-offset="9270">
-          <caret line="314" column="0" selection-start-line="275" selection-start-column="4" selection-end-line="314" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -747,12 +727,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/editor/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-19.25" vertical-offset="1368" max-vertical-offset="2235">
+          <caret line="122" column="13" selection-start-line="122" selection-start-column="13" selection-end-line="122" selection-end-column="13" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#div#0;n#div#8;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/editor/apinatomy2-data.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.09091" vertical-offset="42" max-vertical-offset="10140">
-          <caret line="245" column="1" selection-start-line="245" selection-start-column="1" selection-end-line="245" selection-end-column="1" />
+        <state vertical-scroll-proportion="-3.409091" vertical-offset="0" max-vertical-offset="12510">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding>
-            <element signature="n#!!block;n#Material#0" expanded="false" />
+            <element signature="n#!!block;n#Layer#0" expanded="false" />
             <element signature="n#!!block;n#AsymmetricUnit#0" expanded="false" />
             <element signature="n#!!block;n#VisualParameters#0" expanded="false" />
             <element signature="n#!!block;n#MaterialRepo#0" expanded="false" />
@@ -766,16 +756,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/au-editor.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.6111112" vertical-offset="5598" max-vertical-offset="7035">
-          <caret line="379" column="85" selection-start-line="379" selection-start-column="85" selection-end-line="379" selection-end-column="85" />
+        <state vertical-scroll-proportion="-22.038462" vertical-offset="5517" max-vertical-offset="7470">
+          <caret line="406" column="55" selection-start-line="406" selection-start-column="55" selection-end-line="406" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/editor/material-editor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.107142" vertical-offset="4022" max-vertical-offset="9270">
+          <caret line="287" column="27" selection-start-line="275" selection-start-column="4" selection-end-line="314" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/repositories.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45454547" vertical-offset="840" max-vertical-offset="2400">
-          <caret line="83" column="41" selection-start-line="83" selection-start-column="41" selection-end-line="83" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.6734007" vertical-offset="285" max-vertical-offset="2400">
+          <caret line="59" column="113" selection-start-line="59" selection-start-column="113" selection-end-line="59" selection-end-column="113" />
           <folding />
         </state>
       </provider>

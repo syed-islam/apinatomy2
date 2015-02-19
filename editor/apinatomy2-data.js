@@ -8,6 +8,7 @@
 
 //create material
 function Material(id, name, colour, type, children, au) {
+
     this.id = id;
     this.name = name;
     this.colour = colour;
