@@ -169,19 +169,71 @@ function Material(id, name, colour, type, children, au) {
         if (children != null)
             children.splice(index, 1, child);
     }
+
+
+    this.saveMaterialToDatabase = function() {
+        var query;
+        var xmlhttp;
+        query = 'http://open-physiology.org:5054//makelyph/?name=' + encodeURIComponent(this.name) + '&type=' + encodeURIComponent("mix");
+        //query += '&layer'+i+'='+encodeURIComponent(layer_ids[i]);
+        console.log(query);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 //create layer
-function Layer(id, name, thickness, material){
+function Layer(id, name, thickness, material) {
     this.id = id;
     this.name = name;
     this.thickness = thickness;
     this.material = material;
 
-    this.clone = function(){
+
+
+    //function ajax_create_layer () {
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5054/makelayer/" +
+            "?material=" + this.material.id +
+            "&thickness=" + this.thickness +
+            "&color=" + this.material.color ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                   console.log(response)
+                    return;
+                }
+
+                console.log(response);
+
+            }
+        });
+
+    this.clone = function () {
         var newLayer = new Layer(this.id, this.name, this.thickness, this.material);
         return newLayer;
     }
+
+    //}
 }
 
 //create Asymmetric Unit
@@ -356,7 +408,7 @@ function AsymmetricUnitRepo(auSet){
                 .attr("width", function (d) {return /*auRepo.auSet[j].length * */ vp.lengthScale;})
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})
-                .attr("y", function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;});
+                .attr("y", function (d, i) { prev += d.thickness * vp.widthScale; return 10 + prev - d.thickness * vp.widthScale;});
         }
         svg.selectAll("auRepo")
             .data(auRepo.auSet)
@@ -365,15 +417,15 @@ function AsymmetricUnitRepo(auSet){
             .style("stroke-width", 0.5)
             .style("stroke", "black")
             .attr("width", vp.width - maxLength - 2 * delta)
-            .attr("height", function(d){return d.getTotalWidth(vp.widthScale);})
+            .attr("height", function(d){return (d.getTotalWidth(vp.widthScale) > 10) ? d.getTotalWidth(vp.widthScale) : 15 ;})
             .attr("x", maxLength + 2 * delta)
-            .attr("y", function(d, i){return i * (maxWidth + delta);})
+            .attr("y", function(d, i){return 10 + (i * (maxWidth + delta));})
             .on("click", onClick);
         svg.selectAll("auRepo")
             .data(auRepo.auSet)
             .enter().append("text")
             .attr("x", maxLength + 2 * delta + 5)
-            .attr("y", function(d, i){return i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2;})
+            .attr("y", function(d, i){return 15+ (i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2);})
             .text(function(d){return d.id + " - " + d.name;})
     }
 }
@@ -857,9 +909,52 @@ function Graph(id, name, nodes, links){
                 })
                 .attr('class', 'au')
                 .text(function (d) {
+                    //return "test";
                     if (d.au)
                        return d.au.id;
                 });
+
+            var jsonRectangles = [
+                { "x_axis": 10, "y_axis": 10, "height": 20, "width":20, "color" : "green" },
+                { "x_axis": 50, "y_axis": 50, "height": 20, "width":20, "color" : "green" }
+            ]
+
+
+
+
+
+
+            //try 1
+            path.enter().append("rect")
+                .attr('x', function (d) {
+                    return (d.target.x + d.source.x)/2;
+                })
+                .attr('y', function (d) {
+                    return (d.target.y + d.source.y)/2;
+                })
+              .attr("height", function (d,i) { return jsonRectangles[i].height; })
+              .attr("width", function (d,i) { return jsonRectangles[i].width; })
+              .style("fill", function(d) { return "black" });
+
+
+
+            //try 2
+            //var svgContainer = path.enter().append("svg")
+            //var rectangles = svgContainer.selectAll("rect")
+            //                             .data(jsonRectangles)
+            //                             .enter()
+            //                             .append("rect");
+            //var rectangleAttributes = rectangles
+            //                          .attr("x", function (d) { return svg.selectAll("path"); })
+            //                          .attr("y", function (d) { return d.y_axis; })
+            //                          .attr("height", function (d) { return d.height; })
+            //                          .attr("width", function (d) { return d.width; })
+            //                          .style("fill", function(d) { return d.color; });
+
+
+
+
+
         }
 
         var drag = d3.behavior.drag()

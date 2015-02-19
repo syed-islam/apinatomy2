@@ -106,6 +106,9 @@ var materialEditor = function () {
         d3.select("#materialType").property("value", material.type);
     }
 
+
+
+
     d3.select("#materialType").on("input", function () {
         if (materialType == "AU"){
             if (selectedMaterial.au != null)
@@ -165,6 +168,11 @@ var materialEditor = function () {
     ////////////////////////////////
 
     d3.select("#materialClone").on("click", function () {
+        var current_MaterialID = $('#materialID').val();
+        $('#materialID').val(current_MaterialID + "_cloned");
+        //d3.select('#materialClone').attr("disabled", "true");
+        d3.select('#materialSave').attr("disabled", null);
+
         if (materialRepo.getIndexByID(materialID.value) > -1) {
             alert("Cannot create a new material: another material with such ID exists!");
             return;
@@ -194,6 +202,14 @@ var materialEditor = function () {
         //console.log(materialRepo.materials[1]);
 
         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+
+
+
+        newMaterial.saveMaterialToDatabase();
+
+
+
+
     })
 
     d3.select("#materialUpdate").on("click", function () {
@@ -250,6 +266,46 @@ var materialEditor = function () {
         }
     })
 
+    d3.select("#createBasicLyph").on("click", function () {
+        console.log("Creating basic lyph");
+        console.log(fmaID.value);
+
+        //send request to create lyph
+
+        $.ajax
+        ({
+            url:
+                "http://open-physiology.org:5054/lyph/"+
+                encodeURIComponent(fmaID.value),
+            jsonp:
+                "callback",
+            dataType:
+                "jsonp",
+            success: function( response )
+            {
+                console.log(this.url);
+                var data = response;
+
+                if ( data.hasOwnProperty( "Error" ) )
+                {
+                  console.log(data.Error);
+                    return;
+                }
+
+                console.log(data);
+                if (materialRepo.getIndexByID(data.id)== -1 )
+                    load_all_materials();
+                else
+                    console.log("Basic Material already exisits");
+
+            }
+
+        });
+
+        //
+
+    })
+
     //////////////////////////////////////
     //Sub-material parameters
     /////////////////////////////////////
@@ -288,6 +344,7 @@ var materialEditor = function () {
 
     function deleteChild(material, child){
         if (material != null && child != null){
+            console.log("Gets here");
             if (confirm("Delete sub-material " + child.id + " from material " + material.id + "?")){
                 var index = material.getChildIndex(child.id);
                 if (index > -1){
@@ -391,11 +448,11 @@ var materialEditor = function () {
 
 
 
-    ///////////////////////////////////
+///////////////////////////////////
 // Loading Lyph Data from Server
 ///////////////////////////////////
 
-    var test = function load_all_materials(){
+    var load_all_materials = function (){
         console.log("Loading existing lyphs")
         $.ajax
         ({
@@ -430,50 +487,59 @@ var materialEditor = function () {
                         }
                 }
 
-                var composite_material_content = [];
+
                 //load all mix types
 
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "mix"){
                         //console.log(data[i]);
+                        var composite_material_content = [];
                         for (var j = 0; j < data[i].layers.length;j++){
                             composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
                         }
                         materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "composite", composite_material_content, null), 0);
-
                     }
                 }
                 materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
 
-            //    for (var i = 0; i < data.length; i++){
-            //
-            //
-            //        //identify lyph type
-            //        if (data[i].type === "basic"){// basic
-            //            console.log("basic");
-            //            //console.log(materialRepo);
-            //            materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
-            //            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
-            //            //console.log(materialRepo);
-            //        } else if (data[i].type === "mix"){//mix
-            //            var m1 = new Material("m:002", "Composite material 2", "#808080", "composite", materialRepo.materials.slice(0, materialRepo.materials.length / 2), null);
-            //            materialRepo.addAt(m1, 0);
-            //            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
-            //        } else if (data[i].type === "shell"){//shell
-            //            console.log("shell");
-            //        } else {
-            //            console.log("unknown type encountered");
-            //            return;
-            //        }
-            //
-            //    }
+
+                //load all shell types
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "shell"){
+                        console.log(data[i]);
+                        // Create appropriate layers for the lyph
+
+                        var layers_content= [];
+                        for (var j = 0; j < data[i].layers.length;j++){
+                            console.log(data[i].layers[j]);
+                            layers_content.push(new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   ));
+                        }
+                        console.log(layers_content);
+                        //create AU with the layers
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1);
+
+                        //console.log(toto);
+                        auRepo.addAt(toto,0);
+                        //console.log(auRepo.auSet[0]);
+
+                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    }
+                }
+
+                console.log(auRepo);
+
+
+
+
             }
 
         });
 
 
-    }();
+    };
 
+
+    load_all_materials();
 
 
 
