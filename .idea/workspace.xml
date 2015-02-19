@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/apinatomy2-data.js" afterPath="$PROJECT_DIR$/editor/apinatomy2-data.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/au-editor.js" afterPath="$PROJECT_DIR$/editor/au-editor.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/repositories.js" afterPath="$PROJECT_DIR$/editor/repositories.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="apinatomy2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,21 +38,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="repositories.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="repositories.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/repositories.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6734007" vertical-offset="285" max-vertical-offset="2400">
+            <state vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="2400">
               <caret line="59" column="113" selection-start-line="59" selection-start-column="113" selection-end-line="59" selection-end-column="113" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="au-editor.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="au-editor.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/editor/au-editor.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-22.038462" vertical-offset="5517" max-vertical-offset="7470">
-              <caret line="406" column="55" selection-start-line="406" selection-start-column="55" selection-end-line="406" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.30635837" vertical-offset="5990" max-vertical-offset="7620">
+              <caret line="417" column="0" selection-start-line="417" selection-start-column="0" selection-end-line="417" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -157,8 +154,8 @@
         <option value="$PROJECT_DIR$/editor/material-editor.js" />
         <option value="$PROJECT_DIR$/editor/asymmetric-unit.html" />
         <option value="$PROJECT_DIR$/editor/apinatomy2-data.js" />
-        <option value="$PROJECT_DIR$/editor/au-editor.js" />
         <option value="$PROJECT_DIR$/editor/repositories.js" />
+        <option value="$PROJECT_DIR$/editor/au-editor.js" />
       </list>
     </option>
   </component>
@@ -754,14 +751,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/editor/au-editor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-22.038462" vertical-offset="5517" max-vertical-offset="7470">
-          <caret line="406" column="55" selection-start-line="406" selection-start-column="55" selection-end-line="406" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/editor/material-editor.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-10.107142" vertical-offset="4022" max-vertical-offset="9270">
@@ -772,8 +761,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/repositories.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6734007" vertical-offset="285" max-vertical-offset="2400">
+        <state vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="2400">
           <caret line="59" column="113" selection-start-line="59" selection-start-column="113" selection-end-line="59" selection-end-column="113" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/editor/au-editor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.30635837" vertical-offset="5990" max-vertical-offset="7620">
+          <caret line="417" column="0" selection-start-line="417" selection-start-column="0" selection-end-line="417" selection-end-column="0" />
           <folding />
         </state>
       </provider>

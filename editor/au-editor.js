@@ -422,17 +422,27 @@ var auEditor = function () {
                 //var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
                 //var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
-                auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                if (auRepo != null ) {
+                    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    selectedAU = auRepo.auSet[0];
+                }
+
                 materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
                 loadMaterialRepoToDatalist(materialRepo);
 
-                selectedAU = auRepo.auSet[0];
-                if (selectedAU.layers != null && selectedAU.layers.length > 0)
+
+                if (selectedAU != null && selectedAU.layers != null && selectedAU.layers.length > 0)
                     selectedLayer = selectedAU.layers[0];
+
                 if (materialRepo.materials != null && materialRepo.materials.length > 0)
                     selectedMaterial = materialRepo.materials[0];
-                syncSelectedAU();
-                updateLayerParameters(selectedLayer);
+
+                if (selectedAU != null) {
+                    syncSelectedAU();
+                    updateLayerParameters(selectedLayer);
+                }
+
+
                 window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
 
