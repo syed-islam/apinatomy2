@@ -98,6 +98,19 @@
                         </label>
                         <input type="range" min="20" max="80" id="vpThickness"/>
                     </div>
+                    <br>
+                    <div>
+                        <h3>Create Basic Material:</h3>
+                        <div>
+                            <label for="fmaID" class="parameterLabel">FMA:</label>
+                            <input type="text" id="fmaID" size="200" style="width: 140px"; />
+                        </div>
+                        <div>
+                            <button class="parameterButton" id="createBasicLyph">Create</button>
+                            <br>
+                        </div>
+                    </div>
+                    <br>
                 </div>
             </div>
             <div class="chart" id="chart"></div>
@@ -119,6 +132,7 @@
     </section>
 </div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="apinatomy2-data.js"></script>
 <script src="repositories.js"></script>
 <script src="au-editor.js"></script>

@@ -104,6 +104,13 @@ var materialEditor = function () {
         d3.select("#materialName").property("value", material.name);
         d3.select("#materialColour").property("value", material.colour);
         d3.select("#materialType").property("value", material.type);
+        if (material.type == "simple") {
+            d3.select("#materialClone").attr("disabled", true);
+            d3.select("#materialSave").attr("disabled", true);
+        }if (material.type == "composite") {
+            d3.select("#materialClone").attr("disabled", null);
+            d3.select("#materialSave").attr("disabled", null);
+        }
     }
 
 
@@ -306,6 +313,56 @@ var materialEditor = function () {
 
     })
 
+    d3.select("#materialSave").on("click", function () {
+      console.log("save composite");
+
+        //go for save
+        var proposedname = materialName.value;
+        var lyphtype = "mix";
+
+
+        //if existing lyph_id comes back then don't add and print message
+
+        //if new lyph_id is returned then update the proposed name and lyph_id
+
+        console.log(selectedMaterial);
+        //selectedMaterial.layers;
+
+        $.ajax
+        ({
+            url:"http://open-physiology.org:5054"+
+
+                "/makelyph/?name=" + encodeURIComponent(proposedname) +
+                '&type=' + encodeURIComponent(lyphtype),
+
+            jsonp:
+                "callback",
+            dataType:
+                "jsonp",
+            success: function( response )
+            {
+                console.log(this.url);
+                var data = response;
+
+                if ( data.hasOwnProperty( "Error" ) )
+                {
+                    console.log(data.Error);
+                    return;
+                }
+
+                console.log(data);
+                //if (materialRepo.getIndexByID(data.id)== -1 )
+                //    load_all_materials();
+                //else
+                //    console.log("Basic Material already exisits");
+
+            }
+
+        });
+
+
+    })
+
     //////////////////////////////////////
     //Sub-material parameters
     /////////////////////////////////////
@@ -354,6 +411,7 @@ var materialEditor = function () {
                     //console.log(materialRepo.materials[0]);
                     //console.log(materialRepo.materials[1]);
                     syncSelectedMaterial();
+                    console.log(materialRepo.materials[0]);
                 } else {
                     alert("Failed to delete the sub-material: perhaps, it is not the direct child of the selected material!");
                 }
@@ -384,7 +442,9 @@ var materialEditor = function () {
             return;
         }
         var newMaterial = materialRepo.materials[materialIndex];
+
         selectedMaterial.addChildAt(newMaterial, 0);
+        console.log(materialRepo.materials);
         selectedMaterial.draw(svg, mainVP, onSelectChild);
     })
 

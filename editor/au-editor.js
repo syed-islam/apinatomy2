@@ -217,10 +217,14 @@ var auEditor = function () {
     }
 
      d3.select("#layerClone").on("click", function() {
-         if (selectedAU.getLayerIndex(layerID.value) > -1){
-             alert("Cannot create a new layer: another layer with such ID exists!");
-             return;
-         }
+         //if (selectedAU.getLayerIndex(layerID.value) > -1){
+         //    alert("Cannot create a new layer: another layer with such ID exists!");
+         //    return;
+         //}
+
+         console.log(layers);
+
+
          var materialIndex  = materialRepo.getIndexByID(materialID.value);
          if (materialIndex == -1){
              alert("Cannot update the level: no material with such ID exists!");
@@ -313,4 +317,147 @@ var auEditor = function () {
         mainVP.orientation = value;
         selectedAU.draw(svg, mainVP, onSelectLayer);
     });
+
+
+
+
+
+
+///////////////////////////////////
+// Loading Lyph Data from Server
+///////////////////////////////////
+
+    var load_all_materials = function (){
+        console.log("Loading existing lyphs")
+        $.ajax
+        ({
+            url:
+                "http://open-physiology.org:5054/all_lyphs/",
+            jsonp:
+                "callback",
+            dataType:
+                "jsonp",
+            success: function( response )
+            {
+                var data = response;
+
+                if ( data.hasOwnProperty( "Error" ) )
+                {
+                    if ( path.Error == "No path found" )
+                        alert( "No path found" );
+                    else
+                        alert( "Error: " + path.Error );
+
+                    return;
+                }
+
+                console.log("Lyph Loaded");
+
+
+                //Todo: We should only make a single pass through the dataset.
+                //load all basic types
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "basic"){
+                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                    }
+                }
+
+
+                ////load all mix types
+                //
+                //for (var i = 0; i < data.length; i++) {
+                //    if (data[i].type === "mix"){
+                //        //console.log(data[i]);
+                //        var composite_material_content = [];
+                //        for (var j = 0; j < data[i].layers.length;j++){
+                //            composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
+                //        }
+                //        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "composite", composite_material_content, null), 0);
+                //    }
+                //}
+
+
+                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+
+
+                //load all shell types
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "shell"){
+                        //console.log(data[i]);
+                        // Create appropriate layers for the lyph
+
+                        var layers_content= [];
+                        for (var j = 0; j < data[i].layers.length;j++){
+                            //console.log(data[i].layers[j]);
+                            var newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                            layers.push(newLayer);
+                            layers_content.push(newLayer);
+                            newLayer = null;
+                        }
+                        //console.log(layers_content);
+                        //create AU with the layers
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1);
+
+
+                        //console.log(toto);
+                        auRepo.addAt(toto,0);
+                        //console.log(auRepo.auSet[0]);
+
+                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    }
+                }
+            }
+        });
+    };
+
+
+
+    d3.select("#createBasicLyph").on("click", function () {
+        console.log("Creating basic lyph");
+        console.log(fmaID.value);
+
+        //send request to create lyph
+
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5054/lyph/"+
+            encodeURIComponent(fmaID.value),
+            jsonp:
+                "callback",
+            dataType:
+                "jsonp",
+            success: function( response )
+            {
+                console.log(this.url);
+                var data = response;
+
+                if ( data.hasOwnProperty( "Error" ) )
+                {
+                    console.log(data.Error);
+                    return;
+                }
+
+                console.log(data);
+                if (materialRepo.getIndexByID(data.id)== -1 ) {
+                    //load_all_materials();
+                    materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                } else
+                    console.log("Basic Material already exists");
+
+            }
+
+        });
+
+
+
+    });
+
+
+
+
+    load_all_materials();
+
+
 }();

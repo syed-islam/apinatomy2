@@ -65,7 +65,8 @@ var materialRepo = new MaterialRepo(
         //new Material("#CHEBI_35439i", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_35439j", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
 
-        new Material("#CHEBI_19812", "24-methylenecholesterol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null)]
+
+        ]
 );
 
 //var m1 = new Material("m:002", "Composite material 2", "#808080", "composite", []), null);
@@ -87,7 +88,7 @@ var layers = [
 ];
 
 //1
-var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers, 1);
+var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers.slice(0,3), 1);
 ////2
 //var layers1 = layers.slice(0);
 //var au1 = new AsymmetricUnit("au:002", "Sample AU-1", layers1, 1);
@@ -105,7 +106,8 @@ var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers, 1);
 //var auRepo = new AsymmetricUnitRepo([au, au1, au2, au3]);
 var auRepo = new AsymmetricUnitRepo([au]);
 
-console.log(auRepo);
+
+//console.log(auRepo);
 
 ////////////////////////////////////////////////////////////////
 //Tree

@@ -152,8 +152,12 @@ function Material(id, name, colour, type, children, au) {
     }
 
     this.addChildAt = function(child, index){
+        console.log(child);
+        console.log(index);
+        console.log(children);
         if (children  == null) children = [];
         children.splice(index, 0, child);
+        console.log(children);
     }
 
     this.removeChildAt = function(index){
@@ -162,7 +166,14 @@ function Material(id, name, colour, type, children, au) {
             if (index > -1) {
                 children.splice(index, 1);
             }
-        //console.log(this.id);
+
+        ////special case when deleting the last item
+        //if (children.length == 0){
+        //    children = [];
+        //} else {
+        //    console.log(children);
+        //}
+
     }
 
     this.replaceChildAt = function(child, index){
@@ -219,11 +230,11 @@ function Layer(id, name, thickness, material) {
                 response;
 
                 if (response.hasOwnProperty("Error")) {
-                   console.log(response)
+                   console.log("Layer creation error:" , response);
                     return;
                 }
 
-                console.log(response);
+                console.log("Layer Created", response);
 
             }
         });
@@ -232,8 +243,6 @@ function Layer(id, name, thickness, material) {
         var newLayer = new Layer(this.id, this.name, this.thickness, this.material);
         return newLayer;
     }
-
-    //}
 }
 
 //create Asymmetric Unit
@@ -914,27 +923,92 @@ function Graph(id, name, nodes, links){
                        return d.au.id;
                 });
 
-            var jsonRectangles = [
-                { "x_axis": 10, "y_axis": 10, "height": 20, "width":20, "color" : "green" },
-                { "x_axis": 50, "y_axis": 50, "height": 20, "width":20, "color" : "green" }
-            ]
 
-
-
-
-
-
-            //try 1
-            path.enter().append("rect")
+            path.selectAll("links")
+                .data(auRepo)
+                .append("rect")
                 .attr('x', function (d) {
-                    return (d.target.x + d.source.x)/2;
-                })
-                .attr('y', function (d) {
-                    return (d.target.y + d.source.y)/2;
-                })
-              .attr("height", function (d,i) { return jsonRectangles[i].height; })
-              .attr("width", function (d,i) { return jsonRectangles[i].width; })
-              .style("fill", function(d) { return "black" });
+                                return (d.target.x + d.source.x) / 2;
+                            })
+                            .attr('y', function (d) {
+                                return (d.target.y + d.source.y) / 2;
+                            })
+                            .attr("height", function (d) {
+                                return 10;
+                            })
+                            .attr("width", function (d) {
+                                return 20;
+                            })
+                            .style("fill", function (d) {
+                                return "black"
+                            });
+
+
+            //var tukusvg = path.enter().append("g")
+            //
+            //tukusvg.append("rect")
+            //    .attr('x', function (d) {
+            //                    return (d.target.x + d.source.x) / 2;
+            //                })
+            //                .attr('y', function (d) {
+            //                    return (d.target.y + d.source.y) / 2;
+            //                })
+            //                .attr("height", function (d) {
+            //                    return 10;
+            //                })
+            //                .attr("width", function (d) {
+            //                    return 20;
+            //                })
+            //                .style("fill", function (d) {
+            //                    return "black"
+            //                });
+
+            //var jsonRectangles = [
+            //    { "x_axis": 10, "y_axis": 10, "height": 10, "width":10, "color" : "green" },
+            //    { "x_axis": 50, "y_axis": 50, "height": 20, "width":20, "color" : "green" }
+            //]
+            ////try 3
+            //for (var j = 0; j < this.links.length ; j++) {
+            //    if (this.links[j].au != null) {
+            //        for (var k = 0; k < this.links[j].au.layers.length; k++) {
+            //            console.log(this.links[j].au.layers.length);
+            //            path.select("path").append("rect")
+            //                .attr('x', function (d) {
+            //                    return (d.target.x + d.source.x) / 2;
+            //                })
+            //                .attr('y', function (d) {
+            //                    return (d.target.y + d.source.y) / 2;
+            //                })
+            //                .attr("height", function (d) {
+            //                    return 10;
+            //                })
+            //                .attr("width", function (d) {
+            //                    return 20;
+            //                })
+            //                .style("fill", function (d) {
+            //                    return "black"
+            //                });
+            //        }
+            //    }
+            //}
+
+
+
+
+
+            //
+            //
+            ////try 1
+            //path.enter().append("rect")
+            //    .attr('x', function (d) {
+            //        return (d.target.x + d.source.x)/2;
+            //    })
+            //    .attr('y', function (d) {
+            //        return (d.target.y + d.source.y)/2;
+            //    })
+            //  .attr("height", function (d,i) { return jsonRectangles[i].height; })
+            //  .attr("width", function (d,i) { return jsonRectangles[i].width; })
+            //  .style("fill", function(d) { return "black" });
 
 
 
