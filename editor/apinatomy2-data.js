@@ -205,6 +205,36 @@ function Material(id, name, colour, type, children, au) {
 
 }
 
+function LayerRepo(layers){
+    this.layers = layers;
+
+    this.getIndexByID = function (id){
+        for (var i =0; i < layers.length; i++){
+            if (layers[i].id == id) return i;
+        }
+        return -1;
+    }
+
+    this.getNumberOfLayers = function () {
+        return layers.length;
+    }
+
+    this.addAt = function (layer, index){
+        layers.splice(index, 0, layer);
+    }
+
+    this.containsLayer = function(thickness, material){
+        for (var i =0; i < layers.length; i++){
+            if (layers[i].thickness == thickness && layers[i].material.id == material.id) return i;
+        }
+        return -1;
+    }
+
+
+
+
+}
+
 //create layer
 function Layer(id, name, thickness, material) {
     this.id = id;
@@ -227,6 +257,7 @@ function Layer(id, name, thickness, material) {
 
             dataType: "jsonp",
 
+
             success: function (response) {
                 response;
 
@@ -237,8 +268,15 @@ function Layer(id, name, thickness, material) {
 
                 console.log("Layer Created", response);
 
-            }
+                layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
+
+                rehashaueditor();
+
+            },
+            async:   false
         });
+
+
 
     this.clone = function () {
         var newLayer = new Layer(this.id, this.name, this.thickness, this.material);

@@ -1,4 +1,7 @@
+var rehashaueditor;
+
 var auEditor = function () {
+
     var width = 960, height = 500;
     var panelWidth = 300, panelHeight = 500;
 
@@ -222,7 +225,7 @@ var auEditor = function () {
          //    return;
          //}
 
-         console.log(layers);
+         //console.log(layers);
 
 
          var materialIndex  = materialRepo.getIndexByID(materialID.value);
@@ -230,23 +233,42 @@ var auEditor = function () {
              alert("Cannot update the level: no material with such ID exists!");
              return;
          }
+
          var material = materialRepo.materials[materialIndex];
          var newLayer = null;
-         if (selectedLayer != null){
-             newLayer = selectedLayer.clone();
-             newLayer.id = layerID.value;
-             newLayer.name = layerName.value;
-             newLayer.thickness = layerThickness.value;
-             newLayer.material = material;
+         //if (selectedLayer != null){
+         //    newLayer = selectedLayer.clone();
+         //    newLayer.id = layerID.value;
+         //    newLayer.name = layerName.value;
+         //    newLayer.thickness = layerThickness.value;
+         //    newLayer.material = material;
+         //}
+         //else
+         console.log("Layer exists?" , layerRepo.containsLayer(layerThickness.value,material ));
+         var layerindex = layerRepo.containsLayer(layerThickness.value,material);
+         if (layerindex  > -1){
+             selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
+             selectedAU.draw(svg, mainVP, onSelectLayer);
+             auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+         } else {
+              newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
+             layerRepo.addAt(newLayer,0);
+             selectedAU.addLayerAt(newLayer, 0);
+             selectedAU.draw(svg, mainVP, onSelectLayer);
+             auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
          }
-         else
-             newLayer = new Layer(layerID.value, layerName.value, layerThickness.value, material);
-         var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
-         if (index == 0) index = selectedAU.getNumberOfLayers();
-         selectedAU.addLayerAt(newLayer, index);
-         selectedAU.draw(svg, mainVP, onSelectLayer);
-         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+
+
+         //newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
+         ////layers.push(newLayer);
+         //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
+         //if (index == 0) index = selectedAU.getNumberOfLayers();
+         //selectedAU.addLayerAt(newLayer, index);
+         //selectedAU.draw(svg, mainVP, onSelectLayer);
+         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
     })
+
+
 
     d3.select("#layerUpdate").on("click", function() {
         if (selectedAU != null && selectedLayer != null){
@@ -392,7 +414,13 @@ var auEditor = function () {
                         for (var j = 0; j < data[i].layers.length;j++){
                             //console.log(data[i].layers[j]);
                             var newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
-                            layers.push(newLayer);
+                            if (layerRepo == null){
+                                layerRepo = new LayerRepo([newLayer]);
+                            } else {
+                                layerRepo.addAt(newLayer,0);
+                            }
+
+                            //layers.push(newLayer);
                             layers_content.push(newLayer);
                             newLayer = null;
                         }
@@ -411,16 +439,6 @@ var auEditor = function () {
                 }
 
 
-
-
-
-
-
-
-                ////Init visual parameters
-                //var mainVP = new VisualParameters("horizontal", 250, 50, width, height, 10);
-                //var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
-                //var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
                 if (auRepo != null ) {
                     auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
@@ -445,7 +463,7 @@ var auEditor = function () {
 
                 window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
-
+                console.log("LayerRepo:" , layerRepo);
 
             }
         });
@@ -497,6 +515,15 @@ var auEditor = function () {
 
 
     load_all_materials();
+
+
+
+    rehashaueditor = function rehasheverything(){
+        console.log("callback test");
+        //console.log(layerRepo);
+        selectedAU.draw(svg, mainVP, onSelectLayer);
+        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    }
 
 
 }();

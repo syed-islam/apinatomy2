@@ -54,7 +54,7 @@ var materialRepo = new MaterialRepo(
         //new Material("#CHEBI_19813", "24-methylenecycloartenol", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_51813", "ATTO 520-3", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_35439", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
-
+        //
         //new Material("#CHEBI_35439b", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_35439c", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
         //new Material("#CHEBI_35439d", "pentacyanonickelate(3-)", "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),
@@ -69,7 +69,7 @@ var materialRepo = new MaterialRepo(
         ]
 );
 
-//var m1 = new Material("m:002", "Composite material 2", "#808080", "composite", []), null);
+//var m1 = new Material("m:002", "Composite material 2", "#808080", "composite", materialRepo.materials.slice(materialRepo.materials.length / 2, materialRepo.materials.length - 1),null);
 //var m2 = new Material("m:003", "Composite material 3", "#808080", "composite", materialRepo.materials.slice(materialRepo.materials.length / 2, materialRepo.materials.length - 1), null);
 //var material = new Material("m:001", "Composite material 1", "#D3D3D3", "composite", [m1, m2], null);
 //
@@ -78,14 +78,14 @@ var materialRepo = new MaterialRepo(
 //materialRepo.addAt(material, 0);
 
 //Sample AUs
-var layers = [
+//var layers = [
     //new Layer("l:001", "Chyme/Chyle", 1, materialRepo.materials[0]),
     //new Layer("l:002", "Mucosa", 1, materialRepo.materials[1]),
     //new Layer("l:003", "Submucosa", 1, materialRepo.materials[2]),
     //new Layer("l:004", "Internal Muscle", 1, materialRepo.materials[3]),
     //new Layer("l:005", "External Muscle", 1, materialRepo.materials[4]),
     //new Layer("l:006", "Serosa", 1, materialRepo.materials[5])
-];
+//];
 
 //1
 //var au = new AsymmetricUnit("au:001", "Gastrointestinal tract", layers.slice(0,3), 1);
@@ -104,7 +104,9 @@ var layers = [
 
 //Repository of AUs
 //var auRepo = new AsymmetricUnitRepo([au, au1, au2, au3]);
-var auRepo = null //new AsymmetricUnitRepo([au]);
+var auRepo =  null //new AsymmetricUnitRepo([au]);
+
+var layerRepo = null;
 
 
 //console.log(auRepo);

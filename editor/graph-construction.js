@@ -96,7 +96,8 @@ var graphEditor = function () {
 
     //////////////////////////////////////////////////////////
     graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
-    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    if (auRepo != null)
+        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
 
     selectedGraph = graphRepo.graphs[0];
     syncSelectedGraph();
@@ -413,6 +414,7 @@ var graphEditor = function () {
 
 
     var launch_subgraph_ajax = function(){
+        console.log("here");
         var startNode = $('#startNode').val().trim();
         var endNode =  $('#endNode').val().trim();
 
