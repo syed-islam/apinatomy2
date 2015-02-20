@@ -139,15 +139,15 @@ var auEditor = function () {
     }
 
     function cloneAU(au){
-        if (auRepo.getIndexByID(auID.value) > -1){
-            alert("Cannot create a new AU: another AU with such ID exists!");
-            return;
-        }
+        //if (auRepo.getIndexByID(auID.value) > -1){
+        //    alert("Cannot create a new AU: another AU with such ID exists!");
+        //    return;
+        //}
         var newAU = null;
         if (au != null){
             newAU = au.clone();
-            newAU.id = auID.value;
-            newAU.name = auName.value;
+            newAU.id = auID.value+"_clone";
+            newAU.name = auName.value+"_clone";
             newAU.length = auLength.value;
         }
         else newAU = new AsymmetricUnit(auID.value, auName.value, [], auLength.value);
@@ -155,9 +155,74 @@ var auEditor = function () {
         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
     }
 
+    function saveAUtoServer(au){
+        console.log(au);
+        var query = "http://open-physiology.org:5054/makelyph/" +
+            "?name=" + encodeURIComponent(au.name) +
+            "&type=" + encodeURIComponent("shell");
+        for ( var i = 0; i < au.layers.length; i ++){
+            query += "&layer"+(i+1) + "="+  encodeURIComponent(au.layers[i].id);
+        }
+        console.log(query);
+
+        $.ajax
+        ({
+            url:query,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Layer creation error:" , response);
+                    return;
+                }
+
+                console.log("AU Create:", response);
+
+                if (au.id == response.id){
+                    console.log("AU already saved to database");
+                    return;
+                }
+
+                if (auRepo.getIndexByID(response.id) > -1){
+                    console.log("AU already exists in database as" , response.id,response.name);
+                    return;
+                }
+
+                console.log("New AU");
+                au.id = response.id;
+                au.name = response.name;
+
+                rehashaueditor();
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+    }
+
     d3.select("#auClone").on("click", function() {
         cloneAU(selectedAU);
     })
+
+    d3.select("#auSave").on("click", function() {
+        if (selectedAU != null){
+            saveAUtoServer(selectedAU)
+        }
+    })
+
 
     d3.select("#auUpdate").on("click", function() {
         if (selectedAU != null){
@@ -306,6 +371,8 @@ var auEditor = function () {
             deleteLayer(selectedAU, selectedLayer);
         }
     })
+
+
 
     ////////////////////////////////////////////////////////////
     //Visual Parameters
