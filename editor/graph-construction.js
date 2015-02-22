@@ -65,7 +65,7 @@ var graphEditor = function () {
             //Display tree
             if (selectedGraph.selected_node.tree){
                 var treeVP = new TreeVisualParameters(width - 2 * panelWidth, height,
-                        selectedGraph.selected_node.x - 150, selectedGraph.selected_node.y, 150, {x:-20, y:20});
+                    selectedGraph.selected_node.x - 150, selectedGraph.selected_node.y, 150, {x:-20, y:20});
                 selectedGraph.selected_node.tree.draw(svg, treeVP);
             }
         } else {
@@ -143,12 +143,12 @@ var graphEditor = function () {
 
     d3.select("#auDelete").on("click", function() {
         if (selectedGraph.selected_link) {
-           if (confirm("Delete associated AU?")) {
-               selectedGraph.selected_link.au = null;
-               selectedAU = null;
-               updateAUParameters(selectedAU);
-               selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
-           }
+            if (confirm("Delete associated AU?")) {
+                selectedGraph.selected_link.au = null;
+                selectedAU = null;
+                updateAUParameters(selectedAU);
+                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+            }
         }
     })
 
@@ -359,19 +359,19 @@ var graphEditor = function () {
         // push data for each node and associated edge into the array
         for (i =0; i < selectedGraph.links.length;i++) {
             var newEntry = [    selectedGraph.id,
-                                selectedGraph.links[i].source.name,
-                                selectedGraph.links[i].target.name,
-                                selectedGraph.links[i].source.x,
-                                selectedGraph.links[i].source.y,
-                                selectedGraph.links[i].target.x,
-                                selectedGraph.links[i].target.y,
-                                selectedGraph.links[i].au,
-                                selectedGraph.links[i].type,
-                                selectedGraph.links[i].edgeid,
-                                selectedGraph.links[i].description,
-                                selectedGraph.links[i].fma
+                selectedGraph.links[i].source.name,
+                selectedGraph.links[i].target.name,
+                selectedGraph.links[i].source.x,
+                selectedGraph.links[i].source.y,
+                selectedGraph.links[i].target.x,
+                selectedGraph.links[i].target.y,
+                selectedGraph.links[i].au,
+                selectedGraph.links[i].type,
+                selectedGraph.links[i].edgeid,
+                selectedGraph.links[i].description,
+                selectedGraph.links[i].fma
 
-                            ];
+            ];
             test_array.push(newEntry);
         }
 
@@ -491,14 +491,14 @@ var graphEditor = function () {
                 ////Adding edges to the graph
                 for (var i = 0; i < path.length; i++) {
                     link.push(new Link( nodes[getNodePosition(nodes, path.edges[i].from.id)],
-                                        nodes[getNodePosition(nodes, path.edges[i].to.id)],
-                                        path.edges[i].au ,
-                                        path.edges[i].type,
-                                        path.edges[i].id,
-                                        path.edges[i].name,
-                                        path.edges[i].fma
-                                    )
-                            );
+                            nodes[getNodePosition(nodes, path.edges[i].to.id)],
+                            path.edges[i].au ,
+                            path.edges[i].type,
+                            path.edges[i].id,
+                            path.edges[i].name,
+                            path.edges[i].fma
+                        )
+                    );
                 }
 
                 //Creating sub-graph from ajax data
@@ -542,6 +542,133 @@ var graphEditor = function () {
     }
 
 
+    ///////////////////////////////////
+// Loading Lyph Data from Server
+///////////////////////////////////
+
+    var load_all_materials = function (){
+
+        console.log("Loading existing lyphs")
+        $.ajax
+        ({
+            url:
+                "http://open-physiology.org:5054/all_lyphs/",
+            jsonp:
+                "callback",
+            dataType:
+                "jsonp",
+            success: function( response )
+            {
+                var data = response;
+
+
+                if ( data.hasOwnProperty( "Error" ) )
+                {
+                    if ( path.Error == "No path found" )
+                        alert( "No path found" );
+                    else
+                        alert( "Error: " + path.Error );
+
+                    return;
+                }
+
+                console.log("Lyph Loaded");
+
+
+                //Todo: We should only make a single pass through the dataset.
+                //load all basic types
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "basic"){
+                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                    }
+                }
+
+
+                ////load all mix types
+                //
+                //for (var i = 0; i < data.length; i++) {
+                //    if (data[i].type === "mix"){
+                //        //console.log(data[i]);
+                //        var composite_material_content = [];
+                //        for (var j = 0; j < data[i].layers.length;j++){
+                //            composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
+                //        }
+                //        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "composite", composite_material_content, null), 0);
+                //    }
+                //}
+
+
+                //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+
+
+                //load all shell types
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "shell"){
+                        //console.log(data[i]);
+                        // Create appropriate layers for the lyph
+
+                        var layers_content= [];
+                        for (var j = 0; j < data[i].layers.length;j++){
+                            //console.log(data[i].layers[j]);
+                            var newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                            if (layerRepo == null){
+                                layerRepo = new LayerRepo([newLayer]);
+                            } else {
+                                layerRepo.addAt(newLayer,0);
+                            }
+
+                            //layers.push(newLayer);
+                            layers_content.push(newLayer);
+                            newLayer = null;
+                        }
+                        //console.log(layers_content);
+                        //create AU with the layers
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1);
+
+
+                        //console.log(toto);
+                        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([toto]);
+                        else auRepo.addAt(toto,0);
+                        //console.log(auRepo.auSet[0]);
+
+                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    }
+                }
+
+
+
+                if (auRepo != null ) {
+                    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    selectedAU = auRepo.auSet[0];
+                }
+
+                //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                //loadMaterialRepoToDatalist(materialRepo);
+
+
+                //if (selectedAU != null && selectedAU.layers != null && selectedAU.layers.length > 0)
+                //    selectedLayer = selectedAU.layers[0];
+                //
+                //if (materialRepo.materials != null && materialRepo.materials.length > 0)
+                //    selectedMaterial = materialRepo.materials[0];
+                //
+                //if (selectedAU != null) {
+                //    syncSelectedAU();
+                //    updateLayerParameters(selectedLayer);
+                //}
+
+
+                //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+
+                //console.log("LayerRepo:" , layerRepo);
+
+            }
+        });
+    };
+
+
+
+    load_all_materials();
 
 
 }();

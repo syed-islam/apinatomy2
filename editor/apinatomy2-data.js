@@ -270,7 +270,10 @@ function Layer(id, name, thickness, material) {
 
                 layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
 
-                rehashaueditor();
+
+                if (typeof 'rehashaueditor' == 'function') {
+                    rehashaueditor();
+                };
 
             },
             async:   false
@@ -963,24 +966,24 @@ function Graph(id, name, nodes, links){
                 });
 
 
-            path.selectAll("links")
-                .data(auRepo)
-                .append("rect")
-                .attr('x', function (d) {
-                                return (d.target.x + d.source.x) / 2;
-                            })
-                            .attr('y', function (d) {
-                                return (d.target.y + d.source.y) / 2;
-                            })
-                            .attr("height", function (d) {
-                                return 10;
-                            })
-                            .attr("width", function (d) {
-                                return 20;
-                            })
-                            .style("fill", function (d) {
-                                return "black"
-                            });
+            //path.selectAll("links")
+            //    .data(auRepo)
+            //    .append("rect")
+            //    .attr('x', function (d) {
+            //                    return (d.target.x + d.source.x) / 2;
+            //                })
+            //                .attr('y', function (d) {
+            //                    return (d.target.y + d.source.y) / 2;
+            //                })
+            //                .attr("height", function (d) {
+            //                    return 10;
+            //                })
+            //                .attr("width", function (d) {
+            //                    return 20;
+            //                })
+            //                .style("fill", function (d) {
+            //                    return "black"
+            //                });
 
 
             //var tukusvg = path.enter().append("g")
