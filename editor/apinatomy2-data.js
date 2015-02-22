@@ -986,8 +986,9 @@ function Graph(id, name, nodes, links){
                 .attr("width", function (d) {return layerLength;})
                 .attr("x", function(){return 0;})
                 .attr("y", function (d, i) {
+                    if (i ==0) prev =0; // reset the starting y for layers for each link
                     prev += d.thickness * layerHeight; //remember the relative Y coordinate of the current layer
-                    console.log(i);
+
                     return prev - d.thickness * layerHeight;
                 })
                 .style("fill", function (d) {
@@ -996,8 +997,7 @@ function Graph(id, name, nodes, links){
                 .attr("class", "layer")
             ;
 
-            var prev =0;
-
+            console.log("here");
 
             //path.selectAll("links")
             //    .data(auRepo)
