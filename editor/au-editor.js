@@ -530,7 +530,7 @@ var auEditor = function () {
 
                 window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
-                console.log("LayerRepo:" , layerRepo);
+                //console.log("LayerRepo:" , layerRepo);
 
             }
         });
