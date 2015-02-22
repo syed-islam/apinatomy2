@@ -266,7 +266,7 @@ function Layer(id, name, thickness, material) {
                     return;
                 }
 
-                console.log("Layer Created", response);
+                //console.log("Layer Created", response);
 
                 layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
 
@@ -964,6 +964,39 @@ function Graph(id, name, nodes, links){
                     if (d.au)
                        return d.au.id;
                 });
+
+            //Variable 'path' already gives us access to a graph edge with associated link
+            //To draw a set of layers, we create a 'g' element (group) and place it to the middle of the edge
+            var auIcon = path.enter().append("g")
+                .attr("transform", function (d) {
+                    return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ")";
+                });
+
+            var layerHeight = 5; var layerLength = 20;
+            var prev = 0; //a variable to accumulate offset for layers
+            //To draw layers, we must get access to layers of the AU associated with each link
+            //However, not all links have AUs assigned, in this case we return an empty array
+            auIcon.selectAll(".layer")
+                .data(function (d){
+                    if (d.au) return d.au.layers;
+                    return [];
+                }).enter() //we just started an iteration over layers
+                .append("rect")
+                .attr("height", function (d) {return layerHeight;})
+                .attr("width", function (d) {return layerLength;})
+                .attr("x", function(){return 0;})
+                .attr("y", function (d, i) {
+                    prev += d.thickness * layerHeight; //remember the relative Y coordinate of the current layer
+                    console.log(i);
+                    return prev - d.thickness * layerHeight;
+                })
+                .style("fill", function (d) {
+                    return d.material.colour;
+                })
+                .attr("class", "layer")
+            ;
+
+            var prev =0;
 
 
             //path.selectAll("links")
