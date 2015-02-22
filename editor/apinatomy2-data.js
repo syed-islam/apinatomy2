@@ -982,7 +982,7 @@ function Graph(id, name, nodes, links){
                     return [];
                 }).enter() //we just started an iteration over layers
                 .append("rect")
-                .attr("height", function (d) {return layerHeight;})
+                .attr("height", function (d) {return d.thickness * layerHeight;})
                 .attr("width", function (d) {return layerLength;})
                 .attr("x", function(){return 0;})
                 .attr("y", function (d, i) {
