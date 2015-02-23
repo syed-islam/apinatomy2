@@ -51,6 +51,8 @@ var graphEditor = function () {
         }
     }
 
+
+
     var onSelectGraph = function(d){
         if (this != selectedGraphNode){
             d3.select(this).style("stroke", "red");
@@ -83,6 +85,12 @@ var graphEditor = function () {
             selectedAU = selectedGraph.selected_link.au;
             updateAUParameters(selectedAU);
         }
+    }
+
+    var onMultipleEdgeSelect = function (d){
+        d3.select("#edgeID").property("value", "...");
+        d3.select("#edgeDescription").property("value", "...")
+        d3.select("#edgeType").property("value", "...");
     }
 
 
@@ -193,9 +201,50 @@ var graphEditor = function () {
     });
 
     d3.select("#auUpdate").on("click", function() {
+        if (selectedGraph.getMultipleSection().length > 0){
+            for (var i =0; i < selectedGraph.getMultipleSection().length; i ++){
+                console.log(selectedGraph.getMultipleSection()[i]);
+                selectedGraph.getMultipleSection()[i].au = selectedAU;
+                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
+
+
+
+                $.ajax
+                ({
+                    url:
+                    "http://open-physiology.org:5054/assignlyph/"+
+                    "?lyph="+ encodeURIComponent(selectedAU.id) +
+                    "&edge="+encodeURIComponent(selectedGraph.getMultipleSection()[i].edgeid),
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        response;
+
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Node creation error:" , response);
+                            return;
+                        }
+
+                        console.log(response);
+                    }
+                });
+
+
+
+
+            }
+
+            return;
+        }
+
         if (selectedGraph.selected_link){
             selectedGraph.selected_link.au = selectedAU;
-            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
 
 
             console.log(selectedAU.id, selectedGraph.selected_link.edgeid);
@@ -243,7 +292,7 @@ var graphEditor = function () {
                 selectedGraph.selected_link.au = null;
                 selectedAU = null;
                 updateAUParameters(selectedAU);
-                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
             }
         }
     })
@@ -252,7 +301,7 @@ var graphEditor = function () {
     //Graph parameters
     //////////////////////////////////
     function syncSelectedGraph(){
-        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
         updateGraphParameters(selectedGraph);
     }
 
@@ -320,7 +369,7 @@ var graphEditor = function () {
                     graphRepo.removeAt(index);
                     if (graphRepo.graphs.length > 0) {
                         selectedGraph = graphRepo.graphs[0];
-                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
                     }
                     graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                     updateGraphParameters(selectedGraph);
@@ -374,7 +423,7 @@ var graphEditor = function () {
     d3.select("#nodeDelete").on("click", function() {
         if (selectedGraphNode != null) {
             selectedGraph.deleteNode(selectedGraph.selected_node);
-            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
         }
     })
 
@@ -384,7 +433,7 @@ var graphEditor = function () {
             //graph.id = graphID.value;
             //graph.name = graphName.value;
             graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
-            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+            selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
         }
     })
 
@@ -448,7 +497,7 @@ var graphEditor = function () {
                         //adding graph, selecting graph, drawing graphrepo and graph.
                         graphRepo.addAt(graphImported,0);
                         selectedGraph = graphRepo.graphs[0];
-                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
                         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                         updateGraphParameters(selectedGraph);
                     }
@@ -651,7 +700,7 @@ var graphEditor = function () {
                 ////adding graph, selecting graph, drawing graphrepo and graph.
                 graphRepo.addAt(graphAjax,0);
                 selectedGraph = graphRepo.graphs[0];
-                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
                 graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                 updateGraphParameters(selectedGraph);
 
@@ -893,7 +942,7 @@ var graphEditor = function () {
 
 
                         selectedGraph = graphRepo.graphs[0];
-                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+                        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
                         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                         updateGraphParameters(selectedGraph);
 
@@ -918,7 +967,7 @@ var graphEditor = function () {
 
 
     refresh_graph = function refresh_graph(){
-        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
 
     }

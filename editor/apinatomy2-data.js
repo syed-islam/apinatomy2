@@ -727,6 +727,9 @@ function Graph(id, name, nodes, links){
 
     this.selected_node = null;
     this.selected_link = null;
+    this.multiple_select = [];
+
+    var a_pressed = false;
 
     this.clone = function () {
         var newGraph = new Graph(this.id, this.name, this.nodes.slice(0), this.links.slice(0));
@@ -855,7 +858,11 @@ function Graph(id, name, nodes, links){
         return -1;
     }
 
-    this.draw = function(svg, offset, onSelectNode, onSelectLink) {
+    this.getMultipleSection= function (){
+        return this.multiple_select;
+    }
+
+    this.draw = function(svg, offset, onSelectNode, onSelectLink, onMultipleSelectEdge) {
         //console.log((this.getMaxX() +100) + " " + (this.getMaxY() +100) );
         svg.attr("height", this.getMaxHeight() < 540 ? 540 : this.getMaxHeight() +50);
         svg.attr("width", this.getMaxWidth() < 590 ? 590 : this.getMaxWidth() + 50);
@@ -960,7 +967,16 @@ function Graph(id, name, nodes, links){
             path.enter().append('path')
                 .attr('class', 'link')
                 .classed('selected', function (d) {
-                    return d === graph.selected_link;
+                    console.log(graph.multiple_select.length === 0);
+                    if (graph.multiple_select.length === 0)
+                        return d === graph.selected_link;
+                    else {
+                        for (var i =0; i < graph.multiple_select.length; i++){
+                            if (d === graph.multiple_select[i]) return true;
+                        }
+                            return false;
+                    }
+
                 })
                 .style('stroke', function (d) {
                     return d3.rgb(colors(d.type));
@@ -981,7 +997,21 @@ function Graph(id, name, nodes, links){
                 })
                 .on('mousedown', function (d) {
                     if (d3.event.ctrlKey) return;
+
+
                     mousedown_link = d;
+
+
+                    // creating multiple selection
+                    if (a_pressed){
+                        graph.multiple_select.push(mousedown_link);
+                        console.log(graph.multiple_select);
+                        onMultipleSelectEdge();
+                        update();
+                        return;
+                    }
+
+
                     if (mousedown_link === graph.selected_link)
                         graph.selected_link = null;
                     else
@@ -1206,6 +1236,13 @@ function Graph(id, name, nodes, links){
         }
 
         function keydown() {
+            if (d3.event.keyCode === 65){
+                (a_pressed)? a_pressed = false : a_pressed = true;
+                console.log(a_pressed);
+                if (!a_pressed) {graph.multiple_select = []; update()};
+                return;
+            }
+
             if (d3.event.keyCode === 17) {// ctrl
                 circle.call(drag);
                 svg.classed('ctrl', true);
