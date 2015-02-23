@@ -138,6 +138,59 @@ var graphEditor = function () {
         }
     }
 
+    d3.select("#edgeSave").on("click", function(){
+        var actualEdge = selectedGraph.selected_link;
+        var edgeType = $("#edgeType").val().trim();
+        var edgeName = $("#edgeDescription").val().trim();
+        var fromNode = selectedGraph.selected_link.source ;
+        var toNode = selectedGraph.selected_link.target;
+        var edgeLyphID = $("#auID").val().trim();
+
+        //console.log(edgeType, edgeName, fromNode, toNode, edgeLyphID);
+
+
+        //Update the local data
+        selectedGraph.selected_link.au = auRepo.auSet[auRepo.getIndexByID($("#auID").val().trim())];
+        selectedGraph.selected_link.type = $("#edgeType").val().trim();
+        selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
+
+        // ajax call to create a lyphedge
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5054/makelyphedge/"+
+            "?type="+ encodeURIComponent($("#edgeType").val().trim())+
+            "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
+            "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)+
+            "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)+
+            "&lyph="+ encodeURIComponent($("#auID").val().trim())
+            ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node creation error:" , response);
+                    return;
+                }
+
+                console.log("Response:", response);
+                actualEdge.edgeid = response.id;
+                refresh_graph();
+
+
+            }
+        });
+
+
+
+    });
 
     d3.select("#auUpdate").on("click", function() {
         if (selectedGraph.selected_link){
@@ -172,10 +225,6 @@ var graphEditor = function () {
                     console.log(response);
                 }
             });
-
-
-
-
         } else {
             alert("Error: Link is not selected!");
         }
@@ -537,11 +586,11 @@ var graphEditor = function () {
                 //console.log(auRepo.auSet[auRepo.getIndexByID(path.edges[0].lyph.id)]);
                 ////Adding edges to the graph
                 for (var i = 0; i < path.length; i++) {
-                    console.log(i, path.edges[i].lyph);
+                    //console.log(i, path.edges[i].lyph);
                     link.push(new Link( nodes[getNodePosition(nodes, path.edges[i].from.id)],
                             nodes[getNodePosition(nodes, path.edges[i].to.id)],
                             (path.edges[i].lyph) ? auRepo.auSet[auRepo.getIndexByID(path.edges[i].lyph.id)]: undefined,
-                            path.edges[i].lyph,
+                            //path.edges[i].lyph,
                             path.edges[i].type,
                             path.edges[i].id,
                             path.edges[i].name,
@@ -549,6 +598,8 @@ var graphEditor = function () {
                         )
                     );
                 }
+                    //source, target, au,type, edgeid, description, fma
+
 
                 //Creating sub-graph from ajax data
                 var graphAjax= new Graph("Subgraph_"+(graphRepo.graphs.length+1), startNode+" ---> "+endNode, nodes, link);
