@@ -997,7 +997,7 @@ function Graph(id, name, nodes, links){
                 .attr("class", "layer")
             ;
 
-            console.log("here");
+            //console.log("here");
 
             //path.selectAll("links")
             //    .data(auRepo)
