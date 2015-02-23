@@ -139,6 +139,7 @@ var auEditor = function () {
     }
 
     function cloneAU(au){
+        console.log("here");
         //if (auRepo.getIndexByID(auID.value) > -1){
         //    alert("Cannot create a new AU: another AU with such ID exists!");
         //    return;
@@ -150,7 +151,10 @@ var auEditor = function () {
             newAU.name = auName.value+"_clone";
             newAU.length = auLength.value;
         }
-        else newAU = new AsymmetricUnit(auID.value, auName.value, [], auLength.value);
+        else {
+            newAU = new AsymmetricUnit(auID.value, auName.value, [], auLength.value);
+            console.log(newAU);
+        }
         auRepo.addAt(newAU, auRepo.auSet.length - 1);
         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
     }
@@ -214,6 +218,7 @@ var auEditor = function () {
     }
 
     d3.select("#auClone").on("click", function() {
+        console.log("here");
         cloneAU(selectedAU);
     })
 
