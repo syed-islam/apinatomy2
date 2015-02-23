@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/apinatomy2-data.js" afterPath="$PROJECT_DIR$/editor/apinatomy2-data.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/editor/graph-construction.js" afterPath="$PROJECT_DIR$/editor/graph-construction.js" />
     </list>
     <ignored path="apinatomy2.iws" />
@@ -30,8 +29,8 @@
       <file leaf-file-name="graph-construction.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.94382024" vertical-offset="12531" max-vertical-offset="13905">
-              <caret line="877" column="8" selection-start-line="877" selection-start-column="8" selection-end-line="877" selection-end-column="8" />
+            <state vertical-scroll-proportion="0.91573036" vertical-offset="12606" max-vertical-offset="13935">
+              <caret line="881" column="0" selection-start-line="881" selection-start-column="0" selection-end-line="881" selection-end-column="0" />
               <folding>
                 <element signature="e#1752#2030#0" expanded="false" />
               </folding>
@@ -710,8 +709,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.94382024" vertical-offset="12531" max-vertical-offset="13905">
-          <caret line="877" column="8" selection-start-line="877" selection-start-column="8" selection-end-line="877" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.91573036" vertical-offset="12606" max-vertical-offset="13935">
+          <caret line="881" column="0" selection-start-line="881" selection-start-column="0" selection-end-line="881" selection-end-column="0" />
           <folding>
             <element signature="e#1752#2030#0" expanded="false" />
           </folding>

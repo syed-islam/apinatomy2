@@ -833,6 +833,8 @@ var graphEditor = function () {
                         return;
                     }
 
+
+                    console.log("Response:" , response);
                     for (var i =0; i < response.length; i++){
                         console.log(response[i]);
                         var nodes = [];
@@ -867,7 +869,7 @@ var graphEditor = function () {
                                 var newEdge = new Link(
                                     newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)],
                                     newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)],
-                                    (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph)]: null,
+                                    (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph.id)]: null,
                                     response[i].nodes[j].exits[k].via.type,
                                     response[i].nodes[j].exits[k].via.id,
                                     response[i].nodes[j].exits[k].via.name,
