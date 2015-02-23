@@ -270,15 +270,16 @@ var graphEditor = function () {
     }
 
     function cloneGraph(graph){
-        if (graphRepo.getIndexByID(graphID.value) > -1){
-            alert("Cannot create a new graph: another graph with such ID exists!");
-            return;
-        }
+        //if (graphRepo.getIndexByID(graphID.value) > -1){
+        //    alert("Cannot create a new graph: another graph with such ID exists!");
+        //    return;
+        //}
+
         var newGraph = null;
         if (graph != null){
             newGraph = graph.clone();
-            newGraph.id = graphID.value;
-            newGraph.name = graphName.value;
+            newGraph.id = graphID.value+"_cloned";
+            newGraph.name = graphName.value+"_cloned";
         }
         else newGraph = new Graph(graphID.value, graphName.value, [], []);
         graphRepo.addAt(newGraph, 0);
@@ -290,6 +291,7 @@ var graphEditor = function () {
     d3.select("#graphClone").on("click", function() {
         cloneGraph(selectedGraph);
     })
+
 
     d3.select("#graphUpdate").on("click", function() {
 
@@ -325,6 +327,46 @@ var graphEditor = function () {
                 }
             }
         }
+    })
+
+    d3.select("#graphSave").on("click",function(){
+       var actualSelectedGraphIndex = graphRepo.getIndexByID(selectedGraph.id);
+        console.log(actualSelectedGraphIndex);
+
+
+        var query = "http://open-physiology.org:5054/makeview/?"
+        for (var i =0; i < selectedGraph.nodes.length ; i++){
+            query += "&node" + (i + 1)+ "="+ encodeURIComponent(selectedGraph.nodes[i].name);
+            query += "&x"+ (i + 1) +"="+ encodeURIComponent(selectedGraph.nodes[i].x);
+            query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
+        }
+
+        //console.log(query);
+
+        // ajax call to save graph view
+        $.ajax
+        ({
+            url:query,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node creation error:" , response);
+                    return;
+                }
+
+                console.log(response);
+            }
+        });
+
+
     })
 
     d3.select("#nodeDelete").on("click", function() {

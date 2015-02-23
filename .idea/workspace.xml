@@ -30,8 +30,8 @@
       <file leaf-file-name="graph-construction.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7777778" vertical-offset="1950" max-vertical-offset="11670">
-              <caret line="166" column="13" selection-start-line="166" selection-start-column="13" selection-end-line="166" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.2929293" vertical-offset="4866" max-vertical-offset="12300">
+              <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
               <folding>
                 <element signature="e#1752#2030#0" expanded="false" />
               </folding>
@@ -62,8 +62,8 @@
       <file leaf-file-name="apinatomy2-data.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/apinatomy2-data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="526" max-vertical-offset="9420">
-              <caret line="711" column="4" selection-start-line="711" selection-start-column="4" selection-end-line="718" selection-end-column="1" />
+            <state vertical-scroll-proportion="-4.3846154" vertical-offset="8601" max-vertical-offset="9420">
+              <caret line="1250" column="21" selection-start-line="1250" selection-start-column="9" selection-end-line="1250" selection-end-column="21" />
               <folding>
                 <element signature="n#!!block;n#Material#0" expanded="false" />
                 <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
@@ -89,8 +89,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/editor/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-9.416667" vertical-offset="599" max-vertical-offset="2430">
-              <caret line="55" column="80" selection-start-line="55" selection-start-column="80" selection-end-line="55" selection-end-column="80" />
+            <state vertical-scroll-proportion="-7.5" vertical-offset="30" max-vertical-offset="2445">
+              <caret line="27" column="69" selection-start-line="27" selection-start-column="60" selection-end-line="27" selection-end-column="69" />
               <folding>
                 <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#0;n#div#3;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
@@ -671,8 +671,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.416667" vertical-offset="599" max-vertical-offset="2430">
-          <caret line="55" column="80" selection-start-line="55" selection-start-column="80" selection-end-line="55" selection-end-column="80" />
+        <state vertical-scroll-proportion="-7.5" vertical-offset="30" max-vertical-offset="2445">
+          <caret line="27" column="69" selection-start-line="27" selection-start-column="60" selection-end-line="27" selection-end-column="69" />
           <folding>
             <element signature="n#style#0;n#input#0;n#div#0;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#input#0;n#div#3;n#div#0;n#div#0;n#div#0;n#section#0;n#div#0;n#!!top" expanded="true" />
@@ -685,8 +685,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/apinatomy2-data.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="526" max-vertical-offset="9420">
-          <caret line="711" column="4" selection-start-line="711" selection-start-column="4" selection-end-line="718" selection-end-column="1" />
+        <state vertical-scroll-proportion="-4.3846154" vertical-offset="8601" max-vertical-offset="9420">
+          <caret line="1250" column="21" selection-start-line="1250" selection-start-column="9" selection-end-line="1250" selection-end-column="21" />
           <folding>
             <element signature="n#!!block;n#Material#0" expanded="false" />
             <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
@@ -710,8 +710,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/editor/graph-construction.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7777778" vertical-offset="1950" max-vertical-offset="11670">
-          <caret line="166" column="13" selection-start-line="166" selection-start-column="13" selection-end-line="166" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.2929293" vertical-offset="4866" max-vertical-offset="12300">
+          <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
           <folding>
             <element signature="e#1752#2030#0" expanded="false" />
           </folding>
