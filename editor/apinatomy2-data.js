@@ -847,6 +847,14 @@ function Graph(id, name, nodes, links){
         return freeIds.length;
     }
 
+    this.getNodeIndexByID = function (id){
+        for (var i =0; i < nodes.length; i++){
+            if (nodes[i].id === id)
+                return i;
+        }
+        return -1;
+    }
+
     this.draw = function(svg, offset, onSelectNode, onSelectLink) {
         //console.log((this.getMaxX() +100) + " " + (this.getMaxY() +100) );
         svg.attr("height", this.getMaxHeight() < 540 ? 540 : this.getMaxHeight() +50);
