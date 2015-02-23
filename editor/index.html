@@ -28,19 +28,31 @@
                     </div>
                     <br/>
                     <h2>Edge parameters:</h2>
-                    <h3>Asymmetric Unit:</h3>
                     <div>
-                        <label for="auID" class="parameterLabel">ID:</label>
+                        <label for="edgeID" class="parameterLabel">Edge ID:</label>
+                        <input type="text" id="edgeID" size="200" style="width: 140px;" readonly="true" value =""/>
+                    </div>
+                    <div>
+                        <label for="edgeDescription" class="parameterLabel">Edge Desciption:</label>
+                        <input type="text" id="edgeDescription" size="200" style="width: 140px;"  value =""/>
+                    </div>
+                    <div>
+                        <label for="edgeType" class="parameterLabel">Edge Type:</label>
+                        <input type="text" id="edgeType" size="200" style="width: 140px;" />
+                    </div>
+
+                    <div>
+                        <label for="auID" class="parameterLabel">AU ID:</label>
                         <datalist id="auSet"></datalist>
                         <input type="text" id="auID" style="width: 140px;" list="auSet" readonly="true">
                     </div>
                     <div>
-                        <label for="auName" class="parameterLabel">Name:</label>
+                        <label for="auName" class="parameterLabel">AU Name:</label>
                         <input type="text" id="auName" size="200" style="width: 140px;" readonly="true"/>
                     </div>
                     <br/>
                     <div>
-                        <button class="parameterButton" id="auUpdate">Assign</button>
+                        <button class="parameterButton" id="auUpdate">AU Assign</button>
                         <button class="parameterButton" id="auRestore">Restore</button>
                         <button class="parameterButton" id="auDelete">Delete</button>
                     </div>

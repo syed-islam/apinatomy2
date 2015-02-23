@@ -775,8 +775,50 @@ function Graph(id, name, nodes, links){
 
     this.addNode = function(point){
         var nodeId = this.getNextID();
-        var node = new Node(nodeId,nodeId , point[0], point[1], null);
+        var node = new Node(nodeId, "..." , point[0], point[1], null);
         nodes.push(node);
+
+        //function ajax_create_new_node () {
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5054/makelyphnode/" ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node creation error:" , response);
+                    return;
+                }
+                node.name = response.id;
+
+                console.log(node.name);
+
+
+                refresh_graph();
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     this.deleteNode = function(node){
@@ -807,8 +849,8 @@ function Graph(id, name, nodes, links){
 
     this.draw = function(svg, offset, onSelectNode, onSelectLink) {
         //console.log((this.getMaxX() +100) + " " + (this.getMaxY() +100) );
-        svg.attr("width", this.getMaxHeight() < 540 ? 540 : this.getMaxHeight() +50);
-        svg.attr("height", this.getMaxWidth() < 590 ? 590 : this.getMaxWidth() + 50);
+        svg.attr("height", this.getMaxHeight() < 540 ? 540 : this.getMaxHeight() +50);
+        svg.attr("width", this.getMaxWidth() < 590 ? 590 : this.getMaxWidth() + 50);
 
         var colors = d3.scale.category10();
         var graph = this;

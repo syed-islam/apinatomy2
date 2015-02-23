@@ -2,6 +2,8 @@
  * Created by Natallia on 16/09/2014.
  */
 // set up SVG for D3
+
+var refresh_graph; // used to refresh graphs on udpate
 var graphEditor = function () {
     var width = 540,
         height = 600;
@@ -77,6 +79,7 @@ var graphEditor = function () {
     var onSelectLink = function(d){
         if (selectedGraph.selected_link){
             //Update link parameters
+            updateEdgeParameters(selectedGraph.selected_link);
             selectedAU = selectedGraph.selected_link.au;
             updateAUParameters(selectedAU);
         }
@@ -106,7 +109,18 @@ var graphEditor = function () {
     //AU parameters
     //////////////////////////////////
 
+
+    function updateEdgeParameters(edge){
+        console.log("Updating edge parameter:" , edge);
+
+        edge.edgeid != null ? d3.select("#edgeID").property("value", edge.edgeid) : d3.select("#edgeID").property("value", "")
+        edge.type != null ? d3.select("#edgeType").property("value", edge.type) : d3.select("#edgeType").property("value", "")
+        edge.description != null ? d3.select("#edgeDescription").property("value", edge.description) : d3.select("#edgeDescription").property("value", "");
+    }
+
     function updateAUParameters(au){
+
+
         if (au != null){
             d3.select("#auID").property("value", au.id);
             d3.select("#auName").property("value", au.name);
@@ -129,6 +143,39 @@ var graphEditor = function () {
         if (selectedGraph.selected_link){
             selectedGraph.selected_link.au = selectedAU;
             selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+
+
+            console.log(selectedAU.id, selectedGraph.selected_link.edgeid);
+
+            // ajax call to update the lyph assignment
+            $.ajax
+            ({
+                url:
+                    "http://open-physiology.org:5054/assignlyph/"+
+                        "?lyph="+ encodeURIComponent(selectedAU.id) +
+                        "&edge="+encodeURIComponent(selectedGraph.selected_link.edgeid),
+
+                jsonp: "callback",
+
+                dataType: "jsonp",
+
+
+                success: function (response) {
+                    response;
+
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Node creation error:" , response);
+                        return;
+                    }
+
+                    console.log(response);
+                }
+            });
+
+
+
+
         } else {
             alert("Error: Link is not selected!");
         }
@@ -479,20 +526,22 @@ var graphEditor = function () {
 
                     // Creating Nodes
                     if (doesNodesContainNode(nodes, path.edges[i].from.id) == null) {
-                        nodes.push(new Node(nodes.length, path.edges[i].from.id, ((nodes.length +1) *50) , ((nodes.length +1) *50) , null));
+                        nodes.push(new Node(nodes.length, path.edges[i].from.id, ((nodes.length +1) *200) , 200 , null));
                     }
 
                     if (doesNodesContainNode(nodes, path.edges[i].to.id) == null) {
-                        nodes.push(new Node(nodes.length, path.edges[i].to.id, ((nodes.length +1) * 50), ((nodes.length +1) * 50), null));
+                        nodes.push(new Node(nodes.length, path.edges[i].to.id, ((nodes.length +1) * 200), 200, null));
                     }
                 }
 
-
+                //console.log(auRepo.auSet[auRepo.getIndexByID(path.edges[0].lyph.id)]);
                 ////Adding edges to the graph
                 for (var i = 0; i < path.length; i++) {
+                    console.log(i, path.edges[i].lyph);
                     link.push(new Link( nodes[getNodePosition(nodes, path.edges[i].from.id)],
                             nodes[getNodePosition(nodes, path.edges[i].to.id)],
-                            path.edges[i].au ,
+                            (path.edges[i].lyph) ? auRepo.auSet[auRepo.getIndexByID(path.edges[i].lyph.id)]: undefined,
+                            path.edges[i].lyph,
                             path.edges[i].type,
                             path.edges[i].id,
                             path.edges[i].name,
@@ -666,6 +715,12 @@ var graphEditor = function () {
         });
     };
 
+
+
+    refresh_graph = function refresh_graph(){
+        selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink);
+
+    }
 
 
     load_all_materials();
