@@ -224,6 +224,7 @@ function LayerRepo(layers){
     }
 
     this.containsLayer = function(thickness, material){
+        console.log(layers);
         for (var i =0; i < layers.length; i++){
             if (layers[i].thickness == thickness && layers[i].material.id == material.id) return i;
         }
@@ -245,8 +246,9 @@ function Layer(id, name, thickness, material) {
 
 
     //function ajax_create_layer () {
-        $.ajax
+       this.ajx_sync_layer = $.ajax
         ({
+            context: this,
             url:
             "http://open-physiology.org:5054/makelayer/" +
             "?material=" + this.material.id +
@@ -268,8 +270,8 @@ function Layer(id, name, thickness, material) {
 
                 //console.log("Layer Created", response);
 
-                layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
-
+                //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
+                this.id = response.id;
 
                 if (typeof 'rehashaueditor' == 'function') {
                     rehashaueditor();
