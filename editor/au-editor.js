@@ -14,6 +14,11 @@ var auEditor = function () {
         .attr("width", panelWidth)
         .attr("height", panelHeight);
 
+    var auMaterialRepoSvg = d3.select('#app-body .auRepo2').append("svg")
+        .attr("width", panelWidth)
+        .attr("height", panelHeight);
+
+
     var materialRepoSvg = d3.select('#app-body .materialRepo').append("svg")
         .attr("width", panelWidth)
         .attr("height", panelHeight);
@@ -48,6 +53,18 @@ var auEditor = function () {
                 selectedLayer = selectedAU.layers[0];
             syncSelectedAU();
             updateLayerParameters(selectedLayer);
+        }
+    }
+
+
+    var onSelectMaterialAU = function(d){
+        console.log(d);
+        if (this != selectedMaterial){
+            d3.select(this).style("stroke", "red");
+            d3.select(selectedMaterialNode).style("stroke", "black");
+            selectedMaterialNode = this;
+            selectedMaterial = d;
+            updateMaterialParameters(selectedMaterial);
         }
     }
 
@@ -111,6 +128,7 @@ var auEditor = function () {
     }
 
     function updateMaterialParameters(material){
+        console.log(material);
         d3.select("#materialID").property("value", material.id);
         d3.select("#materialName").property("value", material.name);
     }
@@ -302,13 +320,15 @@ var auEditor = function () {
          //console.log(layers);
 
 
-         var materialIndex  = materialRepo.getIndexByID(materialID.value);
-         if (materialIndex == -1){
+         var material  = (materialRepo.getIndexByID(materialID.value) > auRepo.getIndexByID(materialID.value)) ? materialRepo.materials[materialRepo.getIndexByID(materialID.value)] : auRepo.auSet[auRepo.getIndexByID(materialID.value)];
+         if (!material) {
              alert("Cannot update the level: no material with such ID exists!");
              return;
          }
 
-         var material = materialRepo.materials[materialIndex];
+
+
+         //var  = materialRepo.materials[materialIndex];
 
          console.log("LayerRepo:" ,(layerRepo == null));
 
@@ -339,6 +359,7 @@ var auEditor = function () {
              }
          }
 
+         console.log(auRepo);
          //newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
          ////layers.push(newLayer);
          //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
@@ -494,8 +515,13 @@ var auEditor = function () {
 
                         var layers_content= [];
                         for (var j = 0; j < data[i].layers.length;j++){
-                            //console.log(data[i].layers[j]);
-                            var newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                            //TODO
+
+                            var newLayer  = null;
+                            if (auRepo)
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), (materialRepo.getIndexByID(data[i].layers[j].mtlid) > auRepo.getIndexByID(data[i].layers[j].mtlid)) ? materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)] : auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                            else
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
                             if (layerRepo == null){
                                 layerRepo = new LayerRepo([newLayer]);
                             } else {
@@ -517,6 +543,8 @@ var auEditor = function () {
                         //console.log(auRepo.auSet[0]);
 
                         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                        auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
+
                     }
                 }
 
