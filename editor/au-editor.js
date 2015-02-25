@@ -140,6 +140,7 @@ var auEditor = function () {
 
     function cloneAU(au){
         console.log("here");
+
         //if (auRepo.getIndexByID(auID.value) > -1){
         //    alert("Cannot create a new AU: another AU with such ID exists!");
         //    return;
@@ -152,10 +153,13 @@ var auEditor = function () {
             newAU.length = auLength.value;
         }
         else {
-            newAU = new AsymmetricUnit(auID.value, auName.value, [], auLength.value);
+            newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
             console.log(newAU);
         }
-        auRepo.addAt(newAU, auRepo.auSet.length - 1);
+
+        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
+        else auRepo.addAt(newAU, 0);
+
         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
     }
 
@@ -305,29 +309,35 @@ var auEditor = function () {
          }
 
          var material = materialRepo.materials[materialIndex];
-         var newLayer = null;
-         //if (selectedLayer != null){
-         //    newLayer = selectedLayer.clone();
-         //    newLayer.id = layerID.value;
-         //    newLayer.name = layerName.value;
-         //    newLayer.thickness = layerThickness.value;
-         //    newLayer.material = material;
-         //}
-         //else
-         console.log("Layer exists?" , layerRepo.containsLayer(layerThickness.value,material ));
-         var layerindex = layerRepo.containsLayer(layerThickness.value,material);
-         if (layerindex  > -1){
-             selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
-             selectedAU.draw(svg, mainVP, onSelectLayer);
-             auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-         } else {
-              newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
-             layerRepo.addAt(newLayer,0);
+
+         console.log("LayerRepo:" ,(layerRepo == null));
+
+         //If this is the first AU we are creating and the layerRepo is null
+         if (layerRepo == null){
+             var newLayer = new Layer("Layer_1", materialName.value, 1, material);
+             layerRepo = new LayerRepo([newLayer]);
              selectedAU.addLayerAt(newLayer, 0);
              selectedAU.draw(svg, mainVP, onSelectLayer);
              auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+             console.log(layerRepo);
+         } else { // If AUs already exist
+             var layerindex = layerRepo.containsLayer(layerThickness.value, material);
+             if (layerindex > -1) {  // Layer exists so simply add
+                 //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
+                 //if (index == 0) index = selectedAU.getNumberOfLayers();
+                 selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
+                 selectedAU.draw(svg, mainVP, onSelectLayer);
+                 auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+             } else { // Layer does not exist, create a new layer
+                 newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
+                 //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
+                 //if (index == 0) index = selectedAU.getNumberOfLayers();
+                 layerRepo.addAt(newLayer, 0);
+                 selectedAU.addLayerAt(newLayer, 0);
+                 selectedAU.draw(svg, mainVP, onSelectLayer);
+                 auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+             }
          }
-
 
          //newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
          ////layers.push(newLayer);
