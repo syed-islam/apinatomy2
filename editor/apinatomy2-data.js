@@ -362,7 +362,8 @@ function AsymmetricUnit(id, name, layers, length){
         svg.selectAll("chart")
             .data(au.layers)
             .enter().append("rect")
-            .style("fill", function (d) {return d.material.colour;})
+            .style("fill", function (d) { console.log(d.material); if (d.material.colour == undefined) return "#888888"; return d.material.colour;})
+            .style("fill-opacity" , function (d){if (d.material.colour == undefined)  return 0.5 ; return 1.0})
             .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
             .attr(attr_height, function (d) {return d.thickness * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
@@ -381,7 +382,7 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_y, function (d) {
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
-            .text(function(d) { return d.id + " - " + d.name});
+            .text(function(d, i) {  return d.material.id + " - " + d.name});
     }
 }
 
@@ -457,7 +458,7 @@ function AsymmetricUnitRepo(auSet){
             svg.selectAll("auRepo")
                 .data(auRepo.auSet[j].layers)
                 .enter().append("rect")
-                .style("fill", function (d) {return d.material.colour;})
+                .style("fill", function (d) { if (d.material.colour == undefined) return "#888888"; return d.material.colour;})
                 .attr("width", function (d) {return /*auRepo.auSet[j].length * */ vp.lengthScale;})
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})
