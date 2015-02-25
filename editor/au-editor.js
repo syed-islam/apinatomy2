@@ -173,8 +173,10 @@ var auEditor = function () {
             newAU.length = auLength.value;
         }
         else {
-            newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
-            console.log(newAU);
+            //newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
+            //console.log(newAU);
+            alert("No AU Selected");
+            return;
         }
 
         if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
@@ -184,6 +186,18 @@ var auEditor = function () {
         //newau.draw()
         newAU.draw(svg, mainVP, onSelectLayer);
         redraw_aurepos();
+    }
+
+    function newAU(){
+        var newAU = null;
+        newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
+        console.log(newAU);
+        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
+        else auRepo.addAt(newAU, 0);
+        newAU.draw(svg, mainVP, onSelectLayer);
+        redraw_aurepos();
+
+
     }
 
 
@@ -244,6 +258,11 @@ var auEditor = function () {
 
 
     }
+
+    d3.select("#auNew").on("click", function() {
+        console.log("here");
+        newAU();
+    })
 
     d3.select("#auClone").on("click", function() {
         console.log("here");
@@ -478,6 +497,7 @@ var auEditor = function () {
             success: function( response )
             {
                 var data = response;
+                console.log("Response:", response);
 
 
                 if ( data.hasOwnProperty( "Error" ) )

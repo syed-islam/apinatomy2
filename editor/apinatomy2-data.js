@@ -350,6 +350,7 @@ function AsymmetricUnit(id, name, layers, length){
             attr_x = "y";
             attr_y = "x";
         }
+
         //Draw base
         var baseLength = 0;
         if (au != null) baseLength = au.length;
@@ -358,6 +359,7 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_width, baseLength * vp.lengthScale)
             .attr(attr_height, vp.margin);
         if (au == null) return;
+
         //Draw AU
         svg.selectAll("chart")
             .data(au.layers)
