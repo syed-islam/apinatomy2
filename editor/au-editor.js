@@ -152,8 +152,10 @@ var auEditor = function () {
         au.id = auID.value;
         au.name = auName.value;
         au.length = auLength.value;
+
         au.draw(svg, mainVP, onSelectLayer);
-        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        redraw_aurepos();
     }
 
     function cloneAU(au){
@@ -178,8 +180,12 @@ var auEditor = function () {
         if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
         else auRepo.addAt(newAU, 0);
 
-        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        //newau.draw()
+        newAU.draw(svg, mainVP, onSelectLayer);
+        redraw_aurepos();
     }
+
 
     function saveAUtoServer(au){
         console.log(au);
@@ -277,8 +283,10 @@ var auEditor = function () {
                     auRepo.removeAt(index);
                     if (auRepo.auSet.length > 0) selectedAU = auRepo.auSet[0];
                     selectedAU.draw(svg, mainVP, onSelectLayer);
-                    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    redraw_aurepos();
                     updateAUParameters(selectedAU);
+
                 }
             }
         }
@@ -338,7 +346,8 @@ var auEditor = function () {
              layerRepo = new LayerRepo([newLayer]);
              selectedAU.addLayerAt(newLayer, 0);
              selectedAU.draw(svg, mainVP, onSelectLayer);
-             auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+             //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+             redraw_aurepos();
              console.log(layerRepo);
          } else { // If AUs already exist
              var layerindex = layerRepo.containsLayer(layerThickness.value, material);
@@ -347,7 +356,8 @@ var auEditor = function () {
                  //if (index == 0) index = selectedAU.getNumberOfLayers();
                  selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
                  selectedAU.draw(svg, mainVP, onSelectLayer);
-                 auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                 //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                 redraw_aurepos();
              } else { // Layer does not exist, create a new layer
                  newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
                  //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
@@ -355,7 +365,8 @@ var auEditor = function () {
                  layerRepo.addAt(newLayer, 0);
                  selectedAU.addLayerAt(newLayer, 0);
                  selectedAU.draw(svg, mainVP, onSelectLayer);
-                 auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                 //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                 redraw_aurepos();
              }
          }
 
@@ -390,7 +401,8 @@ var auEditor = function () {
             if (materialIndex >= 0)
                 selectedLayer.material = materialRepo.materials[materialIndex];
             selectedAU.draw(svg, mainVP, onSelectLayer);
-            auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+            //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+            redraw_aurepos();
         } else {
             alert("Cannot update a layer: " + (selectedAU == null )? " AU is not selected!" : " layer is not selected!");
         }
@@ -542,16 +554,17 @@ var auEditor = function () {
                         else auRepo.addAt(toto,0);
                         //console.log(auRepo.auSet[0]);
 
-                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-                        auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
-
+                        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                        //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
+                        redraw_aurepos();
                     }
                 }
 
 
 
                 if (auRepo != null ) {
-                    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    redraw_aurepos();
                     selectedAU = auRepo.auSet[0];
                 }
 
@@ -620,11 +633,16 @@ var auEditor = function () {
         });
 
 
-
     });
 
 
     load_all_materials();
+
+
+    function redraw_aurepos(){
+        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
+    }
 
 
 
@@ -632,7 +650,8 @@ var auEditor = function () {
         console.log("callback test");
         //console.log(layerRepo);
         selectedAU.draw(svg, mainVP, onSelectLayer);
-        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        redraw_aurepos();
     }
 
 
