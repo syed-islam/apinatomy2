@@ -117,6 +117,13 @@ text.id {
     left: 340px;
 }
 
+#app-body .hierarchy {
+    width: 540px;
+    height: 600px;
+    /*position: absolute;*/
+    left: 340px;
+}
+
 #app-body .panel {
     width: 300px;
     height: 600px;
