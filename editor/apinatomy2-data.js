@@ -1077,7 +1077,7 @@ function Graph(id, name, nodes, links){
                     return prev - d.thickness * layerHeight;
                 })
                 .style("fill", function (d) {
-                    return d.material.colour;
+                    if (d.material.colour == undefined) return "#888888"; return d.material.colour;
                 })
                 .attr("class", "layer")
             ;
