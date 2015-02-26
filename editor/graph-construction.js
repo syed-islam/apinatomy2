@@ -735,7 +735,7 @@ var graphEditor = function () {
     }
 
 
-    ///////////////////////////////////
+///////////////////////////////////
 // Loading Lyph Data from Server
 ///////////////////////////////////
 
@@ -753,6 +753,7 @@ var graphEditor = function () {
             success: function( response )
             {
                 var data = response;
+                console.log("Response:", response);
 
 
                 if ( data.hasOwnProperty( "Error" ) )
@@ -802,8 +803,13 @@ var graphEditor = function () {
 
                         var layers_content= [];
                         for (var j = 0; j < data[i].layers.length;j++){
-                            //console.log(data[i].layers[j]);
-                            var newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                            //TODO
+
+                            var newLayer  = null;
+                            if (auRepo)
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), (materialRepo.getIndexByID(data[i].layers[j].mtlid) > auRepo.getIndexByID(data[i].layers[j].mtlid)) ? materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)] : auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                            else
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
                             if (layerRepo == null){
                                 layerRepo = new LayerRepo([newLayer]);
                             } else {
@@ -825,6 +831,8 @@ var graphEditor = function () {
                         //console.log(auRepo.auSet[0]);
 
                         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                        //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
+                        //redraw_aurepos();
                     }
                 }
 
@@ -832,6 +840,7 @@ var graphEditor = function () {
 
                 if (auRepo != null ) {
                     auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    //redraw_aurepos();
                     selectedAU = auRepo.auSet[0];
                 }
 
@@ -839,19 +848,19 @@ var graphEditor = function () {
                 //loadMaterialRepoToDatalist(materialRepo);
 
 
-                //if (selectedAU != null && selectedAU.layers != null && selectedAU.layers.length > 0)
-                //    selectedLayer = selectedAU.layers[0];
-                //
-                //if (materialRepo.materials != null && materialRepo.materials.length > 0)
-                //    selectedMaterial = materialRepo.materials[0];
-                //
-                //if (selectedAU != null) {
-                //    syncSelectedAU();
-                //    updateLayerParameters(selectedLayer);
-                //}
+                if (selectedAU != null && selectedAU.layers != null && selectedAU.layers.length > 0)
+                    selectedLayer = selectedAU.layers[0];
+
+                if (materialRepo.materials != null && materialRepo.materials.length > 0)
+                    selectedMaterial = materialRepo.materials[0];
+
+                if (selectedAU != null) {
+                    syncSelectedAU();
+                    updateLayerParameters(selectedLayer);
+                }
 
 
-                //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+                window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
                 //console.log("LayerRepo:" , layerRepo);
 
