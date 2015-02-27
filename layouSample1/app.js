@@ -60,6 +60,52 @@ var graphEditor = function () {
     }
 
 
+    var onSelectNode = function(d){
+        //if (selectedGraph.selected_node){
+        //    //Update node parameters (tree parameters)
+        //    //Display tree
+        //    if (selectedGraph.selected_node.tree){
+        //        var treeVP = new TreeVisualParameters(width - 2 * panelWidth, height,
+        //            selectedGraph.selected_node.x - 150, selectedGraph.selected_node.y, 150, {x:-20, y:20});
+        //        selectedGraph.selected_node.tree.draw(svg, treeVP);
+        //    }
+        //} else {
+        //    svg.select("g.tree").remove();
+        //}
+        //d3.select("#graphID").property("value", "foul");
+        //d3.select("#nodeName").property("value", "foul");
+        //console.log("Node select callback", d);
+        updateNodeParameter(d);
+    }
+
+    var onSelectLink = function(d){
+        //console.log(d)
+        if (d){
+            //Update link parameters
+            updateEdgeParameters(d);
+            selectedAU = d.au;
+            updateAUParameters(selectedAU);
+        }
+    }
+
+    function updateEdgeParameters(edge){
+        console.log("Updating edge parameter:" , edge);
+
+        edge.edgeid != null ? d3.select("#edgeID").property("value", edge.edgeid) : d3.select("#edgeID").property("value", "")
+        edge.type != null ? d3.select("#edgeType").property("value", edge.type) : d3.select("#edgeType").property("value", "")
+        edge.description != null ? d3.select("#edgeDescription").property("value", edge.description) : d3.select("#edgeDescription").property("value", "");
+    }
+
+
+    function updateNodeParameter(node){
+
+        if (node != null){
+            //console.log(node);
+            d3.select("#nodeName").property("value", node.name);
+        } else {
+            d3.select("#nodeName").property("value","");
+        }
+    }
 
     function updateGraphParameters(graph){
         if (graph != null){
@@ -99,11 +145,64 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
-        selectedGraph.draw(svg);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink);
         updateGraphParameters(selectedGraph);
     }
 
 
+    d3.select("#edgeSave").on("click", function(){
+        var actualEdge = selectedGraph.selected_link;
+        var edgeType = $("#edgeType").val().trim();
+        var edgeName = $("#edgeDescription").val().trim();
+        var fromNode = selectedGraph.selected_link.source ;
+        var toNode = selectedGraph.selected_link.target;
+        var edgeLyphID = $("#auID").val().trim();
+
+        //console.log(edgeType, edgeName, fromNode, toNode, edgeLyphID);
+
+
+        //Update the local data
+        selectedGraph.selected_link.au = auRepo.auSet[auRepo.getIndexByID($("#auID").val().trim())];
+        selectedGraph.selected_link.type = $("#edgeType").val().trim();
+        selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
+
+        // ajax call to create a lyphedge
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5054/makelyphedge/"+
+            "?type="+ encodeURIComponent($("#edgeType").val().trim())+
+            "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
+            "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)+
+            "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)+
+            "&lyph="+ encodeURIComponent($("#auID").val().trim())
+            ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node creation error:" , response);
+                    return;
+                }
+
+                //console.log("Response:", response);
+                //actualEdge.edgeid = response.id;
+                refresh_graph();
+
+
+            }
+        });
+
+
+
+    });
 
 
 
@@ -190,7 +289,7 @@ var graphEditor = function () {
 
 
                     selectedGraph = graphRepo.graphs[0];
-                    selectedGraph.draw(svg, svgOffset, onSelectNode, onSelectLink, onMultipleEdgeSelect);
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink);
                     graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                     updateGraphParameters(selectedGraph);
 
@@ -320,7 +419,7 @@ var graphEditor = function () {
                 ////adding graph, selecting graph, drawing graphrepo and graph.
                 graphRepo.addAt(graphAjax,0);
                 selectedGraph = graphRepo.graphs[0];
-                selectedGraph.draw(svg);
+                selectedGraph.draw(svg, onSelectNode,onSelectLink);
                 graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                 updateGraphParameters(selectedGraph);
 
@@ -475,7 +574,7 @@ var graphEditor = function () {
                 }
 
 
-                window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+                //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
                 //console.log("LayerRepo:" , layerRepo);
 

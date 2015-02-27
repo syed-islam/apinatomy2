@@ -1377,12 +1377,12 @@ function Graph(id, name, nodes, links) {
 
 
 
-    this.draw = function (svg) {
+    this.draw = function (svg, onSelectNode, onSelectLink) {
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius =7;
 
-
+        //console.log(onSelectNode);
 
 
         // init D3 force layout
@@ -1517,7 +1517,7 @@ function Graph(id, name, nodes, links) {
 
 
             // add new links
-            path.enter().append('svg:path')
+            path.enter().append('path')
                 .attr('class', 'link')
                 .classed('selected', function (d) {
                     return d === selected_link;
@@ -1541,6 +1541,7 @@ function Graph(id, name, nodes, links) {
                         $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
                     }
                     selected_node = null;
+                    onSelectLink(d);
                     restart();
                 });
 
@@ -1609,7 +1610,7 @@ function Graph(id, name, nodes, links) {
                         .style('marker-end', 'url(#end-arrow)')
                         .classed('hidden', false)
                         .attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
-
+                    onSelectNode(d);
                     restart();
                 })
                 .on('mouseup', function (d) {
@@ -1661,7 +1662,10 @@ function Graph(id, name, nodes, links) {
                     selected_link = link;
                     selected_node = null;
                     restart();
-                });
+                })
+                .append("svg:title")
+                .text(function(d){return "Name:"+ d.name;});
+            ;
 
             // show node IDs
             g.append('svg:text')
@@ -1669,7 +1673,7 @@ function Graph(id, name, nodes, links) {
                 .attr('y', 4)
                 .attr('class', 'id')
                 .text(function (d) {
-                    return d.id;
+                    return d.name;
                 });
 
             // remove old nodes
@@ -1690,7 +1694,8 @@ function Graph(id, name, nodes, links) {
 
             // insert new node at point
             var point = d3.mouse(this),
-                node = {id: ++lastNodeId, fixed: false};
+                node = new Node(++lastNodeId,lastNodeId, 100,100,null,false);
+                //node = {id: , fixed: false};
             node.x = point[0];
             node.y = point[1];
             nodes.push(node);
