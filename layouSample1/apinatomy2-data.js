@@ -1740,7 +1740,7 @@ function Graph(id, name, nodes, links) {
         var lastKeyDown = -1;
 
         function keydown() {
-            d3.event.preventDefault();
+            //d3.event.preventDefault();
 
             if (lastKeyDown !== -1) return;
             lastKeyDown = d3.event.keyCode;

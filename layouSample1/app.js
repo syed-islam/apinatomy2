@@ -574,7 +574,7 @@ var graphEditor = function () {
                 }
 
 
-                //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+                window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
                 //console.log("LayerRepo:" , layerRepo);
 
