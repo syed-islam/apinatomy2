@@ -149,9 +149,84 @@ var graphEditor = function () {
         updateGraphParameters(selectedGraph);
     }
 
+    d3.select("#auUpdate").on("click", function() {
+        if (selectedGraph.multiple_selection.length > 0){
+            for (var i =0; i < selectedGraph.multiple_selection.length; i ++){
+                console.log(selectedGraph.multiple_selection[i]);
+                selectedGraph.multiple_selection[i].au = selectedAU;
+                selectedGraph.draw(svg, onSelectNode, onSelectLink);
+
+                $.ajax
+                ({
+                    url:
+                    "http://open-physiology.org:5054/assignlyph/"+
+                    "?lyph="+ encodeURIComponent(selectedAU.id) +
+                    "&edge="+encodeURIComponent(selectedGraph.getMultipleSection()[i].edgeid),
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        response;
+
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Node creation error:" , response);
+                            return;
+                        }
+
+                        console.log(response);
+                    }
+                });
+
+
+
+
+            }
+
+            return;
+        }
+
+        if (selectedGraph.selected_link){
+            selectedGraph.selected_link.au = selectedAU;
+            selectedGraph.draw(svg, onSelectNode, onSelectLink);
+
+
+            console.log(selectedAU.id, selectedGraph.selected_link.edgeid);
+
+            // ajax call to update the lyph assignment
+            $.ajax
+            ({
+                url:
+                "http://open-physiology.org:5054/assignlyph/"+
+                "?lyph="+ encodeURIComponent(selectedAU.id) +
+                "&edge="+encodeURIComponent(selectedGraph.selected_link.edgeid),
+
+                jsonp: "callback",
+
+                dataType: "jsonp",
+
+
+                success: function (response) {
+                    response;
+
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Node creation error:" , response);
+                        return;
+                    }
+
+                    console.log(response);
+                }
+            });
+        } else {
+            alert("Error: Link is not selected!");
+        }
+    });
 
     d3.select("#edgeSave").on("click", function(){
-        console.log(selectedGraph);
         var actualEdge = selectedGraph.selected_link;
         var edgeType = $("#edgeType").val().trim();
         var edgeName = $("#edgeDescription").val().trim();
@@ -159,7 +234,7 @@ var graphEditor = function () {
         var toNode = selectedGraph.selected_link.target;
         var edgeLyphID = $("#auID").val().trim();
 
-        //console.log(edgeType, edgeName, fromNode, toNode, edgeLyphID);
+        console.log("EdgeSave:", edgeType, edgeName, fromNode, toNode, edgeLyphID);
 
 
         //Update the local data
@@ -189,11 +264,11 @@ var graphEditor = function () {
 
 
                 if (response.hasOwnProperty("Error")) {
-                    console.log("Node creation error:" , response);
+                    console.log("Edge creation error:" , response);
                     return;
                 }
 
-                //console.log("Response:", response);
+                console.log("Response:", response);
                 //actualEdge.edgeid = response.id;
                 refresh_graph();
             }

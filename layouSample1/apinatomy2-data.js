@@ -726,577 +726,6 @@ function Link(source, target, au,type, edgeid, description, fma, left, right){
     this.right = right;
 }
 
-//create Graph
-//function Graph(id, name, nodes, links){
-//    this.id = id;
-//    this.name = name;
-//    this.nodes = nodes;
-//    this.links = links;
-//
-//    this.selected_node = null;
-//    this.selected_link = null;
-//    this.multiple_select = [];
-//
-//    var a_pressed = false;
-//
-//    this.clone = function () {
-//        var newGraph = new Graph(this.id, this.name, this.nodes.slice(0), this.links.slice(0));
-//        return newGraph;
-//    }
-//
-//    this.addLink = function(mousedown_node, mouseup_node, au){
-//        var source, target;
-//        if (mousedown_node.id < mouseup_node.id) {
-//            source = mousedown_node;
-//            target = mouseup_node;
-//        } else {
-//            source = mouseup_node;
-//            target = mousedown_node;
-//        }
-//        var link = links.filter(function (l) {
-//            return (l.source === source && l.target === target);
-//        })[0];
-//
-//        if (!link) {
-//            link = new Link(source, target, au);
-//            links.push(link);
-//        }
-//        return link;
-//    }
-//
-//
-//    this.getMaxWidth = function(){
-//        var maxVal=0;
-//        for (var i =0; i < nodes.length; i++){
-//            if (nodes[i].x > maxVal) {
-//                maxVal = nodes[i].x;
-//            }
-//        }
-//        return maxVal;
-//    }
-//
-//    this.getMaxHeight = function(){
-//        var maxVal=0;
-//        for (var i =0; i < nodes.length; i++){
-//            if (nodes[i].y > maxVal) {
-//                maxVal = nodes[i].y;
-//            }
-//        }
-//        return maxVal;
-//    }
-//
-//    this.addNode = function(point){
-//        var nodeId = this.getNextID();
-//        var node = new Node(nodeId, "..." , point[0], point[1], null);
-//        nodes.push(node);
-//
-//        //function ajax_create_new_node () {
-//        $.ajax
-//        ({
-//            url:
-//            "http://open-physiology.org:5054/makelyphnode/" ,
-//
-//            jsonp: "callback",
-//
-//            dataType: "jsonp",
-//
-//
-//            success: function (response) {
-//                response;
-//
-//                if (response.hasOwnProperty("Error")) {
-//                    console.log("Node creation error:" , response);
-//                    return;
-//                }
-//                node.name = response.id;
-//
-//                console.log(node.name);
-//
-//
-//                refresh_graph();
-//            }
-//        });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    }
-//
-//    this.deleteNode = function(node){
-//        nodes.splice(nodes.indexOf(node), 1);
-//
-//        var toSplice = links.filter(function(l) {
-//            return (l.source === node || l.target === node);
-//        });
-//        toSplice.map(function(l) {
-//            links.splice(links.indexOf(l), 1);
-//        });
-//    }
-//
-//    this.deleteLink = function(link){
-//        links.splice(links.indexOf(link), 1);
-//    }
-//
-//    this.getNextID = function(){
-//        var freeIds = [];
-//        for (var i = 0; i < nodes.length; i++){
-//            freeIds[nodes[i].id] = true;
-//        }
-//        for (var i = 0; i < freeIds.length; i++){
-//            if (!freeIds[i]) return i;
-//        }
-//        return freeIds.length;
-//    }
-//
-//    this.getNodeIndexByID = function (id){
-//        for (var i =0; i < nodes.length; i++){
-//            if (nodes[i].id === id)
-//                return i;
-//        }
-//        return -1;
-//    }
-//
-//    this.getMultipleSection= function (){
-//        return this.multiple_select;
-//    }
-//
-//    this.draw = function(svg, offset, onSelectNode, onSelectLink, onMultipleSelectEdge) {
-//        //console.log((this.getMaxX() +100) + " " + (this.getMaxY() +100) );
-//        svg.attr("height", this.getMaxHeight() < 540 ? 540 : this.getMaxHeight() +50);
-//        svg.attr("width", this.getMaxWidth() < 590 ? 590 : this.getMaxWidth() + 50);
-//
-//        var colors = d3.scale.category10();
-//        var graph = this;
-//        var mousedown_link = null,
-//            mousedown_node = null,
-//            mouseup_node = null;
-//
-//        function resetMouseVars() {
-//            mousedown_node = null;
-//            mouseup_node = null;
-//            mousedown_link = null;
-//        }
-//
-//        var drag_line = svg.append('svg:path')
-//            .attr('class', 'link dragline hidden')
-//            .attr('d', 'M0,0L0,0');
-//
-//
-//        var path, circle;
-//
-//        function update() {
-//            svg.selectAll('g.graph').remove();
-//
-//            path = svg.append('g').attr('class', 'graph');
-//            circle = svg.append('g').attr('class', 'graph');
-//            circle = circle.selectAll('g').data(nodes, function (d) {return d.id;});
-//            circle.selectAll('circle')
-//                .style('fill', function (d) {
-//                    return (d === graph.selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id);
-//                })
-//            ;
-//
-//
-//            var g = circle.enter().append('g').attr('class', 'graph');
-//
-//            g.append('circle')
-//                .attr('class', 'node')
-//                .attr('r', 12)
-//                .attr('cx', function (d) {
-//                    return d.x;
-//                })
-//                .attr('cy', function (d) {
-//                    return d.y;
-//                })
-//                .style('fill', function (d) {
-//                    return (d === graph.selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id);
-//                })
-//                .style('stroke', function (d) {
-//                    return d3.rgb(colors(d.id)).darker().toString();
-//                })
-//                .on('mousedown', function (d) {
-//                    if (d3.event.ctrlKey) return;
-//                    mousedown_node = d;
-//                    if (mousedown_node === graph.selected_node)
-//                        graph.selected_node = null;
-//                    else
-//                        graph.selected_node = mousedown_node;
-//                    graph.selected_link = null;
-//                    drag_line
-//                        .classed('hidden', false)
-//                        .attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
-//                    onSelectNode();
-//                    update();
-//                })
-//                .on('mouseup', function (d) {
-//                    if (!mousedown_node) return;
-//                    drag_line.classed('hidden', true)
-//                    mouseup_node = d;
-//                    if (mouseup_node === mousedown_node) {
-//                        resetMouseVars();
-//                        return;
-//                    }
-//                    graph.selected_link = graph.addLink(mousedown_node, mouseup_node, null);
-//                    graph.selected_node = null;
-//                    update();
-//                })
-//                .append("svg:title")
-//                .text(function(d){return "Name:"+ d.name;});
-//            ;
-//
-//            g.append('text')
-//                .attr('x', function (d) {
-//                    return d.x;
-//                })
-//                .attr('y', function (d) {
-//                    return d.y;
-//                })
-//                .attr('class', 'id')
-//                .text(function (d) {
-//                    return d.name;
-//                });
-//
-//            // drawing paths
-//            path = path.selectAll('path').data(links);
-//            path.classed('selected', function (d) {
-//                return d === graph.selected_link;
-//            });
-//
-//            path.enter().append('path')
-//                .attr('class', 'link')
-//                .classed('selected', function (d) {
-//                    console.log(graph.multiple_select.length === 0);
-//                    if (graph.multiple_select.length === 0)
-//                        return d === graph.selected_link;
-//                    else {
-//                        for (var i =0; i < graph.multiple_select.length; i++){
-//                            if (d === graph.multiple_select[i]) return true;
-//                        }
-//                            return false;
-//                    }
-//
-//                })
-//                .style('stroke', function (d) {
-//                    return d3.rgb(colors(d.type));
-//                })
-//                .attr('d', function (d) {
-//                    var deltaX = d.target.x - d.source.x,
-//                        deltaY = d.target.y - d.source.y,
-//                        dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-//                        normX = deltaX / dist,
-//                        normY = deltaY / dist,
-//                        sourcePadding = 12,
-//                        targetPadding = 12,
-//                        sourceX = d.source.x + (sourcePadding * normX),
-//                        sourceY = d.source.y + (sourcePadding * normY),
-//                        targetX = d.target.x - (targetPadding * normX),
-//                        targetY = d.target.y - (targetPadding * normY);
-//                    return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
-//                })
-//                .on('mousedown', function (d) {
-//                    if (d3.event.ctrlKey) return;
-//
-//
-//                    mousedown_link = d;
-//
-//
-//                    // creating multiple selection
-//                    if (a_pressed){
-//                        graph.multiple_select.push(mousedown_link);
-//                        console.log(graph.multiple_select);
-//                        onMultipleSelectEdge();
-//                        update();
-//                        return;
-//                    }
-//
-//
-//                    if (mousedown_link === graph.selected_link)
-//                        graph.selected_link = null;
-//                    else
-//                        graph.selected_link = mousedown_link;
-//                    graph.selected_node = null;
-//                    onSelectLink();
-//                    update();
-//                })
-//                .append("svg:title")
-//                .text(function(d) {
-//                    var s = "Edge ID:" + d.edgeid + "\n";
-//                    s += "Description:" + d.description + "\n";
-//                    s += "FMA:" + d.fma+ "\n";
-//                    s += "AU:" + d.au+ "\n";
-//                    s += "Type:" + d.type+ "\n";
-//                    return s;
-//                })
-//            ;
-//
-//            path.enter().append('text')
-//                .attr('x', function (d) {
-//                    return (d.target.x + d.source.x)/2;
-//                })
-//                .attr('y', function (d) {
-//                    return (d.target.y + d.source.y)/2;
-//                })
-//                .attr('class', 'au')
-//                .text(function (d) {
-//                    //return "test";
-//                    if (d.au)
-//                       return d.au.id;
-//                });
-//
-//            //Variable 'path' already gives us access to a graph edge with associated link
-//            //To draw a set of layers, we create a 'g' element (group) and place it to the middle of the edge
-//            var auIcon = path.enter().append("g")
-//                .attr("transform", function (d) {
-//                    return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ")";
-//                });
-//
-//            var layerHeight = 5; var layerLength = 20;
-//            var prev = 0; //a variable to accumulate offset for layers
-//            //To draw layers, we must get access to layers of the AU associated with each link
-//            //However, not all links have AUs assigned, in this case we return an empty array
-//            auIcon.selectAll(".layer")
-//                .data(function (d){
-//                    if (d.au) return d.au.layers;
-//                    return [];
-//                }).enter() //we just started an iteration over layers
-//                .append("rect")
-//                .attr("height", function (d) {return d.thickness * layerHeight;})
-//                .attr("width", function (d) {return layerLength;})
-//                .attr("x", function(){return 0;})
-//                .attr("y", function (d, i) {
-//                    if (i ==0) prev =0; // reset the starting y for layers for each link
-//                    prev += d.thickness * layerHeight; //remember the relative Y coordinate of the current layer
-//
-//                    return prev - d.thickness * layerHeight;
-//                })
-//                .style("fill", function (d) {
-//                    if (d.material.colour == undefined) return "#888888"; return d.material.colour;
-//                })
-//                .attr("class", "layer")
-//            ;
-//
-//            //console.log("here");
-//
-//            //path.selectAll("links")
-//            //    .data(auRepo)
-//            //    .append("rect")
-//            //    .attr('x', function (d) {
-//            //                    return (d.target.x + d.source.x) / 2;
-//            //                })
-//            //                .attr('y', function (d) {
-//            //                    return (d.target.y + d.source.y) / 2;
-//            //                })
-//            //                .attr("height", function (d) {
-//            //                    return 10;
-//            //                })
-//            //                .attr("width", function (d) {
-//            //                    return 20;
-//            //                })
-//            //                .style("fill", function (d) {
-//            //                    return "black"
-//            //                });
-//
-//
-//            //var tukusvg = path.enter().append("g")
-//            //
-//            //tukusvg.append("rect")
-//            //    .attr('x', function (d) {
-//            //                    return (d.target.x + d.source.x) / 2;
-//            //                })
-//            //                .attr('y', function (d) {
-//            //                    return (d.target.y + d.source.y) / 2;
-//            //                })
-//            //                .attr("height", function (d) {
-//            //                    return 10;
-//            //                })
-//            //                .attr("width", function (d) {
-//            //                    return 20;
-//            //                })
-//            //                .style("fill", function (d) {
-//            //                    return "black"
-//            //                });
-//
-//            //var jsonRectangles = [
-//            //    { "x_axis": 10, "y_axis": 10, "height": 10, "width":10, "color" : "green" },
-//            //    { "x_axis": 50, "y_axis": 50, "height": 20, "width":20, "color" : "green" }
-//            //]
-//            ////try 3
-//            //for (var j = 0; j < this.links.length ; j++) {
-//            //    if (this.links[j].au != null) {
-//            //        for (var k = 0; k < this.links[j].au.layers.length; k++) {
-//            //            console.log(this.links[j].au.layers.length);
-//            //            path.select("path").append("rect")
-//            //                .attr('x', function (d) {
-//            //                    return (d.target.x + d.source.x) / 2;
-//            //                })
-//            //                .attr('y', function (d) {
-//            //                    return (d.target.y + d.source.y) / 2;
-//            //                })
-//            //                .attr("height", function (d) {
-//            //                    return 10;
-//            //                })
-//            //                .attr("width", function (d) {
-//            //                    return 20;
-//            //                })
-//            //                .style("fill", function (d) {
-//            //                    return "black"
-//            //                });
-//            //        }
-//            //    }
-//            //}
-//
-//
-//
-//
-//
-//            //
-//            //
-//            ////try 1
-//            //path.enter().append("rect")
-//            //    .attr('x', function (d) {
-//            //        return (d.target.x + d.source.x)/2;
-//            //    })
-//            //    .attr('y', function (d) {
-//            //        return (d.target.y + d.source.y)/2;
-//            //    })
-//            //  .attr("height", function (d,i) { return jsonRectangles[i].height; })
-//            //  .attr("width", function (d,i) { return jsonRectangles[i].width; })
-//            //  .style("fill", function(d) { return "black" });
-//
-//
-//
-//            //try 2
-//            //var svgContainer = path.enter().append("svg")
-//            //var rectangles = svgContainer.selectAll("rect")
-//            //                             .data(jsonRectangles)
-//            //                             .enter()
-//            //                             .append("rect");
-//            //var rectangleAttributes = rectangles
-//            //                          .attr("x", function (d) { return svg.selectAll("path"); })
-//            //                          .attr("y", function (d) { return d.y_axis; })
-//            //                          .attr("height", function (d) { return d.height; })
-//            //                          .attr("width", function (d) { return d.width; })
-//            //                          .style("fill", function(d) { return d.color; });
-//
-//
-//
-//
-//
-//        }
-//
-//        var drag = d3.behavior.drag()
-//            .origin(function() {
-//                var t = d3.select(this).select('circle');
-//                return {x: t.attr("x"), y:t.attr("y")}
-//            })
-//            .on("drag", function (d) {
-//                var dragTarget = d3.select(this).select('circle');
-//                //var new_cx = d.x, new_cy= d.y;
-//                var new_cx, new_cy;
-//                dragTarget.attr("cx", function () {
-//                        new_cx = d3.event.dx + parseInt(dragTarget.attr("cx"));
-//                        //new_cx = d3.mouse(this)[0] - 681;
-//                        //console.log(d3.mouse(this));
-//                        return new_cx;
-//                    })
-//                    .attr("cy", function () {
-//                        new_cy = d3.event.dy +  parseInt(dragTarget.attr("cy"));
-//                        //new_cy = d3.mouse(this)[1] - 80 ;
-//                        //console.log("y" +new_cy);
-//                        return new_cy;
-//                    });
-//                //TODO: transform to relative svg;
-//                d.x = new_cx - offset[0];
-//                d.y = new_cy - offset[1];
-//                //d.x = new_cx ;
-//                //d.y = new_cy ;
-//                update();
-//            });
-//
-//        function mousemove() {
-//            if (!mousedown_node) return;
-//            drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
-//            update();
-//        }
-//
-//        function mouseup() {
-//            if (mousedown_node) drag_line.classed('hidden', true)
-//            svg.classed('active', false);
-//            resetMouseVars();
-//        }
-//
-//        function mousedown() {
-//            svg.classed('active', true);
-//            if (d3.event.ctrlKey || mousedown_node || mousedown_link) return;
-//            var point = d3.mouse(this);
-//            graph.addNode(point);
-//            update();
-//        }
-//
-//        function keydown() {
-//            if (d3.event.keyCode === 65){
-//                (a_pressed)? a_pressed = false : a_pressed = true;
-//                console.log(a_pressed);
-//                if (!a_pressed) {graph.multiple_select = []; update()};
-//                return;
-//            }
-//
-//            if (d3.event.keyCode === 17) {// ctrl
-//                circle.call(drag);
-//                svg.classed('ctrl', true);
-//            }
-//            if (graph.selected_node || graph.selected_link) {
-//                switch (d3.event.keyCode) {
-//                    case 46: // delete
-//                        if (graph.selected_node) {
-//                            graph.deleteNode(graph.selected_node);
-//                        } else if (graph.selected_link) {
-//                            graph.deleteLink(graph.selected_link);
-//                        }
-//                        graph.selected_link = null;
-//                        graph.selected_node = null;
-//                        update();
-//                }
-//            }
-//        }
-//
-//        function keyup() {
-//            if (d3.event.keyCode === 17) {// ctrl
-//                circle
-//                    .on('mousedown.drag', null)
-//                    .on('touchstart.drag', null);
-//                svg.classed('ctrl', false);
-//            }
-//        }
-//
-//        svg.on('mousedown', mousedown)
-//            .on('mousemove', mousemove)
-//            .on('mouseup', mouseup);
-//
-//        d3.select(window)
-//            .on('keydown',keydown)
-//            .on('keyup',keyup);
-//
-//        update();
-//    };
-//
-//    this.import = function(){
-//    }
-//
-//    this.export = function(){
-//    }
-//}
 
 //repository of Graphs
 function GraphRepo(graphs){
@@ -1366,12 +795,17 @@ function Graph(id, name, nodes, links) {
     this.links = links;
     var lastNodeId = nodes.length - 1;
 
+    this.selected_node = null;
+    this.selected_link = null;
+
+    this.multiple_selection = [];
+
     var colors = d3.scale.category10();
 
     //TODO: Add multiple select ability from the other code.
 
     this.clone = function () {
-        var newGraph = new ForceGraph(this.id, this.name, this.nodes.slice(0), this.links.slice(0));
+        var newGraph = new Graph(this.id, this.name, this.nodes.slice(0), this.links.slice(0));
         return newGraph;
     }
 
@@ -1381,8 +815,19 @@ function Graph(id, name, nodes, links) {
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius =7;
+        var graph = this;
+
+        multiple_selected_node_1 = null;
+        multiple_selected_node_2 = null;
 
         //console.log(onSelectNode);
+
+        // mouse event vars
+
+            var mousedown_link = null,
+            mousedown_node = null,
+            mouseup_node = null;
+
 
 
         // init D3 force layout
@@ -1445,17 +890,12 @@ function Graph(id, name, nodes, links) {
 
         // handles to link and node element groups
         var path = svg.append('g').attr('class', 'graph').selectAll('path'),
-            circle = svg.append('g').attr('class', 'graph').selectAll('g');
+            circle = svg.append('g').attr('class', 'graph').selectAll('g'),
+            labels = svg.append('g').attr('class', 'graph').selectAll('text');
 
-        // mouse event vars
-        var selected_node = null,
-            selected_link = null,
-            mousedown_link = null,
-            mousedown_node = null,
-            mouseup_node = null;
 
-        multiple_selected_node_1 = null;
-        multiple_selected_node_2 = null;
+
+
 
         function resetMouseVars() {
             mousedown_node = null;
@@ -1489,6 +929,13 @@ function Graph(id, name, nodes, links) {
             });
 
 
+            labels.attr("x", function(d){return (d.source.x + d.target.x) /2;})
+                .attr("y", function(d){return (d.source.y + d.target.y) /2;})
+
+
+
+
+
         }
 
         // update graph (called when needed)
@@ -1497,57 +944,15 @@ function Graph(id, name, nodes, links) {
 
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             path = svg.append('g').attr('class', 'graph').selectAll('path');
+            labels = svg.append('g').attr('class', 'graph').selectAll('text');
 
             //svg.selectAll("path.link").remove();
             //svg.selectall("").remove();
             //path = svg.append('g').attr('class', 'graph');
 
-            // path (link) group
-            path = path.data(links);
-
-            // update existing links
-            path.classed('selected', function (d) {
-                return d === selected_link;
-            })
-                .style('marker-start', function (d) {
-                    return d.left ? 'url(#start-arrow)' : '';
-                })
-                .style('marker-end', function (d) {
-                    return d.right ? 'url(#end-arrow)' : '';
-                });
 
 
-            // add new links
-            path.enter().append('path')
-                .attr('class', 'link')
-                .classed('selected', function (d) {
-                    return d === selected_link;
-                })
-                .style('marker-start', function (d) {
-                    return d.left ? 'url(#start-arrow)' : '';
-                })
-                .style('marker-end', function (d) {
-                    return d.right ? 'url(#end-arrow)' : '';
-                })
-                .on('mousedown', function (d) {
-                    if (d3.event.ctrlKey) return;
 
-                    // select link
-                    mousedown_link = d;
-                    if (mousedown_link === selected_link) {
-                        selected_link = null;
-                        $("#ins").text("Deselected Link:" + d.id);
-                    } else {
-                        selected_link = mousedown_link;
-                        $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
-                    }
-                    selected_node = null;
-                    onSelectLink(d);
-                    restart();
-                });
-
-            // remove old links
-            path.exit().remove();
 
 
             // circle (node) group
@@ -1572,7 +977,7 @@ function Graph(id, name, nodes, links) {
                 .attr('class', 'node')
                 .attr('r', nodeRadius)
                 .style('fill', function (d) {
-                    return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id);
+                    return (d === graph.selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id);
                 })
                 .style('stroke', function (d) {
                     return d3.rgb(colors(d.id)).darker().toString();
@@ -1596,15 +1001,15 @@ function Graph(id, name, nodes, links) {
 
                     // select node
                     mousedown_node = d;
-                    if (mousedown_node === selected_node) {
-                        selected_node = null;
+                    if (mousedown_node === graph.selected_node) {
+                        graph.selected_node = null;
                         $("#ins").text("Deselected node:" + d.id);
                     }
                     else {
-                        selected_node = mousedown_node;
+                        graph.selected_node = mousedown_node;
                         $("#ins").text("Selected node:" + d.id);
                     }
-                    selected_link = null;
+                    graph.selected_link = null;
 
                     // reposition drag line
                     drag_line
@@ -1654,14 +1059,15 @@ function Graph(id, name, nodes, links) {
                     if (link) {
                         link[direction] = true;
                     } else {
-                        link = {source: source, target: target, left: false, right: false};
-                        link[direction] = true;
+                        //link = {source: source, target: target, left: false, right: false};
+                        link = new Link(source, target, null,".",".","...", "..", false, false),
+                            link[direction] = true;
                         links.push(link);
                     }
 
                     // select new link
-                    selected_link = link;
-                    selected_node = null;
+                    graph.selected_link = link;
+                    graph.selected_node = null;
                     restart();
                 })
                 .append("svg:title")
@@ -1679,6 +1085,104 @@ function Graph(id, name, nodes, links) {
 
             // remove old nodes
             circle.exit().remove();
+
+
+
+
+            labels = labels.data(links);
+
+            labels.enter().append('text')
+                .attr("x", function(d) { return (d.source.y + d.target.y) / 2; })
+                .attr("y", function(d) { return (d.source.x + d.target.x) / 2; })
+                .attr("text-anchor", "middle")
+                .text(function(d) {if (d.au) return d.au.id; });
+
+
+            // path (link) group
+            path = path.data(links);
+
+            // update existing links
+            path = path.classed('selected', function (d) {
+                return d === graph.selected_link;
+            })
+                //.style('marker-start', function (d) {
+                //    return d.left ? 'url(#start-arrow)' : '';
+                //})
+                //.style('marker-end', function (d) {
+                //    return d.right ? 'url(#end-arrow)' : '';
+                //});
+
+
+            // add new links
+           path.enter().append('path')
+                .attr('class', 'link')
+                .classed('selected', function (d) {
+                    return d === graph.selected_link;
+                })
+                //.attr('d', function (d) {
+                //    var deltaX = d.target.x - d.source.x,
+                //        deltaY = d.target.y - d.source.y,
+                //        dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+                //        normX = deltaX / dist,
+                //        normY = deltaY / dist,
+                //        sourcePadding = 12,
+                //        targetPadding = 12,
+                //        sourceX = d.source.x + (sourcePadding * normX),
+                //        sourceY = d.source.y + (sourcePadding * normY),
+                //        targetX = d.target.x - (targetPadding * normX),
+                //        targetY = d.target.y - (targetPadding * normY);
+                //    return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+                //})
+                .on('mousedown', function (d) {
+                    if (d3.event.ctrlKey) return;
+
+                    // select link
+                    mousedown_link = d;
+                    if (mousedown_link === graph.selected_link) {
+                        graph.selected_link = null;
+                        $("#ins").text("Deselected Link:" + d.id);
+                    } else {
+                        graph.selected_link = mousedown_link;
+                        $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
+                    }
+                    graph.selected_node = null;
+                    onSelectLink(d);
+                    restart();
+                })
+                .append("svg:title")
+                .text(function(d) {
+                    //console.log(d.au);
+                    var s = "Edge ID:" + d.edgeid + "\n";
+                    s += "Description:" + d.description + "\n";
+                    s += "FMA:" + d.fma+ "\n";
+                    if (d.au)
+                        s += "AU:" + d.au.id + "\n";
+                    s += "Type:" + d.type+ "\n";
+                    return s;
+
+                })
+            ;
+
+            //path.append('text')
+            //    .attr('x', function (d) {
+            //        return (d.target.x + d.source.x)/2;
+            //    })
+            //    .attr('y', function (d) {
+            //        return (d.target.y + d.source.y)/2;
+            //    })
+            //    .attr('class', 'au')
+            //    .text(function (d) {
+            //        //return "test";
+            //        if (d.au)
+            //            return d.au.id;
+            //    });
+
+
+            // remove old links
+            path.exit().remove();
+
+
+
 
             // set the graph in motion
             force.start();
@@ -1780,7 +1284,7 @@ function Graph(id, name, nodes, links) {
                 svg.classed('ctrl', true);
             }
 
-            if (!selected_node && !selected_link) return;
+            if (!graph.selected_node && !graph.selected_link) return;
             switch (d3.event.keyCode) {
                 case 8: // backspace
                 case 46: // delete
