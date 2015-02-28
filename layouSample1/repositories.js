@@ -129,13 +129,13 @@ var tree = new Tree(treeRoot);
 ///////////////////////////////////////////////////////////
 
 var nodes = [
-        new Node (0, "0", 100, 100, null, false),
-        new Node (1, "1", 200, 200, null, false),
-        new Node (2, "2", 200, 200, null, false)
+        //new Node (0, "0", 100, 100, null, false),
+        //new Node (1, "1", 200, 200, null, false),
+        //new Node (2, "2", 200, 200, null, false)
 
     ],
     links = [
-        new Link(nodes[0], nodes[1],null,"2","3453","Hello I am an edge", "8787", false, false),
+        //new Link(nodes[0], nodes[1],null,"2","3453","Hello I am an edge", "8787", false, false),
     ],
     nodes1 = [
             new Node (0, "0",100, 100, null, false),
@@ -153,4 +153,4 @@ var nodes = [
 var graph = new Graph("Graph 1", "Test graph 1", nodes, links);
 var graph1 = new Graph("Graph 2", "Test graph 2", nodes1, links1);
 
-var graphRepo = new GraphRepo([graph,graph1]);
+var graphRepo = new GraphRepo([]);
