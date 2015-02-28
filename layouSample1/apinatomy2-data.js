@@ -814,7 +814,7 @@ function Graph(id, name, nodes, links) {
     this.draw = function (svg, onSelectNode, onSelectLink) {
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
-        var nodeRadius =7;
+        var nodeRadius =12;
         var graph = this;
 
         multiple_selected_node_1 = null;
@@ -835,7 +835,7 @@ function Graph(id, name, nodes, links) {
             .nodes(nodes)
             .links(links)
             .size([width, height])
-            .linkDistance(100)
+            .linkDistance(150)
             .charge(-250)
             //.gravity(-0.12)
             .on('tick', tick)
@@ -891,7 +891,9 @@ function Graph(id, name, nodes, links) {
         // handles to link and node element groups
         var path = svg.append('g').attr('class', 'graph').selectAll('path'),
             circle = svg.append('g').attr('class', 'graph').selectAll('g'),
-            labels = svg.append('g').attr('class', 'graph').selectAll('text');
+            labels = svg.append('g').attr('class', 'graph').selectAll('text'),
+            auIcon = svg.append('g').attr('class','graph').selectAll('rect');
+            //au_layers = svg.append('g').attr('class','graph').selectAll('.layer');
 
 
 
@@ -929,11 +931,28 @@ function Graph(id, name, nodes, links) {
             });
 
 
-            labels.attr("x", function(d){return (d.source.x + d.target.x) /2;})
+            labels.attr("x", function(d){
+                //adding x, y property to layers
+                //console.log(d);
+                if (d.au) {
+                    d.au.layers.sourcex = d.source.x;
+                    d.au.layers.sourcey = d.source.y;
+                    d.au.layers.targetx = d.target.x;
+                    d.au.layers.targety = d.target.y;
+                }
+
+                //console.log ("changed", d);
+                return (d.source.x + d.target.x) /2;})
                 .attr("y", function(d){return (d.source.y + d.target.y) /2;})
 
+            //auIcon.attr("x", function(d){ return (d.source.x + d.target.x) /2;})
+            //    .attr("y", function(d){return ((d.source.y+ + d.target.y) /2) + 10;})
 
+            auIcon.attr("transform", function (d) {
+                return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ")";
+            });
 
+            //restart();
 
 
         }
@@ -945,6 +964,7 @@ function Graph(id, name, nodes, links) {
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             path = svg.append('g').attr('class', 'graph').selectAll('path');
             labels = svg.append('g').attr('class', 'graph').selectAll('text');
+            auIcon = svg.append('g').attr('class','graph').selectAll('rect');
 
             //svg.selectAll("path.link").remove();
             //svg.selectall("").remove();
@@ -1085,6 +1105,66 @@ function Graph(id, name, nodes, links) {
 
             // remove old nodes
             circle.exit().remove();
+
+
+
+
+            auIcon = auIcon.data(links);
+
+            auIcon = auIcon.enter().append("g")
+            //    .attr("transform", function (d) {
+            //        return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ")";
+            //    });
+
+            auIcon.selectAll(".layer")
+                .data(function (d){
+                    if (d.au){
+                        return d.au.layers;
+                    }
+                    return [];
+                }).enter() //we just started an iteration over layers
+                .append("rect")
+                .attr("height", function (d) {return d.thickness * 5;})
+                .attr("width", function (d) {return  15;})
+                .attr("x", function(d){return 0;})
+                .attr("y", function(d, i){ return ((i+1) * 5);})
+                //.attr("y", function (d, i) {
+                //    if (i ==0) prev =0; // reset the starting y for layers for each link
+                //    prev += d.thickness * layerHeight; //remember the relative Y coordinate of the current layer
+                //
+                //    return prev - d.thickness * layerHeight;
+                //})
+                .style("fill", function (d) {
+                    if (d.material.colour == undefined) return "#888888"; return d.material.colour;
+                })
+                .attr("class", "layer")
+            ;
+
+
+            //var au_layers = auIcon.enter().append("g");
+            //
+            //console.log(au_layers);
+            //    au_layers.selectAll(".layer")
+            //    .data(function (d){
+            //        if (d.au) {
+            //            for (var i = 0; i < d.au.layers.length; i++) {
+            //                d.au.layers[i].x = 0;
+            //                //console.log(d.au.layers[i]);
+            //                d.au.layers[i].y = (i + 1) * 10;
+            //            }
+            //            console.log("Updating layers:", d.au.layers);
+            //            return d.au.layers;
+            //        }
+            //        return [];
+            //    }).enter()
+            //    .append('text')
+            //    .attr("x", function(d, i) {d.x;/*return (d.source.y + d.target.y) / 2;*/ })
+            //    .attr("y", function(d, i ) {d.y; })
+            //    .attr("text-anchor", "middle")
+            //    .text(function(d) {return "help" });
+
+
+
 
 
 
@@ -1327,14 +1407,14 @@ function Graph(id, name, nodes, links) {
                     restart();
                     break;
                 case 70: //f
-                    if (selected_node) {
-                        console.log(selected_node.fixed);
-                        if (selected_node.fixed) {
-                            selected_node.fixed = false;
+                    if (graph.selected_node) {
+                        console.log(graph.selected_node.fixed);
+                        if (graph.selected_node.fixed) {
+                            graph.selected_node.fixed = false;
                         } else {
-                            selected_node.fixed = true;
+                            graph.selected_node.fixed = true;
                         }
-                        console.log(selected_node.fixed);
+                        console.log(graph.selected_node.fixed);
                     }
                     restart();
                     break;
