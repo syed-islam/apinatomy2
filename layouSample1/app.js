@@ -151,6 +151,7 @@ var graphEditor = function () {
 
 
     d3.select("#edgeSave").on("click", function(){
+        console.log(selectedGraph);
         var actualEdge = selectedGraph.selected_link;
         var edgeType = $("#edgeType").val().trim();
         var edgeName = $("#edgeDescription").val().trim();
@@ -195,13 +196,8 @@ var graphEditor = function () {
                 //console.log("Response:", response);
                 //actualEdge.edgeid = response.id;
                 refresh_graph();
-
-
             }
         });
-
-
-
     });
 
 
@@ -385,13 +381,14 @@ var graphEditor = function () {
 
                     // Creating Nodes
                     if (doesNodesContainNode(nodes, path.edges[i].from.id) == null) {
-                        nodes.push(new Node(nodes.length, path.edges[i].from.id, ((nodes.length +1) *200) , 200 , null, false));
+                        nodes.push(new Node(nodes.length, path.edges[i].from.id, ((nodes.length +1) * 100) , ((nodes.length +1) * 100) , null, false));
                     }
 
                     if (doesNodesContainNode(nodes, path.edges[i].to.id) == null) {
-                        nodes.push(new Node(nodes.length, path.edges[i].to.id, ((nodes.length +1) * 200), 200, null, false));
+                        nodes.push(new Node(nodes.length, path.edges[i].to.id, ((nodes.length +1) * 100), ((nodes.length +1) * 100), null, false));
                     }
                 }
+                console.log ("Nodes:", nodes);
 
                 //console.log(auRepo.auSet[auRepo.getIndexByID(path.edges[0].lyph.id)]);
                 ////Adding edges to the graph
@@ -569,12 +566,12 @@ var graphEditor = function () {
                     selectedMaterial = materialRepo.materials[0];
 
                 if (selectedAU != null) {
-                    syncSelectedAU();
-                    updateLayerParameters(selectedLayer);
+                    //syncSelectedAU();
+                    //updateLayerParameters(selectedLayer);
                 }
 
 
-                window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+                //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
                 //console.log("LayerRepo:" , layerRepo);
 

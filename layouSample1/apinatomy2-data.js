@@ -1390,9 +1390,9 @@ function Graph(id, name, nodes, links) {
             .nodes(nodes)
             .links(links)
             .size([width, height])
-            .linkDistance(25)
-            .charge(-150)
-            .gravity(0.12)
+            .linkDistance(100)
+            .charge(-250)
+            //.gravity(-0.12)
             .on('tick', tick)
 
         var customDrag = force.drag()
@@ -1453,6 +1453,7 @@ function Graph(id, name, nodes, links) {
             mousedown_link = null,
             mousedown_node = null,
             mouseup_node = null;
+
         multiple_selected_node_1 = null;
         multiple_selected_node_2 = null;
 
@@ -1694,13 +1695,40 @@ function Graph(id, name, nodes, links) {
 
             // insert new node at point
             var point = d3.mouse(this),
-                node = new Node(++lastNodeId,lastNodeId, 100,100,null,false);
-                //node = {id: , fixed: false};
+                node = new Node(++lastNodeId,".", 100,100,null,false);
             node.x = point[0];
             node.y = point[1];
             nodes.push(node);
 
             restart();
+
+            //ajax call to create new node.
+            //function ajax_create_new_node () {
+            $.ajax
+            ({
+                url:
+                    "http://open-physiology.org:5054/makelyphnode/" ,
+
+                jsonp: "callback",
+
+                dataType: "jsonp",
+
+
+                success: function (response) {
+                    response;
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Node creation error:" , response);
+                        return;
+                    }
+                    node.name = response.id;
+
+                    console.log(node.name);
+                    restart();
+
+
+                }
+            });
         }
 
         function mousemove() {
