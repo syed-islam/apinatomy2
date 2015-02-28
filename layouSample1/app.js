@@ -1,5 +1,7 @@
 // TODO: This part is the driver from the graph-construction.js
 
+var refresh_graph;
+
 var graphEditor = function () {
 
     //Init visual parameters
@@ -128,12 +130,12 @@ var graphEditor = function () {
 
 
     //////////////////////////////////////////////////////////
-    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+    //graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
     if (auRepo != null)
         auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
 
-    selectedGraph = graphRepo.graphs[0];
-    syncSelectedGraph();
+    //selectedGraph = graphRepo.graphs[0];
+    //syncSelectedGraph();
 
 
     function updateGraphParameters(graph){
@@ -142,6 +144,75 @@ var graphEditor = function () {
             d3.select("#graphName").property("value", graph.name);
         }
     }
+
+
+    d3.select("#graphClone").on("click", function() {
+        cloneGraph(selectedGraph);
+    })
+
+
+
+
+    function cloneGraph(graph){
+        //if (graphRepo.getIndexByID(graphID.value) > -1){
+        //    alert("Cannot create a new graph: another graph with such ID exists!");
+        //    return;
+        //}
+
+        var newGraph = null;
+        if (graph != null){
+            newGraph = graph.clone();
+            newGraph.id = graphID.value+"_cloned";
+            newGraph.name = graphName.value+"_cloned";
+        }
+        else newGraph = new Graph(graphID.value, graphName.value, [], []);
+        graphRepo.addAt(newGraph, 0);
+        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+        selectedGraph = newGraph;
+        syncSelectedGraph();
+    }
+
+    d3.select("#graphSave").on("click",function(){
+        var actualSelectedGraphIndex = graphRepo.getIndexByID(selectedGraph.id);
+        //console.log(actualSelectedGraphIndex);
+
+
+        var query = "http://open-physiology.org:5054/makeview/?"
+        for (var i =0; i < selectedGraph.nodes.length ; i++){
+            query += "&node" + (i + 1)+ "="+ encodeURIComponent(selectedGraph.nodes[i].name);
+            query += "&x"+ (i + 1) +"="+ encodeURIComponent(selectedGraph.nodes[i].x);
+            query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
+        }
+
+        //console.log(query);
+
+        // ajax call to save graph view
+        $.ajax
+        ({
+            url:query,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node creation error:" , response);
+                    return;
+                }
+
+                console.log(response);
+                graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
+                refresh_graph();
+            }
+        });
+
+
+    })
 
 
     function syncSelectedGraph(){
@@ -227,6 +298,7 @@ var graphEditor = function () {
     });
 
     d3.select("#edgeSave").on("click", function(){
+        console.log("Selected link:", selectedGraph.selected_link);
         var actualEdge = selectedGraph.selected_link;
         var edgeType = $("#edgeType").val().trim();
         var edgeName = $("#edgeDescription").val().trim();
@@ -314,7 +386,7 @@ var graphEditor = function () {
 
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
-                        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y, null)));
+                        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true));
                     }
 
                     console.log("Nodes:", nodes);
@@ -326,12 +398,13 @@ var graphEditor = function () {
                     for (var j =0; j < response[i].nodes.length; j++){
                         //console.log(response[i].nodes[j].exits.length)
                         for (var k =0; k < response[i].nodes[j].exits.length; k++){
-                            //console.log("source", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)]);
-                            //console.log("target", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)]);
-                            //console.log("au", (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph)] : null);
-                            //console.log("type", response[i].nodes[j].exits[k].via.type );
-                            //console.log("description", response[i].nodes[j].exits[k].via.name );
-                            //console.log("fma",response[i].nodes[j].exits[k].via.fma );
+                            console.log(response[i].nodes[j].id);
+                            console.log("source", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)]);
+                            console.log("target", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)]);
+                            console.log("au", (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph)] : null);
+                            console.log("type", response[i].nodes[j].exits[k].via.type );
+                            console.log("description", response[i].nodes[j].exits[k].via.name );
+                            console.log("fma",response[i].nodes[j].exits[k].via.fma );
 
                             var newEdge = new Link(
                                 newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)],
@@ -655,6 +728,12 @@ var graphEditor = function () {
     };
 
 
+
+    refresh_graph = function refresh_graph(){
+        selectedGraph.draw(svg, onSelectNode, onSelectLink);
+        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+
+    }
     load_all_materials();
     load_all_graphs();
 

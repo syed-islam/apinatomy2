@@ -809,6 +809,14 @@ function Graph(id, name, nodes, links) {
         return newGraph;
     }
 
+    this.getNodeIndexByID = function (id){
+        for (var i =0; i < nodes.length; i++){
+            if (nodes[i].id === id)
+                return i;
+        }
+        return -1;
+    }
+
 
 
     this.draw = function (svg, onSelectNode, onSelectLink) {
@@ -1199,6 +1207,9 @@ function Graph(id, name, nodes, links) {
                 .classed('selected', function (d) {
                     return d === graph.selected_link;
                 })
+               .style('stroke', function (d) {
+                   return d3.rgb(colors(d.type));
+               })
                 //.attr('d', function (d) {
                 //    var deltaX = d.target.x - d.source.x,
                 //        deltaY = d.target.y - d.source.y,
@@ -1368,41 +1379,41 @@ function Graph(id, name, nodes, links) {
             switch (d3.event.keyCode) {
                 case 8: // backspace
                 case 46: // delete
-                    if (selected_node) {
-                        nodes.splice(nodes.indexOf(selected_node), 1);
-                        spliceLinksForNode(selected_node);
-                    } else if (selected_link) {
-                        links.splice(links.indexOf(selected_link), 1);
+                    if (graph.selected_node) {
+                        nodes.splice(nodes.indexOf(graph.selected_node), 1);
+                        spliceLinksForNode(graph.selected_node);
+                    } else if (graph.selected_link) {
+                        links.splice(links.indexOf(graph.selected_link), 1);
                     }
-                    selected_link = null;
-                    selected_node = null;
+                    graph.selected_link = null;
+                    graph.selected_node = null;
                     //lastNodeId--;
                     restart();
                     break;
                 case 66: // B
-                    if (selected_link) {
+                    if (graph.selected_link) {
                         // set link direction to both left and right
-                        selected_link.left = true;
-                        selected_link.right = true;
+                        graph.selected_link.left = true;
+                        graph.selected_link.right = true;
                     }
                     restart();
                     break;
                 case 76: // L
-                    if (selected_link) {
+                    if (graph.selected_link) {
                         // set link direction to left only
-                        selected_link.left = true;
-                        selected_link.right = false;
+                        graph.selected_link.left = true;
+                        graph.selected_link.right = false;
                     }
                     restart();
                     break;
                 case 82: // R
-                    if (selected_node) {
+                    if (graph.selected_node) {
                         // toggle node fixed
-                        selected_node.fixed = !selected_node.fixed;
-                    } else if (selected_link) {
+                        graph.selected_node.fixed = !graph.selected_node.fixed;
+                    } else if (graph.selected_link) {
                         // set link direction to right only
-                        selected_link.left = false;
-                        selected_link.right = true;
+                        graph.selected_link.left = false;
+                        graph.selected_link.right = true;
                     }
                     restart();
                     break;
@@ -1419,7 +1430,7 @@ function Graph(id, name, nodes, links) {
                     restart();
                     break;
                 case 65: //A
-                    if (!selected_link) {
+                    if (!graph.selected_link) {
                         console.log("Link not selected");
                         return;
                     } else {
@@ -1429,7 +1440,7 @@ function Graph(id, name, nodes, links) {
                     break;
                 case 67: //C
 
-                    if (!selected_node) {
+                    if (!graph.selected_node) {
                         console.log("Node not selected");
                         return;
                     } else {
@@ -1465,29 +1476,69 @@ function Graph(id, name, nodes, links) {
         //TODO: Improve the breakLink function
         function breakLink() {
 
-            console.log(selected_link.source);
-            console.log(selected_link.target);
-            console.log(links.indexOf(selected_link));
+            console.log(graph.selected_link.source);
+            console.log(graph.selected_link.target);
+            console.log(links.indexOf(graph.selected_link));
 
             //store start and end nodes
-            var startnode = selected_link.source;
-            var lastnode = selected_link.target;
+            var startnode = graph.selected_link.source;
+            var lastnode = graph.selected_link.target;
 
 
             //remove the link between then nodes
-            links.splice(links.indexOf(selected_link), 1);
+            links.splice(links.indexOf(graph.selected_link), 1);
 
+            var generatedNode = null;
             //insert n nodes and edges
-            for (var i = 0; i < 20; i++) {
-                var generatedNode = {id: ++lastNodeId, fixed: false, x: 50, y: 50, weight: 1};
+            for (var i = 0; i < 1; i++) {
+
+
+                generatedNode = new Node(++lastNodeId,".", 100,100,null,false);
+
+
+
+                //ajax call to create new node.
+                //function ajax_create_new_node () {
+                $.ajax
+                ({
+                    url:
+                        "http://open-physiology.org:5054/makelyphnode/" ,
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        response;
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Node creation error:" , response);
+                            return;
+                        }
+                        generatedNode.name = response.id;
+
+                        //console.log(node.name);
+
+                        restart();
+                    }
+                });
+
                 nodes.push(generatedNode);
                 links.push({source: startnode, target: generatedNode, left: false, right: true})
                 startnode = generatedNode;
+
+
+
+
+
+
+
             }
             links.push({source: startnode, target: lastnode, left: false, right: true})
 
             //removing selection of link as the link no longer exists
-            selected_link = null;
+            graph.selected_link = null;
 
 
         }
