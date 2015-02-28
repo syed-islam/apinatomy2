@@ -101,9 +101,9 @@ var graphEditor = function () {
 
         if (node != null){
             //console.log(node);
-            d3.select("#nodeName").property("value", node.name);
+            d3.select("#nodeName1").property("value", node.name);
         } else {
-            d3.select("#nodeName").property("value","");
+            d3.select("#nodeName1").property("value","");
         }
     }
 
