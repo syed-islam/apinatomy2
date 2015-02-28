@@ -118,6 +118,14 @@ var graphEditor = function () {
     //////////////////////////////////
 
 
+    function syncSelectedAU(){
+        if (selectedMaterial.type == "AU"){
+            updateAUParameters(selectedAU);
+        } else{
+            updateAUParameters(null);
+        }
+    }
+
     function updateEdgeParameters(edge){
         console.log("Updating edge parameter:" , edge);
 
@@ -856,7 +864,7 @@ var graphEditor = function () {
 
                 if (selectedAU != null) {
                     syncSelectedAU();
-                    updateLayerParameters(selectedLayer);
+                    //updateLayerParameters(selectedLayer);
                 }
 
 
