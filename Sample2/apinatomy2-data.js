@@ -704,13 +704,15 @@ function Tree(root){
 }
 
 //graph node
-function Node(id, name, x, y, tree, fixed){
+function Node(id, name, x, y, tree, fixed, location, locationtype){
     this.id = id;
     this.name = name;
     this.x = x;
     this.y = y;
     this.tree = tree;
     this.fixed = fixed;
+    this.location = location;
+    this.locationtype = locationtype;
 }
 
 //graph link
@@ -726,8 +728,8 @@ function Link(source, target, au,type, edgeid, description, fma, left, right){
     this.right = right;
 }
 
-function Rectangle( x, y, width, height){
-    //this.id = id;
+function Rectangle(id, x, y, width, height){
+    this.id = id;
     this.x = x;
     this.y = y;
     this.width = width;
@@ -828,8 +830,8 @@ function Graph(id, name, nodes, links, rectangles) {
     }
 
     rectangles = [];
-    rectangles.push( new Rectangle(20, 320, 180,240));
-    rectangles.push( new Rectangle(370, 30, 160,140));
+    rectangles.push( new Rectangle("L1", 20, 320, 180,240));
+    rectangles.push( new Rectangle("L2", 370, 30, 160,140));
     console.log(rectangles);
 
 
@@ -875,15 +877,64 @@ function Graph(id, name, nodes, links, rectangles) {
         }
 
         function dragmove(d) {
-            //console.log(d.px);
-            if (d.px > width - nodeRadius) d.px = width - nodeRadius;
-            if (d.px < 0 + nodeRadius) d.px = nodeRadius;
-            if (d.py > height - nodeRadius) d.py = height - nodeRadius;
-            if (d.py < 0 + nodeRadius) d.py = nodeRadius;
+
+            if (d.location){
+                var boudingx = null;
+                var boudingy = null;
+                var boundingwidth = null;
+                var boundingheight = null;
+
+                for (var i = 0; i < rectangles.length; i++){
+                    if (rectangles[i].id === d.location){
+
+                        if (d.locationtype === "inside") {
+                            boundingx = rectangles[i].x;
+                            boundingy = rectangles[i].y;
+                            boundingwidth = rectangles[i].width;
+                            boundingheight = rectangles[i].height;
+
+                            if (d.px > boundingx + boundingwidth - nodeRadius) d.px = boundingx + boundingwidth - nodeRadius;
+                            if (d.px < boundingx + nodeRadius) d.px = boundingx + nodeRadius;
+                            if (d.py > boundingy + boundingheight - nodeRadius) d.py = boundingy + boundingheight - nodeRadius;
+                            if (d.py < boundingy + nodeRadius) d.py = boundingy + nodeRadius;
+
+
+                        } else if (d.locationtype === "border") {
+                            boundingx = rectangles[i].x;
+                            boundingy = rectangles[i].y;
+                            boundingwidth = rectangles[i].width;
+                            boundingheight = rectangles[i].height;
+
+
+                            if (d.x != boundingx  && d.x != boundingx + boundingwidth ){
+                                if (Math.abs(d.py - boundingy) < Math.abs(d.py - (boundingy + boundingheight))){
+                                    d.py = boundingy;
+                                } else {
+                                    d.py = boundingy + boundingheight;
+                                }
+
+                                console.log(d.x, boundingx);
+                            }
+                            if (d.px > boundingx + boundingwidth  ) d.px = boundingx + boundingwidth ;
+                            if (d.px < boundingx) d.px = boundingx ;
+                            if (d.py > boundingy + boundingheight ) d.py = boundingy + boundingheight;
+                            if (d.py < boundingy) d.py = boundingy;
+                        }
+
+
+                        break;
+                    }
+                }
+
+
+            }
+
+            if (d.px > width ) d.px = width ;
+            if (d.px < 0 ) d.px = 0;
+            if (d.py > height ) d.py = height ;
+            if (d.py < 0 ) d.py = 0;
             restart();
-            //if(d.px > length) d.px = length;
-            //if(d.py > width) d.py = width;
-            //if(d.py > length) d.py = length;
+
         }
 
 
@@ -896,7 +947,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function rectdragmove(d){
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
-            console.log(d3.event.x, offset);
+            //console.log(d3.event.x, offset);
             d.x = d3.event.x - offset[0];
             d.y = d3.event.y - offset[1];
             //d.y = d3.event.y;
@@ -906,28 +957,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-        // define arrow markers for graph links
-        //svg.append('svg:defs').append('svg:marker')
-        //    .attr('id', 'end-arrow')
-        //    .attr('viewBox', '0 -5 10 10')
-        //    .attr('refX', 6)
-        //    .attr('markerWidth', 3)
-        //    .attr('markerHeight', 3)
-        //    .attr('orient', 'auto')
-        //    .append('svg:path')
-        //    .attr('d', 'M0,-5L10,0L0,5')
-        //    .attr('fill', '#000');
-
-        //svg.append('svg:defs').append('svg:marker')
-        //    .attr('id', 'start-arrow')
-        //    .attr('viewBox', '0 -5 10 10')
-        //    .attr('refX', 4)
-        //    .attr('markerWidth', 3)
-        //    .attr('markerHeight', 3)
-        //    .attr('orient', 'auto')
-        //    .append('svg:path')
-        //    .attr('d', 'M10,-5L0,0L10,5')
-        //    .attr('fill', '#000');
 
         // line displayed when dragging new nodes
         var drag_line = svg.append('svg:path')

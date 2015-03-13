@@ -384,14 +384,24 @@ var graphEditor = function () {
                     //load view meta data
                     id = response[i].id;
 
-                    //load nodes
-                    for (var j =0; j < response[i].nodes.length; j++){
-                        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true));
-                    }
 
-                    //console.log("Nodes:", nodes);
                     newGraph = new Graph(id, id, nodes, edges);
 
+                    //load nodes
+                    for (var j =0; j < response[i].nodes.length; j++){
+
+
+                        //Testing Code
+                            if (response[i].nodes[j].id === "50022481" || response[i].nodes[j].id === "50022493"){
+                                nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, "L2", "inside"));
+                            } else if(response[i].nodes[j].id === "50022482" || response[i].nodes[j].id === "50010931_0"){
+                                nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, "L2", "border"));
+                            }
+                        else {
+                            nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true));
+                        }
+
+                    }
 
 
                     //load edges
@@ -440,6 +450,7 @@ var graphEditor = function () {
 
                 }
 
+                console.log(graphRepo);
                 //console.log(response);
                 //
                 //graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
