@@ -886,6 +886,26 @@ function Graph(id, name, nodes, links, rectangles) {
             //if(d.py > length) d.py = length;
         }
 
+
+
+        var customRectdrag = d3.behavior.drag()
+            .origin(Object)
+            .on("drag", rectdragmove);
+
+        var offset = null;
+
+        function rectdragmove(d){
+            if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
+            console.log(d3.event.x, offset);
+            d.x = d3.event.x - offset[0];
+            d.y = d3.event.y - offset[1];
+            //d.y = d3.event.y;
+            //console.log(d3.event.dx, d3.event.dy, d3.event.x, d3.event.y);
+            restart();
+        }
+
+
+
         // define arrow markers for graph links
         //svg.append('svg:defs').append('svg:marker')
         //    .attr('id', 'end-arrow')
@@ -986,6 +1006,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
         }
 
+
+
+
         // update graph (called when needed)
         var restart = function restart() {
             svg.selectAll('g.graph').remove();
@@ -1014,6 +1037,8 @@ function Graph(id, name, nodes, links, rectangles) {
                 .style("stroke", "blue")
                 .style("stroke-width", "3px")
                 .style("stroke-opacity", "0.6")
+                .attr("cursor", "move")
+                .call(customRectdrag);
 
 
 
