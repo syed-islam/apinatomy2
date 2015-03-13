@@ -394,7 +394,7 @@ var graphEditor = function () {
                         //Testing Code
                             if (response[i].nodes[j].id === "50022481" || response[i].nodes[j].id === "50022493"){
                                 nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, "L2", "inside"));
-                            } else if(response[i].nodes[j].id === "50022482" || response[i].nodes[j].id === "50010931_0"){
+                            } else if(response[i].nodes[j].id === "50022482" || response[i].nodes[j].id === "50010931_0" || response[i].nodes[j].id === "50022480"){
                                 nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, "L2", "border"));
                             }
                         else {

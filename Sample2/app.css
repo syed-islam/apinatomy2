@@ -3,7 +3,7 @@ path.link {
     stroke: #ccc;
     stroke-width: 4px;
     cursor: default;
-    opacity: 0.5;
+    stroke-opacity: 0.9;
 
 }
 

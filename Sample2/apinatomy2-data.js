@@ -948,8 +948,29 @@ function Graph(id, name, nodes, links, rectangles) {
         function rectdragmove(d){
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
+
+            //move all nodes related to the rectangle
+
+            for (var i =0; i < nodes.length; i++){
+                if (nodes[i].location === d.id ){
+                    //nodes[i].fixed = false;
+
+                    nodes[i].px = nodes[i].px + (d3.event.x - offset[0]- d.x);
+                    nodes[i].py = nodes[i].py + (d3.event.y - offset[1]- d.y);
+                    //console.log(d3.event.y - offset[1]- d.y)
+
+
+                } else {
+                    //if (nodes[i].px > d3.event.x - offset[0] && nodes[i].px + nodeRadius < d3.event.x - offset[0] + d.width  && nodes[i].py + nodeRadius > d3.event.y - offset[1] && nodes[i].py + nodeRadius < d3.event.y - offset[1] + d.height ) nodes[i].px = nodes[i].px + (d3.event.x - offset[0]- d.x);
+                    //if (nodes[i].px + nodeRadius < d3.event.x - offset[0] + d.width && nodes[i].py + nodeRadius > d3.event.y - offset[1] && nodes[i].py + nodeRadius < d3.event.y - offset[1] + d.height ) nodes[i].px = nodes[i].px + (d3.event.x - offset[0]- d.x);
+
+                }
+            }
+
             d.x = d3.event.x - offset[0];
             d.y = d3.event.y - offset[1];
+
+
             //d.y = d3.event.y;
             //console.log(d3.event.dx, d3.event.dy, d3.event.x, d3.event.y);
             restart();
@@ -1364,6 +1385,8 @@ function Graph(id, name, nodes, links, rectangles) {
             // add new links
            path.enter().append('path')
                 .attr('class', 'link')
+               .style("stroke-opacity", "0.6")
+               //.style("opacity", "0.6")
                 .classed('selected', function (d) {
                     return d === graph.selected_link;
                 })
