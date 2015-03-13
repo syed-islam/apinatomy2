@@ -215,3 +215,11 @@ text.id {
     stroke: #ccc;
     stroke-width: 2px;
 }
+
+.rectangles {
+    fill: blue;
+    stroke: blue;
+    stroke-width: 3px;
+    stroke-opacity: 0.6;
+
+}
