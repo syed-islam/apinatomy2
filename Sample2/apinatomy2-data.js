@@ -879,8 +879,8 @@ function Graph(id, name, nodes, links, rectangles) {
         function dragmove(d) {
 
             if (d.location){
-                var boudingx = null;
-                var boudingy = null;
+                var boundingx = null;
+                var boundingy = null;
                 var boundingwidth = null;
                 var boundingheight = null;
 
@@ -988,6 +988,73 @@ function Graph(id, name, nodes, links, rectangles) {
 
             circle.attr('transform', function (d) {
                 //return 'translate(' + Math.min(d.x, width -10)  + ',' + Math.max(d.y, 0+10) + ')';
+
+                //check if inside rectangle
+                if (d.location){
+                    var boundingx = null;
+                    var boundingy = null;
+                    var boundingwidth = null;
+                    var boundingheight = null;
+
+                    for (var i = 0; i < rectangles.length; i++){
+                        if (rectangles[i].id === d.location){
+
+                            if (d.locationtype === "inside") {
+                                boundingx = rectangles[i].x;
+                                boundingy = rectangles[i].y;
+                                boundingwidth = rectangles[i].width;
+                                boundingheight = rectangles[i].height;
+                                //var localx = d.x;
+                                //var localy  = d.y;
+
+                                if (d.x > boundingx + boundingwidth - nodeRadius) d.x = boundingx + boundingwidth - nodeRadius;
+                                if (d.x < boundingx + nodeRadius) d.x = boundingx + nodeRadius;
+                                if (d.y > boundingy + boundingheight - nodeRadius) d.y = boundingy + boundingheight - nodeRadius;
+                                if (d.y < boundingy + nodeRadius) d.y = boundingy + nodeRadius;
+
+                                //d.x = localx;
+                                //d.y = localy;
+
+                                return 'translate(' + d.x + ',' + d.y + ')';
+                            } else if (d.locationtype === "border") {
+                                boundingx = rectangles[i].x;
+                                boundingy = rectangles[i].y;
+                                boundingwidth = rectangles[i].width;
+                                boundingheight = rectangles[i].height;
+
+
+                                if (d.x != boundingx  && d.x != boundingx + boundingwidth ){
+                                    if (Math.abs(d.y - boundingy) < Math.abs(d.y - (boundingy + boundingheight))){
+                                        d.y = boundingy;
+                                    } else {
+                                        d.y = boundingy + boundingheight;
+                                    }
+
+
+                                }
+                                if (d.x > boundingx + boundingwidth  ) d.x = boundingx + boundingwidth ;
+                                if (d.x < boundingx) d.x = boundingx ;
+                                if (d.y > boundingy + boundingheight ) d.y = boundingy + boundingheight;
+                                if (d.y < boundingy) d.y = boundingy;
+                                return 'translate(' + d.x + ',' + d.y + ')';
+
+                            }
+
+
+                            break;
+                        }
+                    }
+
+
+                }
+
+
+                //check if on border of rectangle
+
+                //check if its going into a rectangle
+
+                //check if its going outside the svg
+
                 return 'translate(' + Math.max(nodeRadius*2, Math.min(width - nodeRadius*2, d.x)) + ',' + Math.max(nodeRadius*2, Math.min(height - nodeRadius*2, d.y)) + ')';
 
             });

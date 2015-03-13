@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Sample2/apinatomy2-data.js" afterPath="$PROJECT_DIR$/Sample2/apinatomy2-data.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Sample2/app.js" afterPath="$PROJECT_DIR$/Sample2/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="apinatomy2.iws" />
@@ -61,8 +60,8 @@
       <file leaf-file-name="apinatomy2-data.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Sample2/apinatomy2-data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.9075043" vertical-offset="3823" max-vertical-offset="14295">
-              <caret line="920" column="67" selection-start-line="920" selection-start-column="67" selection-end-line="920" selection-end-column="67" />
+            <state vertical-scroll-proportion="0.2408377" vertical-offset="4062" max-vertical-offset="15300">
+              <caret line="1018" column="21" selection-start-line="1018" selection-start-column="21" selection-end-line="1018" selection-end-column="21" />
               <folding>
                 <element signature="n#!!block;n#Material#0" expanded="false" />
                 <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
@@ -722,8 +721,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Sample2/apinatomy2-data.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.9075043" vertical-offset="3823" max-vertical-offset="14295">
-          <caret line="920" column="67" selection-start-line="920" selection-start-column="67" selection-end-line="920" selection-end-column="67" />
+        <state vertical-scroll-proportion="0.2408377" vertical-offset="4062" max-vertical-offset="15300">
+          <caret line="1018" column="21" selection-start-line="1018" selection-start-column="21" selection-end-line="1018" selection-end-column="21" />
           <folding>
             <element signature="n#!!block;n#Material#0" expanded="false" />
             <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
