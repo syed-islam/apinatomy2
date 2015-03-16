@@ -857,6 +857,7 @@ function Graph(id, name, nodes, links, rectangles) {
             var rectangle_draw = null;
             var rectangle_x =  null;
             var rectangle_y = null;
+            var drag_button_enabled = true;
 
 
 
@@ -1152,13 +1153,13 @@ function Graph(id, name, nodes, links, rectangles) {
         // update graph (called when needed)
         var restart = function restart() {
             svg.selectAll('g.graph').remove();
-
-            circle = svg.append('g').attr('class', 'graph').selectAll('g');
+            boxes = svg.append('g').attr('class', 'graph').selectAll('rect');
             path = svg.append('g').attr('class', 'graph').selectAll('path');
             pathoverlay = svg.append('g').attr('class', 'graph').selectAll('path');
             labels = svg.append('g').attr('class', 'graph').selectAll('text');
             auIcon = svg.append('g').attr('class','graph').selectAll('rect');
-            boxes = svg.append('g').attr('class', 'graph').selectAll('rect');
+            circle = svg.append('g').attr('class', 'graph').selectAll('g');
+
 
             //svg.selectAll("path.link").remove();
             //svg.selectall("").remove();
@@ -1255,6 +1256,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 .on('mouseup', function (d) {
 
                     if (!mousedown_node) return;
+                    if (drag_button_enabled) return;
 
                     // needed by FF
                     drag_line
@@ -1572,6 +1574,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
             if (!mousedown_node) return;
 
+            if (drag_button_enabled) return;
+
             // update drag line
             drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
 
@@ -1629,6 +1633,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 //circle.call(force.drag);
                 circle.call(customDrag);
                 svg.classed('ctrl', true);
+                drag_button_enabled = true;
             }
 
             if (!graph.selected_node && !graph.selected_link) return;
@@ -1685,7 +1690,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     restart();
                     break;
-                case 65: //A
+                case 83: //s
                     if (!graph.selected_link) {
                         console.log("Link not selected");
                         return;
@@ -1694,7 +1699,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     restart();
                     break;
-                case 67: //C
+                case 67: //c
 
                     if (!graph.selected_node) {
                         console.log("Node not selected");
@@ -1811,6 +1816,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     .on('mousedown.drag', null)
                     .on('touchstart.drag', null);
                 svg.classed('ctrl', false);
+                drag_button_enabled = false;
             }
         }
 
