@@ -831,8 +831,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
     rectangles = [];
     rectangles.push( new Rectangle("L1", 20, 320, 180,240));
-    rectangles.push( new Rectangle("L2", 370, 30, 160,140));
-    console.log(rectangles);
+    rectangles.push( new Rectangle("L2", 370, 30, 155,140));
+    rectangles.push( new Rectangle("L3", 1, 10, 528, 570));
+    //console.log(rectangles);
 
 
     this.draw = function (svg, onSelectNode, onSelectLink) {
@@ -850,11 +851,14 @@ function Graph(id, name, nodes, links, rectangles) {
 
             var mousedown_link = null,
             mousedown_node = null,
-            mouseup_node = null;
+            mouseup_node = null,
+            insert_node = null;
 
             var rectangle_draw = null;
             var rectangle_x =  null;
             var rectangle_y = null;
+
+
 
 
 
@@ -946,6 +950,7 @@ function Graph(id, name, nodes, links, rectangles) {
         var offset = null;
 
         function rectdragmove(d){
+            if (rectangle_draw) return;
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
 
@@ -986,6 +991,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         // handles to link and node element groups
         var path = svg.append('g').attr('class', 'graph').selectAll('path'),
+            pathoverlay = svg.append('g').attr('class', 'graph').selectAll('path'),
             circle = svg.append('g').attr('class', 'graph').selectAll('g'),
             labels = svg.append('g').attr('class', 'graph').selectAll('text'),
             auIcon = svg.append('g').attr('class','graph').selectAll('rect'),
@@ -1089,12 +1095,29 @@ function Graph(id, name, nodes, links, rectangles) {
                     normY = deltaY / dist,
                     sourcePadding = d.left ? 17 : nodeRadius,
                     targetPadding = d.right ? 17 : nodeRadius,
-                    sourceX = d.source.x + (sourcePadding * normX),
-                    sourceY = d.source.y + (sourcePadding * normY),
-                    targetX = d.target.x - (targetPadding * normX),
-                    targetY = d.target.y - (targetPadding * normY);
+                    sourceX = d.source.x + (sourcePadding * normX) - 2 ,
+                    sourceY = d.source.y + (sourcePadding * normY) - 2,
+                    targetX = d.target.x - (targetPadding * normX) - 2,
+                    targetY = d.target.y - (targetPadding * normY) - 2;
                 return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
             });
+
+            pathoverlay.attr('d', function (d) {
+                var deltaX = d.target.x - d.source.x,
+                    deltaY = d.target.y - d.source.y,
+                    dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+                    normX = deltaX / dist,
+                    normY = deltaY / dist,
+                    sourcePadding = d.left ? 17 : nodeRadius,
+                    targetPadding = d.right ? 17 : nodeRadius,
+                    sourceX = d.source.x + (sourcePadding * normX) + 2,
+                    sourceY = d.source.y + (sourcePadding * normY) + 2,
+                    targetX = d.target.x - (targetPadding * normX) + 2,
+                    targetY = d.target.y - (targetPadding * normY) + 2;
+                return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+            });
+
+
 
 
             labels.attr("x", function(d){
@@ -1132,6 +1155,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             path = svg.append('g').attr('class', 'graph').selectAll('path');
+            pathoverlay = svg.append('g').attr('class', 'graph').selectAll('path');
             labels = svg.append('g').attr('class', 'graph').selectAll('text');
             auIcon = svg.append('g').attr('class','graph').selectAll('rect');
             boxes = svg.append('g').attr('class', 'graph').selectAll('rect');
@@ -1369,6 +1393,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             // path (link) group
             path = path.data(links);
+            pathoverlay = pathoverlay.data(links);
 
             // update existing links
             path = path.classed('selected', function (d) {
@@ -1380,12 +1405,23 @@ function Graph(id, name, nodes, links, rectangles) {
                 //.style('marker-end', function (d) {
                 //    return d.right ? 'url(#end-arrow)' : '';
                 //});
+            pathoverlay = pathoverlay.classed('selected', function (d) {
+                return d === graph.selected_link;
+            })
 
 
             // add new links
+            pathoverlay.enter().append('path')
+                .attr('class', 'link')
+                .style("stroke-opacity", "0.6")
+                .style('stroke', function (d) {
+                    return d3.rgb(255,140,0);
+                })
+
+
            path.enter().append('path')
                 .attr('class', 'link')
-               .style("stroke-opacity", "0.6")
+               //.style("stroke-opacity", "0.6")
                //.style("opacity", "0.6")
                 .classed('selected', function (d) {
                     return d === graph.selected_link;
@@ -1477,49 +1513,63 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
                 console.log("Draw rect", rectangle_x, rectangle_y);
-
+                rectangles.push(new Rectangle(rectangles.length, rectangle_x, rectangle_y, 1, 1));
+                console.log(rectangles);
+                restart();
                 return;
             }
 
             // insert new node at point
-            var point = d3.mouse(this),
-                node = new Node(++lastNodeId,".", 100,100,null,false);
-            node.x = point[0];
-            node.y = point[1];
-            nodes.push(node);
+            if (insert_node) {
+                var point = d3.mouse(this),
+                    node = new Node(++lastNodeId, ".", point[0], point[1], null, true);
+                nodes.push(node);
+                insert_node = false;
+
+                restart();
+
+                //ajax call to create new node.
+                //function ajax_create_new_node () {
+                $.ajax
+                ({
+                    url:
+                        "http://open-physiology.org:5054/makelyphnode/" ,
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        response;
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Node creation error:" , response);
+                            return;
+                        }
+                        node.name = response.id;
+
+                        console.log(node.name);
+                        restart();
+
+
+                    }
+                });
+            }
 
             restart();
-
-            //ajax call to create new node.
-            //function ajax_create_new_node () {
-            $.ajax
-            ({
-                url:
-                    "http://open-physiology.org:5054/makelyphnode/" ,
-
-                jsonp: "callback",
-
-                dataType: "jsonp",
-
-
-                success: function (response) {
-                    response;
-
-                    if (response.hasOwnProperty("Error")) {
-                        console.log("Node creation error:" , response);
-                        return;
-                    }
-                    node.name = response.id;
-
-                    console.log(node.name);
-                    restart();
-
-
-                }
-            });
         }
 
         function mousemove() {
+            if (rectangle_draw){
+                rectangles[rectangles.length-1].width = d3.mouse(this)[0] - rectangles[rectangles.length-1].x;
+                rectangles[rectangles.length-1].height = d3.mouse(this)[1] - rectangles[rectangles.length-1].y;
+                //console.log(rectangles[rectangles.length-1]);
+                restart();
+                return;
+            }
+
+
             if (!mousedown_node) return;
 
             // update drag line
@@ -1532,8 +1582,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
             if (rectangle_draw){
+                rectangle_draw = false;
 
-                console.log("Draw rect", d3.mouse(this)[0], d3.mouse(this)[1]);
 
             }
 
@@ -1596,23 +1646,23 @@ function Graph(id, name, nodes, links, rectangles) {
                     //lastNodeId--;
                     restart();
                     break;
-                case 66: // B
-                    if (graph.selected_link) {
-                        // set link direction to both left and right
-                        graph.selected_link.left = true;
-                        graph.selected_link.right = true;
-                    }
-                    restart();
-                    break;
-                case 76: // L
-                    if (graph.selected_link) {
-                        // set link direction to left only
-                        graph.selected_link.left = true;
-                        graph.selected_link.right = false;
-                    }
-                    restart();
-                    break;
-                //case 82: // R
+                //case 66: // B
+                //    if (graph.selected_link) {
+                //        // set link direction to both left and right
+                //        graph.selected_link.left = true;
+                //        graph.selected_link.right = true;
+                //    }
+                //    restart();
+                //    break;
+                //case 76: // L
+                //    if (graph.selected_link) {
+                //        // set link direction to left only
+                //        graph.selected_link.left = true;
+                //        graph.selected_link.right = false;
+                //    }
+                //    restart();
+                //    break;
+                ////case 82: // R
                 //    if (graph.selected_node) {
                 //        // toggle node fixed
                 //        graph.selected_node.fixed = !graph.selected_node.fixed;
@@ -1676,6 +1726,9 @@ function Graph(id, name, nodes, links, rectangles) {
                     break;
                 case 82: // R - Rectangle
                     rectangle_draw = true;
+                    break;
+                case 73: // I - insert node
+                    insert_node = true;
                     break;
 
 
