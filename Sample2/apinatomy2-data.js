@@ -1746,7 +1746,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 case 65: // a - Attach node to lyph
                     attachNodeToLyph("inside");
                     break;
-                case 66: // a - Attach node to lyph
+                case 66: // b - Attach node to lyph
                     attachNodeToLyph("border");
                     break;
 
@@ -1796,6 +1796,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             graph.selected_node.location = boundingRectangleID;
             graph.selected_node.locationtype = locationType;
+            //graph.selected_node.fixed = true;
             console.log(graph.selected_node);
         }
 
@@ -1803,25 +1804,47 @@ function Graph(id, name, nodes, links, rectangles) {
         //TODO: Improve the breakLink function
         function breakLink() {
 
-            //console.log(graph.selected_link.source);
-            //console.log(graph.selected_link.target);
-            //console.log(links.indexOf(graph.selected_link));
+            var breakCount = 2;
+            //$.prompt("What's your name?",
+            //    function(s){$.alert('Your name is '+s);});
+
+            breakCount = prompt("Number of replacement edges?");
+
 
             //store start and end nodes
             var startnode = graph.selected_link.source;
             var lastnode = graph.selected_link.target;
+            var insertBorderNodes = null;
+            var startNodeLocation = startnode.location;
+            var lastNodeLocation = lastnode.location;
 
+
+            startnode.location != lastnode.location ?  insertBorderNodes = true:insertBorderNodes= false;
+
+            console.log(startNodeLocation,lastNodeLocation);
 
             //remove the link between then nodes
             links.splice(links.indexOf(graph.selected_link), 1);
 
 
             //insert n nodes and edges
-            for (var i = 0; i < 10; i++) {
+            for (var i = 0; i < breakCount; i++) {
 
                 (function (){
 
-                    var generatedNode = new Node(++lastNodeId,".", 100,100,null,false);
+                    var generatedNode = new Node(++lastNodeId,".", 100,100,null,true);
+
+                    if (i === 0 && insertBorderNodes){
+                        generatedNode.location = startNodeLocation;
+                        generatedNode.locationtype = "border";
+                    }
+                    if (i === breakCount -1 && insertBorderNodes){
+                        generatedNode.location = lastNodeLocation;
+                        generatedNode.locationtype = "border";
+                    }
+
+                    console.log(generatedNode);
+
                     //ajax call to create new node.
                     //function ajax_create_new_node () {
                     $.ajax
