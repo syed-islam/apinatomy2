@@ -857,7 +857,7 @@ function Graph(id, name, nodes, links, rectangles) {
             var rectangle_draw = null;
             var rectangle_x =  null;
             var rectangle_y = null;
-            var drag_button_enabled = true;
+            var drag_button_enabled = false;
 
 
 
@@ -918,7 +918,7 @@ function Graph(id, name, nodes, links, rectangles) {
                                     d.py = boundingy + boundingheight;
                                 }
 
-                                console.log(d.x, boundingx);
+                                //console.log(d.x, boundingx);
                             }
                             if (d.px > boundingx + boundingwidth  ) d.px = boundingx + boundingwidth ;
                             if (d.px < boundingx) d.px = boundingx ;
@@ -1735,9 +1735,68 @@ function Graph(id, name, nodes, links, rectangles) {
                 case 73: // I - insert node
                     insert_node = true;
                     break;
+                case 76: // l - remove node location data
+                    //console.log(graph.selected_node);
+                    if (graph.selected_node) {
+                        graph.selected_node.location = null;
+                        graph.selected_node.locationtype = null;
+                        //console.log(graph.selected_node);
+                    }
+                    break;
+                case 65: // a - Attach node to lyph
+                    attachNodeToLyph("inside");
+                    break;
+                case 66: // a - Attach node to lyph
+                    attachNodeToLyph("border");
+                    break;
 
 
             }
+        }
+
+
+        function attachNodeToLyph(locationType){
+            //console.log(graph.selected_node.x, graph.selected_node.y);
+
+            var boundingx = null;
+            var boundingy = null;
+            var boundingwidth = null;
+            var boundingheight = null;
+
+            var boundingRectangleSize = null;
+            var boundingRectangleID = null;
+
+            for (var i = 0; i < rectangles.length; i++){ // check for inside
+
+                boundingx = rectangles[i].x;
+                boundingy = rectangles[i].y;
+                boundingwidth = rectangles[i].width;
+                boundingheight = rectangles[i].height;
+
+
+                //console.log(boundingRectangleID);
+
+                if (graph.selected_node.x > boundingx + boundingwidth + (nodeRadius/2)) continue;
+                if (graph.selected_node.x < boundingx - (nodeRadius/2) ) continue;
+                if (graph.selected_node.y > boundingy + boundingheight + (nodeRadius /2)) continue;
+                if (graph.selected_node.y < boundingy - (nodeRadius/2)) continue;
+
+                if (boundingRectangleSize){
+                    if ((boundingwidth * boundingheight) < boundingRectangleSize){
+                        boundingRectangleSize = boundingwidth * boundingheight;
+                        boundingRectangleID = rectangles[i].id;
+                    }
+                } else {
+                    boundingRectangleSize = boundingwidth * boundingheight;
+                    boundingRectangleID = rectangles[i].id;
+                }
+
+            }
+
+
+            graph.selected_node.location = boundingRectangleID;
+            graph.selected_node.locationtype = locationType;
+            console.log(graph.selected_node);
         }
 
 

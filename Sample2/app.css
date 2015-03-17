@@ -144,7 +144,7 @@ text.id {
 }
 
 #app-body .panel .repo-pane {
-    height: 30%;
+    height: 25%;
     position: relative;
     overflow-x: auto;
     overflow-y: auto;
