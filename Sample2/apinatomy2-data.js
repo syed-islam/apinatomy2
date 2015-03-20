@@ -729,12 +729,13 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     this.highlighted = highlighted;
 }
 
-function Rectangle(id, x, y, width, height){
+function Rectangle(id, x, y, width, height, lyphID){
     this.id = id;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    this.lyphID = lyphID;
 }
 
 
@@ -832,10 +833,10 @@ function Graph(id, name, nodes, links, rectangles) {
 
     if (rectangles === undefined)
         rectangles = [];
-    rectangles.push( new Rectangle("L1", 20, 320, 180,240));
-    rectangles.push( new Rectangle("L2", 370, 30, 155,140));
-    rectangles.push( new Rectangle("L3", 1, 10, 528, 570));
-    console.log(rectangles);
+    //rectangles.push( new Rectangle("L1", 20, 320, 180,240));
+    //rectangles.push( new Rectangle("L2", 370, 30, 155,140));
+    //rectangles.push( new Rectangle("L3", 1, 10, 528, 570));
+    //console.log(rectangles);
 
 
     this.draw = function (svg, onSelectNode, onSelectLink) {
@@ -998,7 +999,9 @@ function Graph(id, name, nodes, links, rectangles) {
             circle = svg.append('g').attr('class', 'graph').selectAll('g'),
             labels = svg.append('g').attr('class', 'graph').selectAll('text'),
             auIcon = svg.append('g').attr('class','graph').selectAll('rect'),
-            boxes = svg.append('g').attr('class', 'graph');
+            boxes = svg.append('g').attr('class', 'graph'),
+            boxlabels = svg.append('g').attr('class', 'graph')
+            ;
 
 
             //au_layers = svg.append('g').attr('class','graph').selectAll('.layer');
@@ -1161,6 +1164,8 @@ function Graph(id, name, nodes, links, rectangles) {
             labels = svg.append('g').attr('class', 'graph').selectAll('text');
             auIcon = svg.append('g').attr('class','graph').selectAll('rect');
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
+            boxlabels = svg.append('g').attr('class', 'graph');
+
 
 
             //svg.selectAll("path.link").remove();
@@ -1171,12 +1176,21 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
             boxes = boxes.data(rectangles);
-            boxes = boxes.enter().append('rect');
+
+            boxlabels = boxes.enter().append('svg:text');
+            boxlabels.attr('x' ,function (d) {return d.x})
+                .attr('y' ,function (d) {return d.y-5 })
+                .text( function (d) { return d.lyphID; })
+
+
+            boxes = boxes.enter().append('svg:rect');
 
             boxes.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y})
                 .attr('width' ,function (d) {return d.width})
                 .attr('height' ,function (d) {return d.height})
+                //.append("svg:title")
+                //.text(function(d){return "Hello:"})
                 .style("fill", "none")
                 .style("stroke", "blue")
                 .style("stroke-width", "3px")
@@ -1520,7 +1534,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
                 console.log("Draw rect", rectangle_x, rectangle_y);
-                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1));
+                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, selectedAU.name));
                 console.log(rectangles);
                 restart();
                 return;
@@ -1880,14 +1894,14 @@ function Graph(id, name, nodes, links, rectangles) {
                     });
 
                     nodes.push(generatedNode);
-                    links.push({source: startnode, target: generatedNode, left: false, right: true, highlighted: false})
+                    links.push({source: startnode, target: generatedNode, left: false, right: false, highlighted: false})
                     startnode = generatedNode;
                 }());
 
 
             }
 
-            links.push({source: startnode, target: lastnode, left: false, right: true, highlighted: false})
+            links.push({source: startnode, target: lastnode, left: false, right: false, highlighted: false})
 
             //removing selection of link as the link no longer exists
             graph.selected_link = null;

@@ -1,6 +1,7 @@
 // TODO: This part is the driver from the graph-construction.js
 
 var refresh_graph;
+var selectedAU = null;
 
 var graphEditor = function () {
 
@@ -35,7 +36,7 @@ var graphEditor = function () {
     var selectedGraph = null;
     var selectedGraphNode = null;
     var selectedAUNode = null;
-    var selectedAU = null;
+    selectedAU = null;
 
 
 
