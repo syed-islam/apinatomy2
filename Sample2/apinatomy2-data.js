@@ -716,7 +716,7 @@ function Node(id, name, x, y, tree, fixed, location, locationtype){
 }
 
 //graph link
-function Link(source, target, au,type, edgeid, description, fma, left, right){
+function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted){
     this.source = source;
     this.target = target;
     this.au = au;
@@ -726,6 +726,7 @@ function Link(source, target, au,type, edgeid, description, fma, left, right){
     this.fma = fma;
     this.left = left;
     this.right = right;
+    this.highlighted = highlighted;
 }
 
 function Rectangle(id, x, y, width, height){
@@ -839,7 +840,7 @@ function Graph(id, name, nodes, links, rectangles) {
     this.draw = function (svg, onSelectNode, onSelectLink) {
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
-        var nodeRadius =12;
+        var nodeRadius = 8;
         var graph = this;
 
         multiple_selected_node_1 = null;
@@ -1096,10 +1097,10 @@ function Graph(id, name, nodes, links, rectangles) {
                     normY = deltaY / dist,
                     sourcePadding = d.left ? 17 : nodeRadius,
                     targetPadding = d.right ? 17 : nodeRadius,
-                    sourceX = d.source.x + (sourcePadding * normX) - 2 ,
-                    sourceY = d.source.y + (sourcePadding * normY) - 2,
-                    targetX = d.target.x - (targetPadding * normX) - 2,
-                    targetY = d.target.y - (targetPadding * normY) - 2;
+                    sourceX = d.source.x + (sourcePadding * normX),
+                    sourceY = d.source.y + (sourcePadding * normY),
+                    targetX = d.target.x - (targetPadding * normX),
+                    targetY = d.target.y - (targetPadding * normY);
                 return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
             });
 
@@ -1111,10 +1112,10 @@ function Graph(id, name, nodes, links, rectangles) {
                     normY = deltaY / dist,
                     sourcePadding = d.left ? 17 : nodeRadius,
                     targetPadding = d.right ? 17 : nodeRadius,
-                    sourceX = d.source.x + (sourcePadding * normX) + 2,
-                    sourceY = d.source.y + (sourcePadding * normY) + 2,
-                    targetX = d.target.x - (targetPadding * normX) + 2,
-                    targetY = d.target.y - (targetPadding * normY) + 2;
+                    sourceX = d.source.x + (sourcePadding * normX),
+                    sourceY = d.source.y + (sourcePadding * normY),
+                    targetX = d.target.x - (targetPadding * normX),
+                    targetY = d.target.y - (targetPadding * normY);
                 return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
             });
 
@@ -1154,8 +1155,8 @@ function Graph(id, name, nodes, links, rectangles) {
         var restart = function restart() {
             svg.selectAll('g.graph').remove();
             boxes = svg.append('g').attr('class', 'graph').selectAll('rect');
-            path = svg.append('g').attr('class', 'graph').selectAll('path');
             pathoverlay = svg.append('g').attr('class', 'graph').selectAll('path');
+            path = svg.append('g').attr('class', 'graph').selectAll('path');
             labels = svg.append('g').attr('class', 'graph').selectAll('text');
             auIcon = svg.append('g').attr('class','graph').selectAll('rect');
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
@@ -1309,7 +1310,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 .text(function(d){return "Name:"+ d.name;});
             ;
 
-            // show node IDs
+            //show node IDs
             g.append('svg:text')
                 .attr('x', 0)
                 .attr('y', 4)
@@ -1383,14 +1384,14 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-
-            labels = labels.data(links);
-
-            labels.enter().append('text')
-                .attr("x", function(d) { return (d.source.y + d.target.y) / 2; })
-                .attr("y", function(d) { return (d.source.x + d.target.x) / 2; })
-                .attr("text-anchor", "middle")
-                .text(function(d) {if (d.au) return d.au.id; });
+            //
+            //labels = labels.data(links);
+            //
+            //labels.enter().append('text')
+            //    .attr("x", function(d) { return (d.source.y + d.target.y) / 2; })
+            //    .attr("y", function(d) { return (d.source.x + d.target.x) / 2; })
+            //    .attr("text-anchor", "middle")
+            //    .text(function(d) {if (d.au) return d.au.id; });
 
 
             // path (link) group
@@ -1414,10 +1415,13 @@ function Graph(id, name, nodes, links, rectangles) {
 
             // add new links
             pathoverlay.enter().append('path')
-                .attr('class', 'link')
-                .style("stroke-opacity", "0.6")
+                //.attr('class', 'link')
+                .style("stroke-width", "12")
+                .style("stroke-opacity", "0.2")
                 .style('stroke', function (d) {
-                    return d3.rgb(255,140,0);
+                    if (d.highlighted) {
+                        return d3.rgb(255, 0, 0);
+                    }
                 })
 
 

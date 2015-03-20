@@ -440,8 +440,10 @@ var graphEditor = function () {
                                 response[i].nodes[j].exits[k].via.type,
                                 response[i].nodes[j].exits[k].via.id,
                                 response[i].nodes[j].exits[k].via.name,
-                                response[i].nodes[j].exits[k].via.fma
-
+                                response[i].nodes[j].exits[k].via.fma,
+                                null,
+                                null,
+                                j % 2 ===0 ?true: false
                             );
                             edges.push(newEdge);
                         }
