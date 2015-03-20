@@ -1311,13 +1311,13 @@ function Graph(id, name, nodes, links, rectangles) {
             ;
 
             //show node IDs
-            g.append('svg:text')
-                .attr('x', 0)
-                .attr('y', 4)
-                .attr('class', 'id')
-                .text(function (d) {
-                    return d.name;
-                });
+            //g.append('svg:text')
+            //    .attr('x', 0)
+            //    .attr('y', 4)
+            //    .attr('class', 'id')
+            //    .text(function (d) {
+            //        return d.name;
+            //    });
 
             // remove old nodes
             circle.exit().remove();
