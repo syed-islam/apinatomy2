@@ -151,6 +151,24 @@ var graphEditor = function () {
         cloneGraph(selectedGraph);
     })
 
+
+    d3.select("#clearHighlight1").on("click", function() {
+        clearHighlight();
+    })
+
+    d3.select("#clearHighlight2").on("click", function() {
+        clearHighlight();
+    })
+
+    function clearHighlight(){
+        console.log(selectedGraph);
+        for (var i =0 ; i < selectedGraph.links.length; i++){
+            selectedGraph.links[i].highlighted = false;
+        }
+        refresh_graph();
+    }
+
+
     d3.select("#graphNew").on("click", function(){
         console.log("new Graph");
         var nodes = [];
