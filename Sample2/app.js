@@ -150,6 +150,23 @@ var graphEditor = function () {
         cloneGraph(selectedGraph);
     })
 
+    d3.select("#graphNew").on("click", function(){
+        console.log("new Graph");
+        var nodes = [];
+        var edges = [];
+        var id = null;
+        var newGraph = null;
+
+        //nodes.push(new Node("1", ".", 200, 200, null, true));
+
+        newGraph = new Graph (graphRepo.graphs.length, graphRepo.graphs.length, nodes, edges);
+        graphRepo.addAt(newGraph, 0);
+        selectedGraph = graphRepo.graphs[0];
+        //graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+        refresh_graph();
+        console.log(graphRepo);
+
+    });
 
 
 

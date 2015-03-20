@@ -1636,7 +1636,8 @@ function Graph(id, name, nodes, links, rectangles) {
                 drag_button_enabled = true;
             }
 
-            if (!graph.selected_node && !graph.selected_link) return;
+            //TODO figure out the effect of removing the following line?
+            //if (!graph.selected_node && !graph.selected_link) return;
             switch (d3.event.keyCode) {
                 case 8: // backspace
                 case 46: // delete
