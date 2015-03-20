@@ -165,8 +165,14 @@ var graphEditor = function () {
         for (var i =0 ; i < selectedGraph.links.length; i++){
             selectedGraph.links[i].highlighted = false;
         }
-        refresh_graph();
+        selectedGraph.draw(svg, onSelectNode, onSelectLink);
     }
+
+
+
+
+
+
 
 
     d3.select("#graphNew").on("click", function(){
