@@ -830,11 +830,12 @@ function Graph(id, name, nodes, links, rectangles) {
         return -1;
     }
 
-    rectangles = [];
+    if (rectangles === undefined)
+        rectangles = [];
     rectangles.push( new Rectangle("L1", 20, 320, 180,240));
     rectangles.push( new Rectangle("L2", 370, 30, 155,140));
     rectangles.push( new Rectangle("L3", 1, 10, 528, 570));
-    //console.log(rectangles);
+    console.log(rectangles);
 
 
     this.draw = function (svg, onSelectNode, onSelectLink) {
@@ -1519,7 +1520,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
                 console.log("Draw rect", rectangle_x, rectangle_y);
-                rectangles.push(new Rectangle(rectangles.length, rectangle_x, rectangle_y, 1, 1));
+                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1));
                 console.log(rectangles);
                 restart();
                 return;
@@ -1780,6 +1781,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
                 //console.log(boundingRectangleID);
+                console.log(rectangles);
 
                 if (graph.selected_node.x > boundingx + boundingwidth + (nodeRadius/2)) continue;
                 if (graph.selected_node.x < boundingx - (nodeRadius/2) ) continue;
@@ -1837,7 +1839,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 (function (){
 
-                    var generatedNode = new Node(++lastNodeId,".", 100,100,null,true);
+                    var generatedNode = new Node(++lastNodeId,".", 100,100,null,true, null, null);
 
                     if (i === 0 && insertBorderNodes){
                         generatedNode.location = startNodeLocation;
@@ -1848,7 +1850,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         generatedNode.locationtype = "border";
                     }
 
-                    console.log(generatedNode);
+                    console.log("generated node", generatedNode);
 
                     //ajax call to create new node.
                     //function ajax_create_new_node () {
@@ -1878,17 +1880,19 @@ function Graph(id, name, nodes, links, rectangles) {
                     });
 
                     nodes.push(generatedNode);
-                    links.push({source: startnode, target: generatedNode, left: false, right: true})
+                    links.push({source: startnode, target: generatedNode, left: false, right: true, highlighted: false})
                     startnode = generatedNode;
                 }());
 
 
             }
 
-            links.push({source: startnode, target: lastnode, left: false, right: true})
+            links.push({source: startnode, target: lastnode, left: false, right: true, highlighted: false})
 
             //removing selection of link as the link no longer exists
             graph.selected_link = null;
+            console.log(nodes);
+            console.log(links)
 
 
         }
