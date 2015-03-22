@@ -97,6 +97,7 @@ var graphEditor = function () {
         edge.edgeid != null ? d3.select("#edgeID").property("value", edge.edgeid) : d3.select("#edgeID").property("value", "")
         edge.type != null ? d3.select("#edgeType").property("value", edge.type) : d3.select("#edgeType").property("value", "")
         edge.description != null ? d3.select("#edgeDescription").property("value", edge.description) : d3.select("#edgeDescription").property("value", "");
+        edge.annotations != null ? d3.select("#edgeAnnotation").property("value", edge.annotations) :d3.select("#edgeAnnotation").property("value", "");
     }
 
 
@@ -151,6 +152,27 @@ var graphEditor = function () {
         cloneGraph(selectedGraph);
     })
 
+
+
+
+
+    d3.select("#annotationHighligh").on("click", function() {
+        console.log("Highlight Annotations");
+        for (var i =0 ; i < selectedGraph.links.length; i++){
+
+            console.log(selectedGraph.links[i].annotations);
+                selectedGraph.links[i].highlighted = false;
+            if (selectedGraph.links[i].annotations){
+                if (selectedGraph.links[i].annotations.indexOf($("#highlightAnnotation").val().trim()) > -1)
+                   selectedGraph.links[i].highlighted = true;
+            }
+            //if (selectedGraph.links[i].annotations.contains($("#highlightAnnotation").val().trim()))
+            //   selectedGraph.links[i].highlighted = true;
+            //else
+            //    selectedGraph.links[i].highlighted = false;
+        }
+        selectedGraph.draw(svg, onSelectNode, onSelectLink);
+    })
 
     d3.select("#clearHighlight1").on("click", function() {
         clearHighlight();
@@ -339,6 +361,13 @@ var graphEditor = function () {
         }
     });
 
+    $("#annotateEdge").click(function(){
+        console.log("Annotage edge");
+        console.log("Annotations", $("#edgeAnnotation").val().trim());
+        selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
+
+    });
+
     d3.select("#edgeSave").on("click", function(){
         console.log("Selected link:", selectedGraph.selected_link);
         var actualEdge = selectedGraph.selected_link;
@@ -467,8 +496,8 @@ var graphEditor = function () {
                                 response[i].nodes[j].exits[k].via.name,
                                 response[i].nodes[j].exits[k].via.fma,
                                 null,
-                                null,
-                                j % 2 ===0 ?true: false
+                                null
+                                //j % 2 ===0 ?true: false
                             );
                             edges.push(newEdge);
                         }
@@ -683,6 +712,7 @@ var graphEditor = function () {
                 console.log("Lyph Loaded");
 
 
+
                 //Todo: We should only make a single pass through the dataset.
                 //load all basic types
                 for (var i = 0; i < data.length; i++) {
@@ -709,21 +739,27 @@ var graphEditor = function () {
                 //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
 
 
+
+
                 //load all shell types
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "shell"){
                         //console.log(data[i]);
                         // Create appropriate layers for the lyph
+                        //TODO Remove after changes made by SAM to ensure that lyphs are returned in the order they were created.
+                        if (i === 10) continue;
+                        console.log(i);
 
                         var layers_content= [];
                         for (var j = 0; j < data[i].layers.length;j++){
                             //TODO
 
+                            //console.log(data[i].layers[j])
                             var newLayer  = null;
                             if (auRepo)
-                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), (materialRepo.getIndexByID(data[i].layers[j].mtlid) > auRepo.getIndexByID(data[i].layers[j].mtlid)) ? materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)] : auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), (materialRepo.getIndexByID(data[i].layers[j].mtlid) > auRepo.getIndexByID(data[i].layers[j].mtlid)) ? materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)] : auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].mtlid)]);
                             else
-                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
                             if (layerRepo == null){
                                 layerRepo = new LayerRepo([newLayer]);
                             } else {

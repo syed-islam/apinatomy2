@@ -243,6 +243,7 @@ function Layer(id, name, thickness, material) {
     this.thickness = thickness;
     this.material = material;
 
+    console.log(this.id, this.name, this.thickness, this.material);
 
 
     //function ajax_create_layer () {
@@ -716,7 +717,7 @@ function Node(id, name, x, y, tree, fixed, location, locationtype){
 }
 
 //graph link
-function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted){
+function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations){
     this.source = source;
     this.target = target;
     this.au = au;
@@ -727,6 +728,7 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     this.left = left;
     this.right = right;
     this.highlighted = highlighted;
+    this.annotations = annotations;
 }
 
 function Rectangle(id, x, y, width, height, lyphID){
