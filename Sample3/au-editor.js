@@ -620,10 +620,10 @@ var auEditor = function () {
 
 
     d3.select("#createBasicLyph").on("click", function () {
-        console.log("Creating basic lyph");
+        console.log("Creating basic template");
         console.log(fmaID.value);
 
-        //send request to create lyph
+        //send request to create template
 
         $.ajax
         ({
