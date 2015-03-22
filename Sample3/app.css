@@ -105,6 +105,14 @@ text.id {
     overflow-x: auto;
 }
 
+
+#app-body .console {
+    width: 540px;
+    height: 10px;
+    position: absolute;
+    left: 340px;
+}
+
 #app-body .tree {
     width: 540px;
     height: 600px;
@@ -144,11 +152,21 @@ text.id {
 }
 
 #app-body .panel .repo-pane {
-    height: 25%;
+    height: 23%;
     position: relative;
     overflow-x: auto;
     overflow-y: auto;
 }
+
+
+#app-body .panel .repo-pane .small {
+    height: 4%;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+
 
 #app-body .panel .repo-pane .repo {
     position: relative;
@@ -157,6 +175,8 @@ text.id {
     border: 1px solid #e3e3e3;
     background-color: #eee;
 }
+
+
 
 .instructions {
     position: absolute;

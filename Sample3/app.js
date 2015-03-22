@@ -5,6 +5,9 @@ var selectedAU = null;
 
 var graphEditor = function () {
 
+
+        $('#userconsole').text("Hello");
+
     //Init visual parameters
     var panelWidth = 300, panelHeight = 500;
     var width = 530;
@@ -241,10 +244,15 @@ var graphEditor = function () {
         //console.log(actualSelectedGraphIndex);
 
 
-        var query = "http://open-physiology.org:5054/makeview/?"
+        var query = "http://open-physiology.org:5055/makeview/?"
         for (var i =0; i < selectedGraph.nodes.length ; i++){
             query += "&node" + (i + 1)+ "="+ encodeURIComponent(selectedGraph.nodes[i].name);
             query += "&x"+ (i + 1) +"="+ encodeURIComponent(selectedGraph.nodes[i].x);
+            query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
+        }
+
+
+        for (var i =0; i < selectedGraph.rectangles.length; i++){
             query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
         }
 
@@ -265,7 +273,7 @@ var graphEditor = function () {
 
 
                 if (response.hasOwnProperty("Error")) {
-                    console.log("Node creation error:" , response);
+                    console.log("Graph View Save error" , response);
                     return;
                 }
 
@@ -389,12 +397,12 @@ var graphEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5054/makelyphedge/"+
+            "http://open-physiology.org:5055/makelyph/"+
             "?type="+ encodeURIComponent($("#edgeType").val().trim())+
             "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
             "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)+
             "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)+
-            "&lyph="+ encodeURIComponent($("#auID").val().trim())
+            "&template="+ encodeURIComponent($("#auID").val().trim())
             ,
 
             jsonp: "callback",
@@ -427,7 +435,7 @@ var graphEditor = function () {
         // ajax call to load all graph view
         $.ajax
         ({
-            url:"http://open-physiology.org:5054/all_lyphviews/",
+            url:"http://open-physiology.org:5055/all_lyphviews/",
 
             jsonp: "callback",
 
@@ -460,18 +468,7 @@ var graphEditor = function () {
 
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
-
-
-                        //Testing Code
-                            if (response[i].nodes[j].id === "50022481" || response[i].nodes[j].id === "50022493"){
-                                nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, undefined, undefined));
-                            } else if(response[i].nodes[j].id === "50022482" || response[i].nodes[j].id === "50010931_0" || response[i].nodes[j].id === "50022480"){
-                                nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, undefined, undefined));
-                            }
-                        else {
-                            nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true));
-                        }
-
+                        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true));
                     }
 
 
@@ -487,10 +484,12 @@ var graphEditor = function () {
                             //console.log("description", response[i].nodes[j].exits[k].via.name );
                             //console.log("fma",response[i].nodes[j].exits[k].via.fma );
 
+                            console.log(response[i]);
+
                             var newEdge = new Link(
                                 newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)],
                                 newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)],
-                                (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph.id)]: null,
+                                (response[i].nodes[j].exits[k].via.template)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.template.id)]: null,
                                 response[i].nodes[j].exits[k].via.type,
                                 response[i].nodes[j].exits[k].via.id,
                                 response[i].nodes[j].exits[k].via.name,
@@ -688,7 +687,7 @@ var graphEditor = function () {
         $.ajax
         ({
             url:
-                "http://open-physiology.org:5054/all_lyphs/",
+                "http://open-physiology.org:5055/all_templates/",
             jsonp:
                 "callback",
             dataType:

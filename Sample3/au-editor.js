@@ -203,7 +203,7 @@ var auEditor = function () {
 
     function saveAUtoServer(au){
         console.log(au);
-        var query = "http://open-physiology.org:5054/makelyph/" +
+        var query = "http://open-physiology.org:5055/maketemplate/" +
             "?name=" + encodeURIComponent(au.name) +
             "&type=" + encodeURIComponent("shell");
         for ( var i = 0; i < au.layers.length; i ++){

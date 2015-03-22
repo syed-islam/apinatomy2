@@ -186,7 +186,7 @@ function Material(id, name, colour, type, children, au) {
     this.saveMaterialToDatabase = function() {
         var query;
         var xmlhttp;
-        query = 'http://open-physiology.org:5054//makelyph/?name=' + encodeURIComponent(this.name) + '&type=' + encodeURIComponent("mix");
+        //query = 'http://open-physiology.org:5054//makelyph/?name=' + encodeURIComponent(this.name) + '&type=' + encodeURIComponent("mix");
         //query += '&layer'+i+'='+encodeURIComponent(layer_ids[i]);
         console.log(query);
 
@@ -251,7 +251,7 @@ function Layer(id, name, thickness, material) {
         ({
             context: this,
             url:
-            "http://open-physiology.org:5054/makelayer/" +
+            "http://open-physiology.org:5055/makelayer/" +
             "?material=" + this.material.id +
             "&thickness=" + this.thickness +
             "&color=" + this.material.color ,
@@ -1556,7 +1556,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 $.ajax
                 ({
                     url:
-                        "http://open-physiology.org:5054/makelyphnode/" ,
+                        "http://open-physiology.org:5055/makelyphnode/" ,
 
                     jsonp: "callback",
 
@@ -1873,7 +1873,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     $.ajax
                     ({
                         url:
-                            "http://open-physiology.org:5054/makelyphnode/" ,
+                            "http://open-physiology.org:5055/makelyphnode/" ,
 
                         jsonp: "callback",
 
