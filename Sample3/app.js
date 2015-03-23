@@ -100,6 +100,7 @@ var graphEditor = function () {
 
     function updateRectangleParameter(rectangle){
         d3.select("#rectangleID").property("value", rectangle.lyphID);
+        d3.select("#rectangleName").property("value", rectangle.lyphName);
     }
 
 
@@ -191,6 +192,44 @@ var graphEditor = function () {
     d3.select("#graphClone").on("click", function() {
         cloneGraph(selectedGraph);
     })
+
+    d3.select("#searchRectangleLyph").on("click", function() {
+
+        //send ajax request
+        $.ajax
+        ({
+            context: this,
+            url:
+            "http://open-physiology.org:5055/lyph/" +
+            $("#rectangleID").val().trim() ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node not found" , response);
+                    d3.select("#rectangleName").attr('value', '');
+                    return;
+                }
+
+
+                d3.select("#rectangleName").attr('value', response.name);
+
+
+            },
+            async:   false
+        });
+
+
+
+
+    })
+
 
 
 

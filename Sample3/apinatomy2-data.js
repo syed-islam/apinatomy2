@@ -731,13 +731,14 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     this.annotations = annotations;
 }
 
-function Rectangle(id, x, y, width, height, lyphID){
+function Rectangle(id, x, y, width, height, lyphID, lyphName){
     this.id = id;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.lyphID = lyphID;
+    this.lyphName = lyphName;
 }
 
 
@@ -838,10 +839,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
     if (rectangles === undefined)
         rectangles = [];
-    //rectangles.push( new Rectangle("L1", 20, 320, 180,240));
-    //rectangles.push( new Rectangle("L2", 370, 30, 155,140));
-    //rectangles.push( new Rectangle("L3", 1, 10, 528, 570));
-    //console.log(rectangles);
 
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
@@ -1575,7 +1572,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
                 console.log("Draw rect", rectangle_x, rectangle_y);
-                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, null));
+                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, null, null));
                 console.log(rectangles);
                 restart();
                 return;
