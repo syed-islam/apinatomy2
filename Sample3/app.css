@@ -237,9 +237,13 @@ text.id {
 }
 
 .rectangles {
-    fill: blue;
+    fill: none;
     stroke: blue;
-    stroke-width: 3px;
+    stroke-width: 4px;
     stroke-opacity: 0.6;
+    cursor: move;
+}
 
+.rectangles.selected{
+    stroke-dasharray: 10,2;
 }

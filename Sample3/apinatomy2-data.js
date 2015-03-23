@@ -815,6 +815,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.selected_node = null;
     this.selected_link = null;
+    this.selected_rectangle = null;
 
     this.multiple_selection = [];
 
@@ -1207,6 +1208,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 .text( function (d) { return d.lyphID; })
 
 
+
             boxes = boxes.enter().append('svg:rect');
 
             boxes.attr('x' ,function (d) {return d.x})
@@ -1215,16 +1217,26 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr('height' ,function (d) {return d.height})
                 //.append("svg:title")
                 //.text(function(d){return "Hello:"})
-                .style("fill", "none")
-                .style("stroke", "blue")
-                .style("stroke-width", "3px")
-                .style("stroke-opacity", "0.6")
-                .attr("cursor", "move")
-
+                //.style("fill", "none")
+                //.style("stroke", "blue")
+                //.style("stroke-width", "3px")
+                //.style("stroke-opacity", "0.6")
+                //.attr("cursor", "move")
+                //.classed('rectangles', true)
+                .attr('class', 'rectangles')
+                .classed('selected', function(d){
+                    console.log(d === graph.selected_rectangle)
+                    return d === graph.selected_rectangle;
+                    //return true;
+                })
                 .call(customRectdrag)
                 .on('mousedown', function (d) {
-                    console.log("rectangle click");
+                    //console.log("rectangle click");
+                    graph.selected_rectangle = d;
+
+                    console.log("rectangle clicked", graph.selected_rectangle);
                     onSelectRectangle(d);
+                    restart();
                 });
 
 
@@ -1563,7 +1575,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
                 console.log("Draw rect", rectangle_x, rectangle_y);
-                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, selectedAU.name));
+                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, null));
                 console.log(rectangles);
                 restart();
                 return;
