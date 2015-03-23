@@ -93,6 +93,16 @@ var graphEditor = function () {
     }
 
 
+    var onSelectRectangle = function (d){
+        updateRectangleParameter(d);
+    }
+
+
+    function updateRectangleParameter(rectangle){
+        d3.select("#rectangleID").property("value", rectangle.lyphID);
+    }
+
+
     var onSelectNode = function(d){
         //if (selectedGraph.selected_node){
         //    //Update node parameters (tree parameters)
@@ -201,7 +211,7 @@ var graphEditor = function () {
             //else
             //    selectedGraph.links[i].highlighted = false;
         }
-        selectedGraph.draw(svg, onSelectNode, onSelectLink);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
     })
 
     d3.select("#clearHighlight1").on("click", function() {
@@ -217,7 +227,7 @@ var graphEditor = function () {
         for (var i =0 ; i < selectedGraph.links.length; i++){
             selectedGraph.links[i].highlighted = false;
         }
-        selectedGraph.draw(svg, onSelectNode, onSelectLink);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
     }
 
 
@@ -315,7 +325,7 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
-        selectedGraph.draw(svg, onSelectNode, onSelectLink);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         updateGraphParameters(selectedGraph);
     }
 
@@ -324,7 +334,7 @@ var graphEditor = function () {
             for (var i =0; i < selectedGraph.multiple_selection.length; i ++){
                 console.log(selectedGraph.multiple_selection[i]);
                 selectedGraph.multiple_selection[i].au = selectedAU;
-                selectedGraph.draw(svg, onSelectNode, onSelectLink);
+                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
 
                 $.ajax
                 ({
@@ -361,7 +371,7 @@ var graphEditor = function () {
 
         if (selectedGraph.selected_link){
             selectedGraph.selected_link.au = selectedAU;
-            selectedGraph.draw(svg, onSelectNode, onSelectLink);
+            selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
 
 
             console.log(selectedAU.id, selectedGraph.selected_link.edgeid);
@@ -542,7 +552,7 @@ var graphEditor = function () {
 
 
                     selectedGraph = graphRepo.graphs[0];
-                    selectedGraph.draw(svg, onSelectNode, onSelectLink);
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink,onSelectRectangle);
                     graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                     updateGraphParameters(selectedGraph);
 
@@ -674,7 +684,7 @@ var graphEditor = function () {
                 ////adding graph, selecting graph, drawing graphrepo and graph.
                 graphRepo.addAt(graphAjax,0);
                 selectedGraph = graphRepo.graphs[0];
-                selectedGraph.draw(svg, onSelectNode,onSelectLink);
+                selectedGraph.draw(svg, onSelectNode,onSelectLink,onSelectRectangle);
                 graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                 updateGraphParameters(selectedGraph);
 
@@ -849,7 +859,7 @@ var graphEditor = function () {
 
 
     refresh_graph = function refresh_graph(){
-        selectedGraph.draw(svg, onSelectNode, onSelectLink);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
 
     }

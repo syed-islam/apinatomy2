@@ -843,7 +843,7 @@ function Graph(id, name, nodes, links, rectangles) {
     //console.log(rectangles);
 
 
-    this.draw = function (svg, onSelectNode, onSelectLink) {
+    this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius = 8;
@@ -1220,7 +1220,12 @@ function Graph(id, name, nodes, links, rectangles) {
                 .style("stroke-width", "3px")
                 .style("stroke-opacity", "0.6")
                 .attr("cursor", "move")
-                .call(customRectdrag);
+
+                .call(customRectdrag)
+                .on('mousedown', function (d) {
+                    console.log("rectangle click");
+                    onSelectRectangle(d);
+                });
 
 
 
