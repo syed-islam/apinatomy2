@@ -1060,15 +1060,35 @@ function Graph(id, name, nodes, links, rectangles) {
                                 boundingheight = rectangles[i].height;
 
 
-                                if (d.x != boundingx  && d.x != boundingx + boundingwidth ){
-                                    if (Math.abs(d.y - boundingy) < Math.abs(d.y - (boundingy + boundingheight))){
-                                        d.y = boundingy;
-                                    } else {
-                                        d.y = boundingy + boundingheight;
-                                    }
+                                //if (d.x != boundingx  && d.x != boundingx + boundingwidth ){
+                                //    if (Math.abs(d.y - boundingy) < Math.abs(d.y - (boundingy + boundingheight))){
+                                //        d.y = boundingy;
+                                //    } else {
+                                //        d.y = boundingy + boundingheight;
+                                //    }
+                                //}
 
-
+                                if (Math.abs(d.y - boundingy) <= Math.abs(d.y - (boundingy + boundingheight)) &&
+                                    Math.abs(d.y - boundingy) <= Math.abs(d.x - (boundingx)) &&
+                                    Math.abs(d.y - boundingy) <= Math.abs(d.x - (boundingx + boundingwidth))){
+                                    d.y = boundingy;
+                                } else if (Math.abs(d.y - (boundingy + boundingheight)) < Math.abs(d.y - boundingy) &&
+                                    Math.abs(d.y - (boundingy + boundingheight)) < Math.abs(d.x - boundingx) &&
+                                    Math.abs(d.y - (boundingy + boundingheight)) < Math.abs(d.x - (boundingx + boundingwidth))){
+                                    d.y = boundingy + boundingheight;
+                                } else if (Math.abs(d.x - boundingx) < Math.abs(d.y - boundingy) &&
+                                    Math.abs(d.x - boundingx) < Math.abs(d.y - (boundingy + boundingheight)) &&
+                                    Math.abs(d.x - boundingx) < Math.abs(d.x - (boundingx + boundingwidth))){
+                                    d.x = boundingx;
+                                } else if (Math.abs(d.x - (boundingx + boundingwidth)) < Math.abs(d.y - boundingy) &&
+                                    Math.abs(d.x - (boundingx + boundingwidth)) < Math.abs(d.y - (boundingy + boundingheight)) &&
+                                    Math.abs(d.x - (boundingx + boundingwidth)) < Math.abs(d.x - boundingx )) {
+                                    d.x = boundingx + boundingwidth;
                                 }
+
+
+
+
                                 if (d.x > boundingx + boundingwidth  ) d.x = boundingx + boundingwidth ;
                                 if (d.x < boundingx) d.x = boundingx ;
                                 if (d.y > boundingy + boundingheight ) d.y = boundingy + boundingheight;
@@ -1868,10 +1888,14 @@ function Graph(id, name, nodes, links, rectangles) {
                     if (i === 0 && insertBorderNodes){
                         generatedNode.location = startNodeLocation;
                         generatedNode.locationtype = "border";
+                        generatedNode.x = (startnode.x + lastnode.x)/2;
+                        generatedNode.y = (startnode.y + lastnode.y)/2;
                     }
                     if (i === breakCount -1 && insertBorderNodes){
                         generatedNode.location = lastNodeLocation;
                         generatedNode.locationtype = "border";
+                        generatedNode.x = (startnode.x + lastnode.x)/2;
+                        generatedNode.y = (startnode.y + lastnode.y)/2;
                     }
 
                     console.log("generated node", generatedNode);
