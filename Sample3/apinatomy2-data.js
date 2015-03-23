@@ -811,6 +811,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
     var lastNodeId = nodes.length - 1;
 
+    this.keyboardShortcutEnabled = true;
+
     this.selected_node = null;
     this.selected_link = null;
 
@@ -1656,6 +1658,12 @@ function Graph(id, name, nodes, links, rectangles) {
                 svg.classed('ctrl', true);
                 drag_button_enabled = true;
             }
+
+
+
+
+
+            if (!graph.keyboardShortcutEnabled) return;
 
             //TODO figure out the effect of removing the following line?
             //if (!graph.selected_node && !graph.selected_link) return;

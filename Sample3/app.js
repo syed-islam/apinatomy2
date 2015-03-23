@@ -6,7 +6,34 @@ var selectedAU = null;
 var graphEditor = function () {
 
 
-        $('#userconsole').text("Hello");
+    $('#userconsole').text("Hello");
+
+
+
+    //The following setup is used to ignore all keyboard shortcuts being handled by the graph when the focus is on one of the user input boxes.
+    var setupHandleForKeyboardShortcuts  = function setupHandleForKeyboardShortcuts(){
+        function customfocus(element){
+            $(element).focusin(function() {
+                selectedGraph.keyboardShortcutEnabled = false;
+            })
+            $(element).focusout(function() {
+                selectedGraph.keyboardShortcutEnabled = true;
+            })
+
+        }
+
+        //populate the input elements to ignore
+        customfocus('#edgeDescription');
+        customfocus('#edgeType');
+        customfocus('#edgeAnnotation');
+        customfocus('#nodeName1');
+        customfocus('#highlightAnnotation');
+        customfocus('#startLyph');
+        customfocus('#endLyph');
+    }();
+
+
+
 
     //Init visual parameters
     var panelWidth = 300, panelHeight = 500;
@@ -813,6 +840,8 @@ var graphEditor = function () {
 
                 //console.log("LayerRepo:" , layerRepo);
 
+                load_all_graphs();
+
             }
         });
     };
@@ -825,7 +854,7 @@ var graphEditor = function () {
 
     }
     load_all_materials();
-    load_all_graphs();
+
 
 }();
 
