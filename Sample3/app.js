@@ -75,13 +75,14 @@ var graphEditor = function () {
 
     //Handling user interactions through call back functions
     var onSelectAU = function(d){
-        if (this != selectedAUNode){
+        //if (this != selectedAUNode){
             d3.select(this).style("stroke", "red");
+        if (this != selectedAUNode)
             d3.select(selectedAUNode).style("stroke", "black");
             selectedAUNode = this;
             selectedAU = d;
             updateAUParameters(selectedAU);
-        }
+        //}
     }
 
     var onSelectGraph = function(d){
