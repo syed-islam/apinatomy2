@@ -609,9 +609,10 @@ var graphEditor = function () {
 
                     //load rectangles
                     for (var j =0; j < response[i].lyphs.length; j++){
-                        rectangles.push(new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, "L"));
+                        rectangles.push(new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, ""));
                     }
 
+                    populateRectangleNames(rectangles);
 
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
@@ -656,6 +657,7 @@ var graphEditor = function () {
                     newGraph.selected_link = newGraph.links[0];
                     newGraph.selected_node = newGraph.nodes[0];
                     newGraph.selected_rectangle = newGraph.rectangles[0];
+                    console.log(newGraph.rectangles[0]);
 
                     //console.log("New Graph:", newGraph);
 
@@ -663,7 +665,7 @@ var graphEditor = function () {
 
 
                     selectedGraph = graphRepo.graphs[0];
-                    selectedGraph.draw(svg, onSelectNode, onSelectLink,onSelectRectangle);
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
                     graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
                     updateGraphParameters(selectedGraph);
 
@@ -679,6 +681,43 @@ var graphEditor = function () {
         });
 
 
+    }
+
+
+    function populateRectangleNames(rectangles){
+        for (var i =0; i < rectangles.length; i++){
+
+            (function () {
+                $('#userconsole').text("Searching for lyph: " + $("#rectangleID").val().trim());
+                var rect= rectangles[i];
+
+                //send ajax request
+                $.ajax
+                ({
+
+                    context: this,
+                    url: "http://open-physiology.org:5055/lyph/" +
+                    rect.id,
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        console.log(response);
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Lyph not found", response);
+                            $('#userconsole').text(response.Error);
+                            return;
+                        }
+
+                        rect.lyphName = response.name;
+                    }
+                });
+            }());
+        }
     }
 
 
