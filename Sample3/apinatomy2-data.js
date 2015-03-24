@@ -836,9 +836,9 @@ function Graph(id, name, nodes, links, rectangles) {
         }
         return -1;
     }
-
-    if (rectangles === undefined)
-        rectangles = [];
+    //
+    //if (rectangles === undefined)
+    //    rectangles = [];
 
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
@@ -1564,7 +1564,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
                 console.log("Draw rect", rectangle_x, rectangle_y);
-                rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, null, null));
+                graph.rectangles.push(new Rectangle("R" + rectangles.length, rectangle_x, rectangle_y, 1, 1, null, null));
                 console.log(rectangles);
                 restart();
                 return;

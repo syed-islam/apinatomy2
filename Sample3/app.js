@@ -297,10 +297,11 @@ var graphEditor = function () {
         var edges = [];
         var id = null;
         var newGraph = null;
+        var rectangles = []
 
         //nodes.push(new Node("1", ".", 200, 200, null, true));
 
-        newGraph = new Graph (graphRepo.graphs.length, graphRepo.graphs.length, nodes, edges);
+        newGraph = new Graph (graphRepo.graphs.length, graphRepo.graphs.length, nodes, edges, rectangles);
         graphRepo.addAt(newGraph, 0);
         selectedGraph = graphRepo.graphs[0];
         //graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
@@ -323,7 +324,7 @@ var graphEditor = function () {
             newGraph.id = graphID.value+"_cloned";
             newGraph.name = graphName.value+"_cloned";
         }
-        else newGraph = new Graph(graphID.value, graphName.value, [], []);
+        else newGraph = new Graph(graphID.value, graphName.value, [], [], []);
         graphRepo.addAt(newGraph, 0);
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
         selectedGraph = newGraph;
@@ -342,12 +343,18 @@ var graphEditor = function () {
             query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
         }
 
+        console.log(selectedGraph);
 
         for (var i =0; i < selectedGraph.rectangles.length; i++){
-            query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
+            query += "&lyph"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].lyphID)
+            query += "&lx"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].x)
+            query += "&ly"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].y)
+            query += "&width"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].width)
+            query += "&height"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].height);
+
         }
 
-        //console.log(query);
+        console.log(query);
 
         // ajax call to save graph view
         $.ajax
@@ -587,6 +594,7 @@ var graphEditor = function () {
                     //console.log(response[i]);
                     var nodes = [];
                     var edges = [];
+                    var rectangles = [];
                     var id = null;
                     var newGraph = null;
 
@@ -594,7 +602,7 @@ var graphEditor = function () {
                     id = response[i].id;
 
 
-                    newGraph = new Graph(id, id, nodes, edges);
+                    newGraph = new Graph(id, id, nodes, edges, rectangles);
 
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
@@ -719,6 +727,7 @@ var graphEditor = function () {
                 var resultlist = "";
                 var nodes= [];
                 var link = [];
+                var rectangles = [];
 
                 console.log(response);
                 //return;
@@ -772,7 +781,7 @@ var graphEditor = function () {
 
 
                 //Creating sub-graph from ajax data
-                var graphAjax= new Graph("Subgraph_"+(graphRepo.graphs.length+1), startNode+" ---> "+endNode, nodes, link);
+                var graphAjax= new Graph("Subgraph_"+(graphRepo.graphs.length+1), startNode+" ---> "+endNode, nodes, link, rectangles);
 
                 ////adding graph, selecting graph, drawing graphrepo and graph.
                 graphRepo.addAt(graphAjax,0);

@@ -4,7 +4,6 @@
     <list default="true" id="6ee7b5f4-11d7-4fe4-853d-e84203322d3c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Sample3/apinatomy2-data.js" afterPath="$PROJECT_DIR$/Sample3/apinatomy2-data.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Sample3/app.js" afterPath="$PROJECT_DIR$/Sample3/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="apinatomy2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -68,8 +67,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Sample3/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.13618158" vertical-offset="7233" max-vertical-offset="14655">
-              <caret line="489" column="10" selection-start-line="489" selection-start-column="10" selection-end-line="489" selection-end-column="10" />
+            <state vertical-scroll-proportion="0.5401662" vertical-offset="4890" max-vertical-offset="14790">
+              <caret line="352" column="100" selection-start-line="352" selection-start-column="100" selection-end-line="352" selection-end-column="100" />
               <folding />
             </state>
           </provider>
@@ -78,10 +77,9 @@
       <file leaf-file-name="apinatomy2-data.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Sample3/apinatomy2-data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-698.3333" vertical-offset="390" max-vertical-offset="20475">
-              <caret line="1955" column="34" selection-start-line="1955" selection-start-column="34" selection-end-line="1955" selection-end-column="34" />
+            <state vertical-scroll-proportion="-8.888889" vertical-offset="16110" max-vertical-offset="23415">
+              <caret line="1566" column="22" selection-start-line="1566" selection-start-column="22" selection-end-line="1566" selection-end-column="22" />
               <folding>
-                <element signature="n#!!block;n#Material#0" expanded="false" />
                 <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
                 <element signature="n#!!block;n#Layer#0" expanded="false" />
                 <element signature="n#!!block;n#AsymmetricUnit#0" expanded="false" />
@@ -703,25 +701,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Sample3/apinatomy2-data.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-698.3333" vertical-offset="390" max-vertical-offset="20475">
-          <caret line="1955" column="34" selection-start-line="1955" selection-start-column="34" selection-end-line="1955" selection-end-column="34" />
-          <folding>
-            <element signature="n#!!block;n#Material#0" expanded="false" />
-            <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
-            <element signature="n#!!block;n#Layer#0" expanded="false" />
-            <element signature="n#!!block;n#AsymmetricUnit#0" expanded="false" />
-            <element signature="n#!!block;n#VisualParameters#0" expanded="false" />
-            <element signature="n#!!block;n#AsymmetricUnitRepo#0" expanded="false" />
-            <element signature="n#!!block;n#MaterialRepo#0" expanded="false" />
-            <element signature="n#!!block;n#TreeNode#0" expanded="false" />
-            <element signature="n#!!block;n#TreeVisualParameters#0" expanded="false" />
-            <element signature="n#!!block;n#Tree#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Sample3/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-7.5" vertical-offset="510" max-vertical-offset="3765">
@@ -753,10 +732,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Sample3/apinatomy2-data.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.888889" vertical-offset="16110" max-vertical-offset="23415">
+          <caret line="1566" column="22" selection-start-line="1566" selection-start-column="22" selection-end-line="1566" selection-end-column="22" />
+          <folding>
+            <element signature="n#!!block;n#LayerRepo#0" expanded="false" />
+            <element signature="n#!!block;n#Layer#0" expanded="false" />
+            <element signature="n#!!block;n#AsymmetricUnit#0" expanded="false" />
+            <element signature="n#!!block;n#VisualParameters#0" expanded="false" />
+            <element signature="n#!!block;n#AsymmetricUnitRepo#0" expanded="false" />
+            <element signature="n#!!block;n#MaterialRepo#0" expanded="false" />
+            <element signature="n#!!block;n#TreeNode#0" expanded="false" />
+            <element signature="n#!!block;n#TreeVisualParameters#0" expanded="false" />
+            <element signature="n#!!block;n#Tree#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Sample3/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13618158" vertical-offset="7233" max-vertical-offset="14655">
-          <caret line="489" column="10" selection-start-line="489" selection-start-column="10" selection-end-line="489" selection-end-column="10" />
+        <state vertical-scroll-proportion="0.5401662" vertical-offset="4890" max-vertical-offset="14790">
+          <caret line="352" column="100" selection-start-line="352" selection-start-column="100" selection-end-line="352" selection-end-column="100" />
           <folding />
         </state>
       </provider>
