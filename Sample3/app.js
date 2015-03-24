@@ -6,7 +6,7 @@ var selectedAU = null;
 var graphEditor = function () {
 
 
-    $('#userconsole').text("Hello");
+    $('#userconsole').text("Hello, Welcome to ApiNATOMY2.0");
 
 
 
@@ -30,6 +30,8 @@ var graphEditor = function () {
         customfocus('#highlightAnnotation');
         customfocus('#startLyph');
         customfocus('#endLyph');
+        customfocus('#rectangleID');
+
     }();
 
 
@@ -99,8 +101,9 @@ var graphEditor = function () {
 
 
     function updateRectangleParameter(rectangle){
-        d3.select("#rectangleID").property("value", rectangle.lyphID);
-        d3.select("#rectangleName").property("value", rectangle.lyphName);
+
+        (rectangle.lyphID) ? $('#rectangleID').val(rectangle.lyphID) : $('#rectangleID').val("");
+        (rectangle.lyphName) ? $('#rectangleName').val(rectangle.lyphName) : $('#rectangleName').val("");
     }
 
 
@@ -193,7 +196,17 @@ var graphEditor = function () {
         cloneGraph(selectedGraph);
     })
 
+
+    d3.select("#assignRectangleLyph").on("click", function(){
+        selectedGraph.selected_rectangle.lyphID = $('#rectangleID').val().trim();
+        selectedGraph.selected_rectangle.lyphName = $('#rectangleName').val().trim();
+        console.log(selectedGraph.selected_rectangle)
+        refresh_graph();
+    })
+
     d3.select("#searchRectangleLyph").on("click", function() {
+
+        $('#userconsole').text("Searching for lyph: " + $("#rectangleID").val().trim());
 
         //send ajax request
         $.ajax
@@ -209,16 +222,18 @@ var graphEditor = function () {
 
 
             success: function (response) {
-                response;
+                console.log(response)   ;
 
                 if (response.hasOwnProperty("Error")) {
-                    console.log("Node not found" , response);
-                    d3.select("#rectangleName").attr('value', '');
+                    console.log("Lyph not found" , response);
+                    $('#userconsole').text(response.Error);
+                    $("#rectangleName").val("");
                     return;
                 }
 
+                $('#userconsole').text("Lyph found");
+                $('#rectangleName').val(response.name);
 
-                d3.select("#rectangleName").attr('value', response.name);
 
 
             },
@@ -468,6 +483,7 @@ var graphEditor = function () {
         selectedGraph.selected_link.au = auRepo.auSet[auRepo.getIndexByID($("#auID").val().trim())];
         selectedGraph.selected_link.type = $("#edgeType").val().trim();
         selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
+        selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
 
         // ajax call to create a lyphedge
         $.ajax
@@ -496,11 +512,49 @@ var graphEditor = function () {
                 }
 
                 console.log("Response:", response);
+                selectedGraph.selected_link.edgeid = response.id;
+
+                addEdgeAnnotations(response.id, $("#edgeAnnotation").val().trim() );
+                //actualEdge.edgeid = response.id;
+                refresh_graph();
+                updateEdgeParameters(selectedGraph.selected_link);
+            }
+        });
+    });
+
+    var addEdgeAnnotations = function addEdgeAnnotations (id, annotations){
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5055/annotate/"+
+            "?lyphs=" + id +
+            "&annot=" + annotations
+            ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Edge creation error:" , response);
+                    return;
+                }
+
+                console.log("Response:", response);
+
+                //addEdgeAnnotations(response.id, $("#edgeAnnotation").val().trim() );
                 //actualEdge.edgeid = response.id;
                 refresh_graph();
             }
         });
-    });
+    }
+
+
 
 
 

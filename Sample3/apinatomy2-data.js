@@ -897,7 +897,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 for (var i = 0; i < rectangles.length; i++){
                     if (rectangles[i].id === d.location){
 
-                        if (d.locationtype === "inside") {
+                        if (d.locationtype === "interior") {
                             boundingx = rectangles[i].x;
                             boundingy = rectangles[i].y;
                             boundingwidth = rectangles[i].width;
@@ -1024,7 +1024,7 @@ function Graph(id, name, nodes, links, rectangles) {
             circle.attr('transform', function (d) {
                 //return 'translate(' + Math.min(d.x, width -10)  + ',' + Math.max(d.y, 0+10) + ')';
 
-                //check if inside rectangle
+                //check if interior rectangle
                 if (d.location){
                     var boundingx = null;
                     var boundingy = null;
@@ -1034,7 +1034,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     for (var i = 0; i < rectangles.length; i++){
                         if (rectangles[i].id === d.location){
 
-                            if (d.locationtype === "inside") {
+                            if (d.locationtype === "interior") {
                                 boundingx = rectangles[i].x;
                                 boundingy = rectangles[i].y;
                                 boundingwidth = rectangles[i].width;
@@ -1202,7 +1202,7 @@ function Graph(id, name, nodes, links, rectangles) {
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
-                .text( function (d) { return d.lyphID; })
+                .text( function (d) { if(d.lyphID) return d.lyphID + " - " + d.lyphName; })
 
 
 
@@ -1212,17 +1212,9 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr('y' ,function (d) {return d.y})
                 .attr('width' ,function (d) {return d.width})
                 .attr('height' ,function (d) {return d.height})
-                //.append("svg:title")
-                //.text(function(d){return "Hello:"})
-                //.style("fill", "none")
-                //.style("stroke", "blue")
-                //.style("stroke-width", "3px")
-                //.style("stroke-opacity", "0.6")
-                //.attr("cursor", "move")
-                //.classed('rectangles', true)
                 .attr('class', 'rectangles')
                 .classed('selected', function(d){
-                    console.log(d === graph.selected_rectangle)
+                    //console.log(d === graph.selected_rectangle)
                     return d === graph.selected_rectangle;
                     //return true;
                 })
@@ -1808,7 +1800,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     break;
                 case 65: // a - Attach node to lyph
-                    attachNodeToLyph("inside");
+                    attachNodeToLyph("interior");
                     break;
                 case 66: // b - Attach node to lyph
                     attachNodeToLyph("border");
@@ -1829,8 +1821,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
             var boundingRectangleSize = null;
             var boundingRectangleID = null;
+            var boundingRectangleLyphID = null;
 
-            for (var i = 0; i < rectangles.length; i++){ // check for inside
+            for (var i = 0; i < rectangles.length; i++){ // check for interior
 
                 boundingx = rectangles[i].x;
                 boundingy = rectangles[i].y;
@@ -1850,10 +1843,12 @@ function Graph(id, name, nodes, links, rectangles) {
                     if ((boundingwidth * boundingheight) < boundingRectangleSize){
                         boundingRectangleSize = boundingwidth * boundingheight;
                         boundingRectangleID = rectangles[i].id;
+                        boundingRectangleLyphID = rectangles[i].lyphID;
                     }
                 } else {
                     boundingRectangleSize = boundingwidth * boundingheight;
                     boundingRectangleID = rectangles[i].id;
+                    boundingRectangleLyphID = rectangles[i].lyphID;
                 }
 
             }
@@ -1862,7 +1857,42 @@ function Graph(id, name, nodes, links, rectangles) {
             graph.selected_node.location = boundingRectangleID;
             graph.selected_node.locationtype = locationType;
             //graph.selected_node.fixed = true;
-            console.log(graph.selected_node);
+            console.log(graph.selected_node, boundingRectangleLyphID);
+
+            //send ajax request to store location information in database
+
+            //send ajax request
+            $.ajax
+            ({
+                context: this,
+                url:
+                "http://open-physiology.org:5055/editlyphnode/" +
+                "?node=" + graph.selected_node.name +
+                    "&location=" + boundingRectangleLyphID +
+                    "&loctype=" + locationType,
+
+                jsonp: "callback",
+
+                dataType: "jsonp",
+
+
+                success: function (response) {
+
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Lyph node update error" , response);
+                        return;
+                    }
+
+                    console.log(response)   ;
+
+
+
+
+                }
+            });
+
+
         }
 
 
@@ -1902,12 +1932,14 @@ function Graph(id, name, nodes, links, rectangles) {
                     if (i === 0 && insertBorderNodes){
                         generatedNode.location = startNodeLocation;
                         generatedNode.locationtype = "border";
+                        generatedNode.locationLyph = getRectangleLyph(generatedNode.location);
                         generatedNode.x = (startnode.x + lastnode.x)/2;
                         generatedNode.y = (startnode.y + lastnode.y)/2;
                     }
                     if (i === breakCount -1 && insertBorderNodes){
                         generatedNode.location = lastNodeLocation;
                         generatedNode.locationtype = "border";
+                        generatedNode.locationLyph = getRectangleLyph(generatedNode.location);
                         generatedNode.x = (startnode.x + lastnode.x)/2;
                         generatedNode.y = (startnode.y + lastnode.y)/2;
                     }
@@ -1919,7 +1951,10 @@ function Graph(id, name, nodes, links, rectangles) {
                     $.ajax
                     ({
                         url:
-                            "http://open-physiology.org:5055/makelyphnode/" ,
+                            "http://open-physiology.org:5055/makelyphnode/" +
+                                "?location=" + encodeURIComponent(generatedNode.locationLyph) +
+                                "&loctype=" + encodeURIComponent(generatedNode.locationtype)
+                        ,
 
                         jsonp: "callback",
 
@@ -1970,6 +2005,15 @@ function Graph(id, name, nodes, links, rectangles) {
                     .on('touchstart.drag', null);
                 svg.classed('ctrl', false);
                 drag_button_enabled = false;
+            }
+        }
+
+        function getRectangleLyph(id){
+            for (var i =0; i < rectangles.length; i++){
+                if (rectangles[i].id === id) {
+                    console.log(rectangles[i].id, id);
+                    return rectangles[i].lyphID;
+                }
             }
         }
 
