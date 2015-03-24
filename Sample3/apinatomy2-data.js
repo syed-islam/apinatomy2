@@ -1033,8 +1033,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
                     for (var i = 0; i < rectangles.length; i++){
                         if (rectangles[i].id === d.location){
-
+                            //console.log(rectangles[i].id , d.location, d.locationtype)
                             if (d.locationtype === "interior") {
+                                //console.log(rectangles[i].id , d.location, d.locationtype)
                                 boundingx = rectangles[i].x;
                                 boundingy = rectangles[i].y;
                                 boundingwidth = rectangles[i].width;

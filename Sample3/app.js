@@ -604,9 +604,17 @@ var graphEditor = function () {
 
                     newGraph = new Graph(id, id, nodes, edges, rectangles);
 
+
+
+                    //load rectangles
+                    for (var j =0; j < response[i].lyphs.length; j++){
+                        rectangles.push(new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, "L"));
+                    }
+
+
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
-                        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id , parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true));
+                        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id, parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, response[i].nodes[j].location, response[i].nodes[j].loctype));
                     }
 
 
@@ -646,6 +654,7 @@ var graphEditor = function () {
                     //console.log("Edges", edges);
                     newGraph.selected_link = newGraph.links[0];
                     newGraph.selected_node = newGraph.nodes[0];
+                    newGraph.selected_rectangle = newGraph.rectangles[0];
 
                     //console.log("New Graph:", newGraph);
 
