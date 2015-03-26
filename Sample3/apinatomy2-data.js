@@ -836,6 +836,16 @@ function Graph(id, name, nodes, links, rectangles) {
         }
         return -1;
     }
+
+    this.getLinkIndexbyID = function (id){
+        for (var i =0; i < links.length; i++){
+            if (links[i].edgeid === id)
+                return i;
+        }
+        return -1;
+    }
+
+
     //
     //if (rectangles === undefined)
     //    rectangles = [];

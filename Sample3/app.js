@@ -249,6 +249,63 @@ var graphEditor = function () {
     })
 
 
+    d3.select("#highlightPath").on("click", function(){
+        var numPaths = 16;
+
+        if($('#shortest').is(':checked'))
+            numPaths = 1;
+
+        //send ajax request
+        $.ajax
+        ({
+            context: this,
+            url:
+            "http://open-physiology.org:5055/lyphpath/" +
+            "?fromlyph=" + $('#startLyph').val().trim() +
+            "&tolyph=" + $('#endLyph').val().trim() +
+            "&numpaths=" + numPaths
+            ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                console.log(response)   ;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("PAth not found" , response);
+                    return;
+                }
+
+                clearHighlight();
+
+                // loop through the number of paths
+                for (var i =0; i < response.length; i ++){
+                     // loop through and identify edges on the paths
+
+                    console.log(response[i]);
+
+                    for (var j =0; j < response[i].length; j++){
+                        console.log(response[i].edges[j].id);
+
+
+                        if (selectedGraph.getLinkIndexbyID(response[i].edges[j].id) > -1 ){
+                            selectedGraph.links[selectedGraph.getLinkIndexbyID(response[i].edges[j].id)].highlighted = true;
+                        }
+                    }
+                    
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+
+                }
+
+
+
+            }
+        });
+
+    })
 
 
 
