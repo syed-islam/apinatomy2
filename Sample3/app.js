@@ -295,7 +295,7 @@ var graphEditor = function () {
                             selectedGraph.links[selectedGraph.getLinkIndexbyID(response[i].edges[j].id)].highlighted = true;
                         }
                     }
-                    
+
                     selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
 
                 }
@@ -819,6 +819,9 @@ var graphEditor = function () {
                         }
 
                         rect.lyphName = response.name;
+                        if (selectedGraph){
+                            refresh_graph();
+                        }
                     }
                 });
             }());
