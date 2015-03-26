@@ -14,10 +14,12 @@ var graphEditor = function () {
     var setupHandleForKeyboardShortcuts  = function setupHandleForKeyboardShortcuts(){
         function customfocus(element){
             $(element).focusin(function() {
-                selectedGraph.keyboardShortcutEnabled = false;
+                if (selectedGraph)
+                    selectedGraph.keyboardShortcutEnabled = false;
             })
             $(element).focusout(function() {
-                selectedGraph.keyboardShortcutEnabled = true;
+                if (selectedGraph)
+                    selectedGraph.keyboardShortcutEnabled = true;
             })
 
         }
@@ -284,8 +286,6 @@ var graphEditor = function () {
         }
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
     }
-
-
 
 
 
