@@ -1520,6 +1520,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     if (d.au)
                         s += "AU:" + d.au.id + "\n";
                     s += "Type:" + d.type+ "\n";
+                    s += "Annots:" + d.annotations;
                     return s;
 
                 })

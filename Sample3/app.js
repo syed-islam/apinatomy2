@@ -473,7 +473,43 @@ var graphEditor = function () {
         console.log("Annotations", $("#edgeAnnotation").val().trim());
         selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
 
+        //ajax call to save annotations
+        annotate_lyph();
+
     });
+
+    var annotate_lyph = function annotate_lyph(){
+        //ajax call to save annotations
+        console.log("Ajax call to save annotations.");
+
+        // ajax call to update the lyph assignment
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5055/annotate/"+
+            "?lyph="+ encodeURIComponent(selectedGraph.selected_link.edgeid) +
+            "&annot="+encodeURIComponent($("#edgeAnnotation").val().trim()),
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Annotation error:" , response);
+                    return;
+                }
+
+                console.log(response);
+            }
+        });
+
+
+    };
 
     d3.select("#edgeSave").on("click", function(){
         console.log("Selected link:", selectedGraph.selected_link);
@@ -632,7 +668,7 @@ var graphEditor = function () {
                             //console.log("description", response[i].nodes[j].exits[k].via.name );
                             //console.log("fma",response[i].nodes[j].exits[k].via.fma );
 
-                            console.log(response[i]);
+
 
                             var newEdge = new Link(
                                 newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)],
@@ -643,7 +679,19 @@ var graphEditor = function () {
                                 response[i].nodes[j].exits[k].via.name,
                                 response[i].nodes[j].exits[k].via.fma,
                                 null,
-                                null
+                                null,
+                                false,
+                                function(){
+                                    //console.log("in");
+                                    console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
+                                    var annotations = "";
+                                    for (var ai = 0; ai < response[i].nodes[j].exits[k].via.annots.length; ai++){
+                                        annotations = annotations + response[i].nodes[j].exits[k].via.annots[ai].obj + " ";
+                                        //annotations += response[i].nodes[j].exits[k].vai.annots[ai].obj;
+                                    }
+                                    //console.log("Annnots" , annotations)
+                                    return annotations.trim();
+                                }()
                                 //j % 2 ===0 ?true: false
                             );
                             edges.push(newEdge);
@@ -657,9 +705,9 @@ var graphEditor = function () {
                     newGraph.selected_link = newGraph.links[0];
                     newGraph.selected_node = newGraph.nodes[0];
                     newGraph.selected_rectangle = newGraph.rectangles[0];
-                    console.log(newGraph.rectangles[0]);
+                    //console.log(newGraph.rectangles[0]);
 
-                    //console.log("New Graph:", newGraph);
+                    console.log("New Graph:", newGraph);
 
                     graphRepo.addAt(newGraph,0);
 
@@ -705,7 +753,7 @@ var graphEditor = function () {
 
 
                     success: function (response) {
-                        console.log(response);
+                        //console.log(response);
 
                         if (response.hasOwnProperty("Error")) {
                             console.log("Lyph not found", response);
