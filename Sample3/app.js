@@ -6,7 +6,7 @@ var selectedAU = null;
 var graphEditor = function () {
 
 
-    $('#userconsole').text("Hello, Welcome to ApiNATOMY2.0");
+    $('#userconsole').text("Hello, Welcome to ApiNATOMY 2.0");
 
 
 
@@ -100,6 +100,7 @@ var graphEditor = function () {
 
     var onSelectRectangle = function (d){
         updateRectangleParameter(d);
+        $('#userconsole').text("Lyph " + d.lyphID + " selected")
     }
 
 
@@ -126,6 +127,7 @@ var graphEditor = function () {
         //d3.select("#nodeName").property("value", "foul");
         //console.log("Node select callback", d);
         updateNodeParameter(d);
+        $('#userconsole').text("Node " + d.id + " selected")
     }
 
     var onSelectLink = function(d){
@@ -135,6 +137,9 @@ var graphEditor = function () {
             updateEdgeParameters(d);
             selectedAU = d.au;
             updateAUParameters(selectedAU);
+            $('#userconsole').text("Edge " + d.edgeid + " selected");
+
+
         }
     }
 
@@ -793,7 +798,7 @@ var graphEditor = function () {
         for (var i =0; i < rectangles.length; i++){
 
             (function () {
-                $('#userconsole').text("Searching for lyph: " + $("#rectangleID").val().trim());
+                //$('#userconsole').text("Searching for lyph: " + $("#rectangleID").val().trim());
                 var rect= rectangles[i];
 
                 //send ajax request

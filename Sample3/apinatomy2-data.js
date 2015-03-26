@@ -1648,7 +1648,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             if (rectangle_draw){
                 rectangle_draw = false;
-
+                $('#userconsole').text("Rectangle draw done.");
 
             }
 
@@ -1798,6 +1798,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     break;
                 case 82: // R - Rectangle
+                    $('#userconsole').text("Rectangle draw enable, click and move mouse right, bottom to draw.");
                     rectangle_draw = true;
                     break;
                 case 73: // I - insert node
@@ -1812,9 +1813,11 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     break;
                 case 65: // a - Attach node to lyph
+                    $('#userconsole').text("Attaching node to interior of lyph");
                     attachNodeToLyph("interior");
                     break;
                 case 66: // b - Attach node to lyph
+                    $('#userconsole').text("Attaching node to interior of lyph");
                     attachNodeToLyph("border");
                     break;
 
@@ -1870,6 +1873,7 @@ function Graph(id, name, nodes, links, rectangles) {
             graph.selected_node.locationtype = locationType;
             //graph.selected_node.fixed = true;
             console.log(graph.selected_node, boundingRectangleLyphID);
+            $('#userconsole').text("Attached node " + graph.selected_node.name + " to " + locationType + " of lyph " + boundingRectangleID);
 
             //send ajax request to store location information in database
 
@@ -1897,6 +1901,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
 
                     console.log(response)   ;
+
 
 
 
