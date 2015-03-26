@@ -933,8 +933,7 @@ var graphEditor = function () {
                     if (data[i].type === "shell"){
                         //console.log(data[i]);
                         // Create appropriate layers for the lyph
-                        //TODO Remove after changes made by SAM to ensure that lyphs are returned in the order they were created.
-                        if (i === 10) continue;
+                        //if (i === 10) continue;
                         console.log(i);
 
                         var layers_content= [];

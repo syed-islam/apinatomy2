@@ -543,8 +543,8 @@ var auEditor = function () {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "shell"){
 
-                        //TODO Remove after changes made by SAM to ensure that lyphs are returned in the order they were created.
-                        if (i === 10) continue;
+
+                        //if (i === 10) continue;
                         console.log(i);
 
                         //console.log(data[i]);
