@@ -870,6 +870,7 @@ function Graph(id, name, nodes, links, rectangles) {
             insert_node = null;
 
             var rectangle_draw = null;
+            var rectangle_draw_started = null;
             var rectangle_x =  null;
             var rectangle_y = null;
             var drag_button_enabled = false;
@@ -1572,6 +1573,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
             if (rectangle_draw) {
+                rectangle_draw_started = true;
 
                 rectangle_x = d3.mouse(this)[0];
                 rectangle_y = d3.mouse(this)[1];
@@ -1624,7 +1626,7 @@ function Graph(id, name, nodes, links, rectangles) {
         }
 
         function mousemove() {
-            if (rectangle_draw){
+            if (rectangle_draw && rectangle_draw_started){
                 rectangles[rectangles.length-1].width = d3.mouse(this)[0] - rectangles[rectangles.length-1].x;
                 rectangles[rectangles.length-1].height = d3.mouse(this)[1] - rectangles[rectangles.length-1].y;
                 //console.log(rectangles[rectangles.length-1]);
@@ -1648,6 +1650,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             if (rectangle_draw){
                 rectangle_draw = false;
+                rectangle_draw_started = false;
                 $('#userconsole').text("Rectangle draw done.");
 
             }
