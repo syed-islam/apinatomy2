@@ -237,6 +237,8 @@ var auEditor = function () {
 
                 if (auRepo.getIndexByID(response.id) > -1){
                     console.log("AU already exists in database as" , response.id,response.name);
+                    $('#userconsole').text("AU already exists in database as" , response.id,response.name);
+
                     return;
                 }
 
