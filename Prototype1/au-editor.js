@@ -487,7 +487,7 @@ var auEditor = function () {
 
     var load_all_materials = function (){
 
-        console.log("Loading existing lyphs")
+        console.log("Loading existing lyphs/materials")
         $.ajax
         ({
             url:
@@ -498,33 +498,30 @@ var auEditor = function () {
                 "jsonp",
             success: function( response )
             {
+                if (debugging) console.log("Request URL:", this.url);
                 var data = response;
                if (debugging) console.log("Response:", response);
 
 
                 if ( data.hasOwnProperty( "Error" ) )
                 {
-                    if ( path.Error == "No path found" )
-                        alert( "No path found" );
-                    else
-                        alert( "Error: " + path.Error );
-
+                    if (debugging) console.log("Error: " + path.Error );
                     return;
                 }
 
-                console.log("Lyph Loaded");
-
-
                 //Todo: We should only make a single pass through the dataset.
-                //load all basic types
+
+                if (debugging) console.log("Loading all Basic Templates")
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "basic"){
+                        //TODO Replace type "simple" with basic for consistency
                         materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                        materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
                     }
                 }
 
 
-                ////load all mix types
+                //Todo - Load all Mix Types
                 //
                 //for (var i = 0; i < data.length; i++) {
                 //    if (data[i].type === "mix"){
@@ -538,10 +535,10 @@ var auEditor = function () {
                 //}
 
 
-                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
 
 
-                //load all shell types
+
+                if (debugging) console.log("Loading all Shell Templates");
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "shell"){
 
@@ -626,7 +623,7 @@ var auEditor = function () {
     d3.select("#createBasicLyph").on("click", function () {
         console.log("Creating Basic Template", fmaID.value);
 
-        //send request to create template
+        //send request to create basic template
         $.ajax
         ({
             url:
