@@ -653,9 +653,9 @@ var auEditor = function () {
                     materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null), 0);
 
 
+
+                    //TODO automatically select the newly created material.
                     console.log("Redrawing Meterial Repo")
-                    selectedMaterial = materialRepo.materials[0];
-                    materialRepo.
                     materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
                 } else{
                     console.log("Basic Material Already Exists");
