@@ -369,6 +369,25 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;})
             .on("click", onClick);
+
+
+        //Inner rectangles
+        prev = vp.margin;
+        svg.selectAll("chart")
+            .data(au.layers)
+            .enter().append("rect")
+            .style("fill", function (d) {return "#888888"})
+            .style("fill-opacity" , function (d){return 0.5})
+            .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
+            .attr(attr_height, function (d) {return d.thickness * vp.widthScale /2;})
+            .attr(attr_x, function () {return 0;})
+            .attr(attr_y, function (d) {
+                prev += d.thickness * vp.widthScale;
+                return prev - d.thickness * vp.widthScale / 2 - 15;})
+            .on("click", function (){console.log("inside clicked");})
+
+
+
         //Add labels
         prev = vp.margin;
         svg.selectAll("chart")
@@ -382,7 +401,10 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_y, function (d) {
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
-            .text(function(d, i) {  if (d.materials[0] === undefined) return; return d.materials[0].id + " - " + d.name});
+            .text(function(d, i) {  if (d.materials[0] === undefined) return; return d.materials[0].id + " - " + d.name})
+            ;
+
+
     }
 }
 
