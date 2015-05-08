@@ -499,7 +499,7 @@ var auEditor = function () {
             success: function( response )
             {
                 var data = response;
-                console.log("Response:", response);
+               if (debugging) console.log("Response:", response);
 
 
                 if ( data.hasOwnProperty( "Error" ) )
@@ -621,12 +621,12 @@ var auEditor = function () {
 
 
 
+
+    //Create Basic Lyph
     d3.select("#createBasicLyph").on("click", function () {
-        console.log("Creating basic template");
-        console.log(fmaID.value);
+        console.log("Creating Basic Template", fmaID.value);
 
         //send request to create template
-
         $.ajax
         ({
             url:
@@ -638,31 +638,34 @@ var auEditor = function () {
                 "jsonp",
             success: function( response )
             {
-                console.log(this.url);
+                console.log("Request URL:", this.url);
                 var data = response;
 
                 if ( data.hasOwnProperty( "Error" ) )
                 {
-                    console.log(data.Error);
+                    console.log("Error:", data.Error);
                     return;
                 }
 
-                console.log(data);
+                console.log("Response:" , data);
                 if (materialRepo.getIndexByID(data.id)== -1 ) {
-                    //load_all_materials();
-                    materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
-                    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
-                } else
-                    console.log("Basic Material already exists");
+                    console.log("Creating new basic material and added to material repo");
+                    materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null), 0);
 
+
+                    console.log("Redrawing Meterial Repo")
+                    selectedMaterial = materialRepo.materials[0];
+                    materialRepo.
+                    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                } else{
+                    console.log("Basic Material Already Exists");
+                }
             }
 
         });
 
     });
 
-
-    load_all_materials();
 
 
     function redraw_aurepos(){
@@ -680,5 +683,12 @@ var auEditor = function () {
         redraw_aurepos();
     }
 
+
+
+
+
+
+    //Initialisation of the materials from the Database.
+    load_all_materials();
 
 }();
