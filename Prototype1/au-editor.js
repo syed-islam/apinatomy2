@@ -34,13 +34,14 @@ var auEditor = function () {
     var selectedMaterial = null;  //Selected material data
 
     var onSelectLayer = function (d){
-        if (this != selectedLayerNode){
+        //if (this != selectedLayerNode){
             d3.select(this).style("stroke", "red").style("stroke-width", 2);
             d3.select(selectedLayerNode).style("stroke", "black").style("stroke-width", 0);
             selectedLayerNode = this;
             selectedLayer = d;
+            console.log("Layer Selected")
             updateLayerParameters(selectedLayer);
-        }
+        //}
     }
 
     var onSelectAU = function(d){
@@ -321,8 +322,8 @@ var auEditor = function () {
             d3.select("#layerID").property("value", layer.id);
             d3.select("#layerName").property("value", layer.name);
             d3.select("#layerThickness").property("value", layer.thickness);
-            d3.select("#materialID").property("value", layer.material.id);
-            d3.select("#materialName").property("value", layer.material.name);
+            d3.select("#materialID").property("value", layer.materials[0].id);
+            d3.select("#materialName").property("value", layer.materials[0].name);
         }
     }
 
@@ -356,6 +357,8 @@ var auEditor = function () {
          }
 
 
+        var materials = [material];
+
 
          //var  = materialRepo.materials[materialIndex];
 
@@ -363,7 +366,7 @@ var auEditor = function () {
 
          //If this is the first AU we are creating and the layerRepo is null
          if (layerRepo == null){
-             var newLayer = new Layer("Layer_1", materialName.value, 1, material);
+             var newLayer = new Layer("Layer_1", materialName.value, 1, materials);
              layerRepo = new LayerRepo([newLayer]);
              selectedAU.addLayerAt(newLayer, 0);
              selectedAU.draw(svg, mainVP, onSelectLayer);
@@ -371,7 +374,7 @@ var auEditor = function () {
              redraw_aurepos();
              console.log(layerRepo);
          } else { // If AUs already exist
-             var layerindex = layerRepo.containsLayer(layerThickness.value, material);
+             var layerindex = layerRepo.containsLayer(layerThickness.value, materials);
              if (layerindex > -1) {  // Layer exists so simply add
                  //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
                  //if (index == 0) index = selectedAU.getNumberOfLayers();
@@ -541,7 +544,6 @@ var auEditor = function () {
                 if (debugging) console.log("Loading all Shell Templates");
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "shell"){
-
 
                         //if (i === 10) continue;
                         console.log(i);

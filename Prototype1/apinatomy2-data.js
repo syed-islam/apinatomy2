@@ -2,6 +2,9 @@
  * Created by Natallia on 05/11/2014.
  */
 
+
+debugging = true;
+
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
@@ -192,17 +195,6 @@ function Material(id, name, colour, type, children, au) {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
 }
 
 function LayerRepo(layers){
@@ -237,58 +229,63 @@ function LayerRepo(layers){
 }
 
 //create layer
-function Layer(id, name, thickness, material) {
+function Layer(id, name, thickness, materials) {
     this.id = id;
     this.name = name;
     this.thickness = thickness;
-    this.material = material;
+    this.materials = materials;
 
-    console.log(this.id, this.name, this.thickness, this.material);
+    console.log(this.id, this.name, this.thickness, this.materials);
 
 
     //function ajax_create_layer () {
-       this.ajx_sync_layer = $.ajax
-        ({
-            context: this,
-            url:
-            "http://open-physiology.org:5055/makelayer/" +
-            "?material=" + this.material.id +
-            "&thickness=" + this.thickness +
-            "&color=" + this.material.color ,
+    //   this.createLayerOnServer = function createLayerOnServer() {
+           $.ajax
+           ({
+               context: this,
+               url: "http://open-physiology.org:5055/makelayer/" +
+               "?material=" + this.materials[0].id +
+               "&thickness=" + this.thickness +
+               "&color=" + this.materials[0].colour,
 
-            jsonp: "callback",
+               jsonp: "callback",
 
-            dataType: "jsonp",
-
-
-            success: function (response) {
-                response;
-
-                if (response.hasOwnProperty("Error")) {
-                   console.log("Layer creation error:" , response);
-                    return;
-                }
-
-                //console.log("Layer Created", response);
-
-                //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
-                this.id = response.id;
-
-                if (typeof 'rehashaueditor' == 'function') {
-                    rehashaueditor();
-                };
-
-            },
-            async:   false
-        });
+               dataType: "jsonp",
 
 
+               success: function (response) {
+                   response;
 
+                   if (response.hasOwnProperty("Error")) {
+                       console.log("Layer creation error:", response);
+                       return;
+                   }
+
+                   //console.log("Layer Created", response);
+
+                   //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
+                   this.id = response.id;
+
+                   if (typeof 'rehashaueditor' == 'function') {
+                       rehashaueditor();
+                   }
+                   ;
+               }
+           });
+       //}
+
+
+    //Create a cloned/copies layer
     this.clone = function () {
-        var newLayer = new Layer(this.id, this.name, this.thickness, this.material);
+        var newLayer = new Layer(this.id, this.name, this.thickness, this.materials);
         return newLayer;
     }
+
+
+
 }
+
+
 
 //create Asymmetric Unit
 function AsymmetricUnit(id, name, layers, length){
@@ -365,8 +362,8 @@ function AsymmetricUnit(id, name, layers, length){
         svg.selectAll("chart")
             .data(au.layers)
             .enter().append("rect")
-            .style("fill", function (d) { console.log(d.material); if (d.material.colour == undefined) return "#888888"; return d.material.colour;})
-            .style("fill-opacity" , function (d){if (d.material.colour == undefined)  return 0.5 ; return 1.0})
+            .style("fill", function (d) {if (d.materials[0] === undefined) return "#888888"; return d.materials[0].colour;})
+            .style("fill-opacity" , function (d){if (d.materials === undefined)  return 0.5 ; return 1.0})
             .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
             .attr(attr_height, function (d) {return d.thickness * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
@@ -385,7 +382,7 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_y, function (d) {
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
-            .text(function(d, i) {  return d.material.id + " - " + d.name});
+            .text(function(d, i) {  if (d.materials[0] === undefined) return; return d.materials[0].id + " - " + d.name});
     }
 }
 
@@ -461,7 +458,7 @@ function AsymmetricUnitRepo(auSet){
             svg.selectAll("auRepo")
                 .data(auRepo.auSet[j].layers)
                 .enter().append("rect")
-                .style("fill", function (d) { if (d.material.colour == undefined) return "#888888"; return d.material.colour;})
+                .style("fill", function (d) { if (d.materials[0] === undefined) return "#888888"; return d.materials[0].colour;})
                 .attr("width", function (d) {return /*auRepo.auSet[j].length * */ vp.lengthScale;})
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})
