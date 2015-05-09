@@ -41,6 +41,7 @@ var auEditor = function () {
             selectedLayer = d;
             console.log("Layer Selected")
             updateLayerParameters(selectedLayer);
+
         //}
     }
 
@@ -70,13 +71,22 @@ var auEditor = function () {
     }
 
     var onSelectMaterial = function(d){
-        if (this != selectedMaterial){
-            d3.select(this).style("stroke", "red");
-            d3.select(selectedMaterialNode).style("stroke", "black");
-            selectedMaterialNode = this;
+        //if (d != selectedMaterial){
+            //console.log(this);
+            //console.log(selectedMaterialNode)/
+            //d3.select(this).style("stroke", "red");
+            //d3.select(selectedMaterialNode).style("stroke", "blue");
+            //selectedMaterialNode = this;
             selectedMaterial = d;
+            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
             updateMaterialParameters(selectedMaterial);
-        }
+
+        //}
+    }
+
+    var manualSelectMaterial = function (material){
+        selectedMaterial = d;
+        updateMaterialParameters(selectedMaterial);
     }
 
     ///////////////////////////////////////////////////////
@@ -650,12 +660,8 @@ var auEditor = function () {
                 if (materialRepo.getIndexByID(data.id)== -1 ) {
                     console.log("Creating new basic material and added to material repo");
                     materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null), 0);
-
-
-
-                    //TODO automatically select the newly created material.
-                    console.log("Redrawing Meterial Repo")
-                    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                    console.log("Selecting the new material")
+                    onSelectMaterial(materialRepo.materials[0]);
                 } else{
                     console.log("Basic Material Already Exists");
                 }

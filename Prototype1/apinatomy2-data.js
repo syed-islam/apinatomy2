@@ -405,6 +405,8 @@ function AsymmetricUnit(id, name, layers, length){
             ;
 
 
+
+
     }
 }
 
@@ -535,7 +537,7 @@ function MaterialRepo(materials){
         materials.splice(index, 1, material);
     }
 
-    this.draw = function(svg, vp, onClick){
+    this.draw = function(svg, vp, onClick, manualSelectedMaterial){
         var materialRepo = this;
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
@@ -554,18 +556,27 @@ function MaterialRepo(materials){
             .enter().append("rect")
             .style("fill", "white")
             .style("stroke-width", 0.5)
-            .style("stroke", "black")
+            .style("stroke", function(d){
+                console.log("Manual Selected Material:", manualSelectedMaterial);
+                if (manualSelectedMaterial === d) {
+                    manualSelectedMaterial = null;
+                    return "red";
+                }
+                return "black";
+            })
             .attr("width", vp.width - vp.lengthScale - 2 * delta)
             .attr("height", vp.widthScale)
             .attr("x", vp.lengthScale + 2 * delta)
             .attr("y", function(d, i){return i * (vp.widthScale + delta);})
             .on("click", onClick);
+
         svg.selectAll("materialRepo")
             .data(materialRepo.materials)
             .enter().append("text")
             .attr("x", vp.lengthScale + 2 * delta + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
             .text(function(d){return d.id + " - " + d.name;})
+
     }
 }
 
