@@ -59,6 +59,8 @@ var auEditor = function () {
     }
 
 
+
+
     var onSelectMaterialAU = function(d){
         console.log(d);
         if (this != selectedMaterial){
@@ -70,24 +72,17 @@ var auEditor = function () {
         }
     }
 
+
+
+    //Function used directly and as callback function to handle new material selection.
+    //@param {material} d material to be selected.
     var onSelectMaterial = function(d){
-        //if (d != selectedMaterial){
-            //console.log(this);
-            //console.log(selectedMaterialNode)/
-            //d3.select(this).style("stroke", "red");
-            //d3.select(selectedMaterialNode).style("stroke", "blue");
-            //selectedMaterialNode = this;
             selectedMaterial = d;
             materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
             updateMaterialParameters(selectedMaterial);
-
-        //}
     }
 
-    var manualSelectMaterial = function (material){
-        selectedMaterial = d;
-        updateMaterialParameters(selectedMaterial);
-    }
+
 
     ///////////////////////////////////////////////////////
     //Demo
