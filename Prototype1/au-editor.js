@@ -46,16 +46,19 @@ var auEditor = function () {
     }
 
     var onSelectAU = function(d){
-        if (this != selectedAUNode){
-            d3.select(this).style("stroke", "red");
-            d3.select(selectedAUNode).style("stroke", "black");
-            selectedAUNode = this;
-            selectedAU = d;
-            if (selectedAU.layers != null && selectedAU.layers.length > 0)
-                selectedLayer = selectedAU.layers[0];
-            syncSelectedAU();
-            updateLayerParameters(selectedLayer);
-        }
+        //if (this != selectedAUNode){
+        //    d3.select(this).style("stroke", "red");
+        //    d3.select(selectedAUNode).style("stroke", "black");
+        //    selectedAUNode = this;
+        //    selectedAU = d;
+        //    if (selectedAU.layers != null && selectedAU.layers.length > 0)
+        //        selectedLayer = selectedAU.layers[0];
+        //    syncSelectedAU();
+        //    updateLayerParameters(selectedLayer);
+        //}
+        selectedAU = d;
+        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU, selectedAU);
+        syncSelectedAU();
     }
 
 
@@ -196,12 +199,13 @@ var auEditor = function () {
 
     function newAU(){
         var newAU = null;
-        newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
+        newAU = new AsymmetricUnit("newAU" + (auRepo ? auRepo.auSet.length +1  : 1), "newAu" + + (auRepo ? auRepo.auSet.length +1  : 1), [], (auLength.value) ? auLength.value : 1);
         console.log(newAU);
         if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
         else auRepo.addAt(newAU, 0);
         newAU.draw(svg, mainVP, onSelectLayer);
         redraw_aurepos();
+        onSelectAU(newAU); //Selecting the AU
 
 
     }
@@ -267,6 +271,7 @@ var auEditor = function () {
 
     }
 
+    //New AU Button Click
     d3.select("#auNew").on("click", function() {
         console.log("here");
         newAU();
@@ -525,6 +530,7 @@ var auEditor = function () {
                         //TODO Replace type "simple" with basic for consistency
                         materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
                         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                        onSelectMaterial(materialRepo.materials[0]);
                     }
                 }
 
@@ -599,7 +605,8 @@ var auEditor = function () {
                     selectedAU = auRepo.auSet[0];
                 }
 
-                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                //TODO add this back
+                //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
                 loadMaterialRepoToDatalist(materialRepo);
 
 

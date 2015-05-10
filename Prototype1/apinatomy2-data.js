@@ -464,7 +464,7 @@ function AsymmetricUnitRepo(auSet){
     }
 
     //Load AUs from the repository
-    this.draw = function(svg, vp, onClick) {
+    this.draw = function(svg, vp, onClick, manualSelectedAU) {
         var auRepo = this;
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
@@ -493,7 +493,14 @@ function AsymmetricUnitRepo(auSet){
             .enter().append("rect")
             .style("fill", "white")
             .style("stroke-width", 0.5)
-            .style("stroke", "black")
+            .style("stroke", function(d){
+                console.log("Manual Selected AU:", manualSelectedAU);
+                if (manualSelectedAU === d) {
+                    manualSelectedAU = null;
+                    return "red";
+                }
+                return "black";
+            })
             .attr("width", vp.width - maxLength - 2 * delta)
             .attr("height", function(d){return (d.getTotalWidth(vp.widthScale) > 10) ? d.getTotalWidth(vp.widthScale) : 15 ;})
             .attr("x", maxLength + 2 * delta)
