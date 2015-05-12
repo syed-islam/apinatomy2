@@ -274,6 +274,26 @@ var auEditor = function () {
 
     }
 
+
+
+    //Add Material to Layer
+    d3.select("#addMaterial").on("click", function(){
+      console.log("Add Material ", selectedMaterial, " to layer:" , selectedLayer);
+        var existingMaterials = selectedLayer.materials;
+
+        //if layer already has materials
+        if (existingMaterials){
+            existingMaterials.splice(0,0,selectedMaterial);
+        } else { // if layer is previously empty
+            selectedLayer.materials = [selectedMaterial];
+        }
+
+        onSelectLayer(selectedLayer);
+
+
+
+    });
+
     //New AU Button Click
     d3.select("#auNew").on("click", function() {
         console.log("here");
