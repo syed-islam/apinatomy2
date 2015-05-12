@@ -237,16 +237,25 @@ function Layer(id, name, thickness, materials) {
 
     console.log(this.id, this.name, this.thickness, this.materials);
 
+    //URL for accessing create layer api
+    var url = "http://open-physiology.org:5055/makelayer/";
+
+    //If creating a layer with known list of materials
+    if (materials  &&  materials.length === 0) {
+        url += "?material=" + this.materials[0].id +
+        "&thickness=" + this.thickness +
+        "&color=" + this.materials[0].colour
+    } else { // Creating a blank layer
+        url += "?material=none"+
+            "&thickness=" + this.thickness;
+    }
 
     //function ajax_create_layer () {
     //   this.createLayerOnServer = function createLayerOnServer() {
            $.ajax
            ({
                context: this,
-               url: "http://open-physiology.org:5055/makelayer/" +
-               "?material=" + this.materials[0].id +
-               "&thickness=" + this.thickness +
-               "&color=" + this.materials[0].colour,
+               url: url,
 
                jsonp: "callback",
 
@@ -260,6 +269,8 @@ function Layer(id, name, thickness, materials) {
                        console.log("Layer creation error:", response);
                        return;
                    }
+
+                   console.log("Layer created successfully:", response);
 
                    //console.log("Layer Created", response);
 
@@ -336,7 +347,7 @@ function AsymmetricUnit(id, name, layers, length){
     }
 
     //Draw AU
-    this.draw = function(svg, vp, onClick) {
+    this.draw = function(svg, vp, onSelectLayer, selectedLayer) {
         var au = this;
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
@@ -349,7 +360,7 @@ function AsymmetricUnit(id, name, layers, length){
             attr_y = "x";
         }
 
-        //Draw base
+        //Draw AU Base
         var baseLength = 0;
         if (au != null) baseLength = au.length;
         svg.append("rect")
@@ -358,26 +369,33 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_height, vp.margin);
         if (au == null) return;
 
-        //Draw AU
+        //Draw AU Layers
         svg.selectAll("chart")
             .data(au.layers)
             .enter().append("rect")
-            .style("fill", function (d) {if (d.materials[0] === undefined) return "#888888"; return d.materials[0].colour;})
+            .style("fill", function (d) {if (d.materials === undefined) return "#888888"; return d.materials[0].colour;})
             .style("fill-opacity" , function (d){if (d.materials === undefined)  return 0.5 ; return 1.0})
+            .style("stroke", function(d){
+                console.log("Manual Selected Layer:", selectedLayer);
+                if (selectedLayer === d) {
+                    selectedLayer = null;
+                    return "red";
+                }
+            })
             .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
             .attr(attr_height, function (d) {return d.thickness * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;})
-            .on("click", onClick);
+            .on("click", onSelectLayer);
 
 
-        //Inner rectangles
+        //Draw Inner rectangles for each material
         prev = vp.margin;
         svg.selectAll("chart")
             .data(au.layers)
             .enter().append("rect")
-            .style("fill", function (d) {return "#888888"})
-            .style("fill-opacity" , function (d){return 0.5})
+            .style("fill", function (d) {if (d.materials === undefined) return "#888888"; return d.materials[0].colour;})
+            .style("fill-opacity" , function (d){return 0.01})
             .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
             .attr(attr_height, function (d) {return d.thickness * vp.widthScale /2;})
             .attr(attr_x, function () {return 0;})
@@ -401,7 +419,7 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_y, function (d) {
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
-            .text(function(d, i) {  if (d.materials[0] === undefined) return; return d.materials[0].id + " - " + d.name})
+            .text(function(d, i) {  if (d.materials === undefined) return; return d.materials[0].id + " - " + d.name})
             ;
 
 

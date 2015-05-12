@@ -34,15 +34,18 @@ var auEditor = function () {
     var selectedMaterial = null;  //Selected material data
 
     var onSelectLayer = function (d){
-        //if (this != selectedLayerNode){
-            d3.select(this).style("stroke", "red").style("stroke-width", 2);
-            d3.select(selectedLayerNode).style("stroke", "black").style("stroke-width", 0);
-            selectedLayerNode = this;
-            selectedLayer = d;
-            console.log("Layer Selected")
-            updateLayerParameters(selectedLayer);
-
-        //}
+        selectedLayer = d;
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
+        updateLayerParameters(selectedLayer);
+        ////if (this != selectedLayerNode){
+        //    d3.select(this).style("stroke", "red").style("stroke-width", 2);
+        //    d3.select(selectedLayerNode).style("stroke", "black").style("stroke-width", 0);
+        //    selectedLayerNode = this;
+        //    selectedLayer = d;
+        //    console.log("Layer Selected")
+        //    updateLayerParameters(selectedLayer);
+        //
+        ////}
     }
 
     var onSelectAU = function(d){
@@ -91,7 +94,7 @@ var auEditor = function () {
     //Demo
     ///////////////////////////////////////////////////////
     ////Init visual parameters
-    var mainVP = new VisualParameters("horizontal", 250, 50, width, height, 10);
+    var mainVP = new VisualParameters("horizontal", 500, 50, width, height, 10);
     var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
     var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
@@ -200,7 +203,7 @@ var auEditor = function () {
     function newAU(){
         var newAU = null;
         newAU = new AsymmetricUnit("newAU" + (auRepo ? auRepo.auSet.length +1  : 1), "newAu" + + (auRepo ? auRepo.auSet.length +1  : 1), [], (auLength.value) ? auLength.value : 1);
-        console.log(newAU);
+        console.log("New AU Created:", newAU);
         if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
         else auRepo.addAt(newAU, 0);
         newAU.draw(svg, mainVP, onSelectLayer);
@@ -332,8 +335,8 @@ var auEditor = function () {
             d3.select("#layerID").property("value", layer.id);
             d3.select("#layerName").property("value", layer.name);
             d3.select("#layerThickness").property("value", layer.thickness);
-            d3.select("#materialID").property("value", layer.materials[0].id);
-            d3.select("#materialName").property("value", layer.materials[0].name);
+            //d3.select("#materialID").property("value", layer.materials[0].id);
+            //d3.select("#materialName").property("value", layer.materials[0].name);
         }
     }
 
@@ -351,14 +354,55 @@ var auEditor = function () {
         }
     }
 
-     d3.select("#layerClone").on("click", function() {
+
+
+    //Handle Add Layer
+    d3.select("#layerClone").on("click", function() {
+        if (debugging) console.log("Adding new layer");
+
+
+        //Create new blank layer
+        var newLayer = new Layer("Layer_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , layerName.value ? layerName.value : "Layer_" + (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1"), layerThickness.value ? layerThickness.value : 1)
+
+        // Add blank layer to layer repo
+        if (layerRepo){
+            if (debugging) console.log("Layer Repo Exists");
+            layerRepo.addAt(newLayer, 0);
+        } else {
+            console.log("Layer Repo Uninitialised");
+            layerRepo = new LayerRepo([newLayer]);
+        }
+        if (debugging) console.log(layerRepo);
+
+        //Add new layer to AU
+        if (selectedAU){
+            console.log("Adding layer Selected AU:", selectedAU);
+            //TODO - Add layers in a more user-friendly way, below the  selected layer rather than at position 0.
+            selectedAU.addLayerAt(newLayer, 0);
+        } else {
+            //TODO - Perhaps move this error condition as a check before even creating the layers.
+            console.log("No AU Selected");
+            selectedAU.addLayerAt(newLayer, 0);
+        }
+
+        //Draw the AU
+        //selectedAU.draw(svg, mainVP, onSelectLayer);
+        onSelectLayer(newLayer)
+
+
+    })
+
+
+
+    //Todo incorporate the code as handle material and remove the following function.
+    //Previous Handle Add Layer
+     d3.select("#DefunctlayerClone").on("click", function() {
          //if (selectedAU.getLayerIndex(layerID.value) > -1){
          //    alert("Cannot create a new layer: another layer with such ID exists!");
          //    return;
          //}
 
          //console.log(layers);
-
 
          var material  = (materialRepo.getIndexByID(materialID.value) > auRepo.getIndexByID(materialID.value)) ? materialRepo.materials[materialRepo.getIndexByID(materialID.value)] : auRepo.auSet[auRepo.getIndexByID(materialID.value)];
          if (!material) {
