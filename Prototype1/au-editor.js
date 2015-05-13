@@ -151,6 +151,11 @@ var auEditor = function () {
             d3.select("#materialName").property("value", materialRepo[materialIndex].name);
     });
 
+
+    d3.select("#thelist").on("change", function(){
+        console.log(thelist.value);
+    })
+
     ////////////////////////////////////////////////////////////
     //AU Parameters
     ////////////////////////////////////////////////////////////
@@ -273,6 +278,18 @@ var auEditor = function () {
 
 
     }
+
+    d3.select("#removeMaterial").on("click", function(){
+        console.log("Remove material button clicked");
+        if (thelist.value){
+            console.log(thelist.value);
+            console.log($("#thelist").val());
+            $("#thelist").find("option[value='"+$("#thelist").val()+"']").remove();
+            //$thelist.find("option[value='"+$thelist.val()+"']").remove();
+        } else {
+            console.log("No material selected for removal")
+        }
+    })
 
 
 
