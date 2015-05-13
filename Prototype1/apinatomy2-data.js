@@ -474,6 +474,14 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
 
     }
 
+    this.getIndexByIDMiscMaterials= function (id){
+        for (var i = 0; i < this.misc_materials.length; i++){
+            if (this.misc_materials[i].id === id){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     this.clone = function(){
         var newAU = new AsymmetricUnit(this.id, this.name, this.layers.slice(0), this.length);

@@ -303,21 +303,51 @@ var auEditor = function () {
 
     d3.select("#removeMaterial").on("click", function(){
         console.log("Remove material button clicked");
+
+
+
+
         if (thelist.value && thelist.value != "fake" ){
-            console.log($("#thelist").val());
-            selectedLayer.materials.splice(selectedLayer.getIndexOfMaterialByID($("#thelist").val()),1);
-            $("#thelist").find("option[value='"+$("#thelist").val()+"']").remove();
 
-            selectedLayer.sync_materials_to_server();
 
-            if (selectedLayer.materials.length == 0){
-                $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
+
+
+            if (selectedLayer instanceof Layer) {
+                console.log($("#thelist").val());
+                selectedLayer.materials.splice(selectedLayer.getIndexOfMaterialByID($("#thelist").val()), 1);
+                $("#thelist").find("option[value='" + $("#thelist").val() + "']").remove();
+
+                selectedLayer.sync_materials_to_server();
+
+                if (selectedLayer.materials.length == 0){
+                    $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
+                }
+            } else if (selectedLayer instanceof AsymmetricUnit){
+                selectedLayer.misc_materials.splice(selectedLayer.getIndexByIDMiscMaterials($("#thelist").val()), 1)
+                $("#thelist").find("option[value='" + $("#thelist").val() + "']").remove();
+
+                selectedLayer.sync_au_to_server();
+
+
+                if (selectedLayer.misc_materials.length == 0){
+                    $('#thelist').append('<option value=fake> ' + "No Material outside defined layers" +   "</option")
+                }
+
             }
+
+
+
+
+
 
 
         } else {
             console.log("No material selected for removal")
         }
+
+
+
+
     })
 
 
@@ -357,11 +387,12 @@ var auEditor = function () {
             console.log("Add Material ", selectedMaterial, " to outside layer of AU:", selectedLayer);
 
             //Todo: Do not allow the same material to be added twice.
+            $("#thelist").find("option[value='fake']").remove();
 
             selectedLayer.misc_materials.push(selectedMaterial);
             selectedLayer.sync_au_to_server();
 
-            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + "</option")
+            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + " " + selectedMaterial.name + "</option")
 
 
         }
