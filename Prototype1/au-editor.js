@@ -288,9 +288,12 @@ var auEditor = function () {
             selectedLayer.materials.splice(selectedLayer.getIndexOfMaterialByID($("#thelist").val()),1);
             $("#thelist").find("option[value='"+$("#thelist").val()+"']").remove();
 
+            selectedLayer.sync_materials_to_server();
+
             if (selectedLayer.materials.length == 0){
                 $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
             }
+
 
         } else {
             console.log("No material selected for removal")

@@ -311,7 +311,13 @@ function Layer(id, name, thickness, materials, colour) {
                     url += ","
             }
 
+        } else if (this.materials  &&  this.materials.length === 0) {
+            url += "&material=none"
         }
+
+
+
+
         url+="&mutable=yes";
 
         console.log(url);
