@@ -294,9 +294,6 @@ function Layer(id, name, thickness, materials, colour) {
         //}
     }
 
-
-
-
     //Create a cloned/copies layer
     this.clone = function () {
         var newLayer = new Layer(this.id, this.name, this.thickness, this.materials);
@@ -305,6 +302,14 @@ function Layer(id, name, thickness, materials, colour) {
 
 
 
+    this.getIndexOfMaterialByID = function (id ){
+        for (var i =0; i < this.materials.length ; i++){
+            console.log("Param:" + id, "Search" + this.materials[i].id);
+            if (this.materials[i].id === id)
+            return i;
+        }
+        return -1;
+    }
 }
 
 
@@ -505,7 +510,7 @@ function AsymmetricUnit(id, name, layers, length){
             .attr(attr_y, function (d) {
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
-            .text(function(d, i) {  return d.id + " " + d.name});
+            .text(function(d, i) {  return d.id});
 
 
 

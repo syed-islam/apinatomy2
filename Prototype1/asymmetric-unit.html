@@ -57,26 +57,35 @@
                         </label>
                         <input type="number" id="layerThickness" min="1" max="10" style="width: 46px;"/>
                     </div>
-                    <label class="parameterLabel">
-                        <h4>Material:</h4>
-                    </label>
-                    <div>
-                        <label for="materialID" class="parameterLabel">
-                            ID:
-                        </label>
-                        <datalist id="materials"></datalist>
-                        <input type="text" id="materialID" style="width: 140px;" list="materials">
-                    </div>
-                    <div>
-                        <label for="materialName" class="parameterLabel">Name:</label>
-                        <input type="text" id="materialName" style="width: 140px;" readonly="true">
-                    </div>
+                    <br>
                     <div>
                         <button class="parameterButton" id="layerClone">Add</button>
                         <button class="parameterButton" id="layerUpdate">Update</button>
                         <button class="parameterButton" id="layerRestore">Restore</button>
                         <button class="parameterButton" id="layerDelete">Delete</button>
                     </div>
+
+                    <!--<label class="parameterLabel">-->
+                        <h3>Material:</h3>
+                    <!--</label>-->
+                        <div>
+                                <select id="thelist" size="20"  style="width: 300px;>
+                                <option value="1">One</option>
+                                </select>
+                        </div>
+
+                    <!--<div>-->
+                        <!--<label for="materialID" class="parameterLabel">-->
+                            <!--ID:-->
+                        <!--</label>-->
+                        <!--<datalist id="materials"></datalist>-->
+                        <!--<input type="text" id="materialID" style="width: 140px;" list="materials">-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="materialName" class="parameterLabel">Name:</label>-->
+                        <!--<input type="text" id="materialName" style="width: 140px;" readonly="true">-->
+                    <!--</div>-->
+
 
                     <br><br>
 
@@ -113,17 +122,11 @@
                     <div>
 
 
-                        <div>
-                            <h1>Sample</h1>
-                            <form>
-                                <select id="thelist" size="4"  style="width: 100px;>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">How do you think this long name and list will look? </option>
-                                    <option value="4">Four</option>
-                                </select>
-                            </form>
-                        </div>
+
+
+
+
+
                     </div>
                     <br>
                 </div>

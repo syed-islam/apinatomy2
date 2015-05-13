@@ -35,8 +35,9 @@ var auEditor = function () {
 
     var onSelectLayer = function (d){
         selectedLayer = d;
-        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
         updateLayerParameters(selectedLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
+
         ////if (this != selectedLayerNode){
         //    d3.select(this).style("stroke", "red").style("stroke-width", 2);
         //    d3.select(selectedLayerNode).style("stroke", "black").style("stroke-width", 0);
@@ -283,13 +284,14 @@ var auEditor = function () {
     d3.select("#removeMaterial").on("click", function(){
         console.log("Remove material button clicked");
         if (thelist.value){
-            console.log(thelist.value);
             console.log($("#thelist").val());
+            selectedLayer.materials.splice(selectedLayer.getIndexOfMaterialByID($("#thelist").val()),1);
             $("#thelist").find("option[value='"+$("#thelist").val()+"']").remove();
-            //$thelist.find("option[value='"+$thelist.val()+"']").remove();
         } else {
             console.log("No material selected for removal")
         }
+
+        console.log(selectedLayer);
     })
 
 
@@ -297,6 +299,17 @@ var auEditor = function () {
     //Add Material to Layer
     d3.select("#addMaterial").on("click", function(){
       console.log("Add Material ", selectedMaterial, " to layer:" , selectedLayer);
+
+
+      //Do not allow for duplicate materials in the same layer
+        if (selectedLayer.materials && selectedLayer.materials.length> 0 && selectedLayer.getIndexOfMaterialByID(selectedMaterial.id) > -1){
+            console.log("Material already exists in layer.")
+            return;
+        }
+
+
+
+
         var existingMaterials = selectedLayer.materials;
 
         //if layer already has materials
@@ -306,11 +319,15 @@ var auEditor = function () {
             selectedLayer.materials = [selectedMaterial];
         }
 
+        $('#thelist').append('<option value=' +  selectedMaterial.id  + '> ' +  selectedMaterial.id + "</option")
+
+
+        console.log(selectedLayer.materials);
         onSelectLayer(selectedLayer);
-
-
-
     });
+
+
+
 
     //New AU Button Click
     d3.select("#auNew").on("click", function() {
@@ -369,12 +386,21 @@ var auEditor = function () {
     //Layer parameters
     ////////////////////////////////////////////////////////////
     function updateLayerParameters(layer){
+        console.log("Updating parameter", layer);
         if (layer != null){
             d3.select("#layerID").property("value", layer.id);
             d3.select("#layerName").property("value", layer.name);
             d3.select("#layerThickness").property("value", layer.thickness);
             //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialName").property("value", layer.materials[0].name);
+
+            //Update the materials list
+            $("#thelist").empty()
+            if (layer.materials) {
+                for (var i = 0; i < layer.materials.length; i++) {
+                    $('#thelist').append('<option value=' + layer.materials[i].id + '> ' + layer.materials[i].id + "  " +  layer.materials[i].name +   "</option")
+                }
+            }
         }
     }
 
