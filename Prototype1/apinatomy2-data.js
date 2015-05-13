@@ -229,13 +229,14 @@ function LayerRepo(layers){
 }
 
 //create layer
-function Layer(id, name, thickness, materials) {
+function Layer(id, name, thickness, materials, colour) {
     this.id = id;
     this.name = name;
     this.thickness = thickness;
     this.materials = materials;
+    this.colour = "#"+((1<<24)*Math.random()|0).toString(16);
 
-    console.log(this.id, this.name, this.thickness, this.materials);
+    console.log(this.id, this.name, this.thickness, this.materials, this.colour);
 
     //URL for accessing create layer api
     var url = "http://open-physiology.org:5055/makelayer/";
@@ -277,9 +278,9 @@ function Layer(id, name, thickness, materials) {
                    //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
                    this.id = response.id;
 
-                   if (typeof 'rehashaueditor' == 'function') {
+                   //if (typeof 'rehashaueditor' == 'function') {
                        rehashaueditor();
-                   }
+                   //}
                    ;
                }
            });
@@ -378,7 +379,7 @@ function AsymmetricUnit(id, name, layers, length){
         svg.selectAll("chart")
             .data(au.layers)
             .enter().append("rect")
-            .style("fill", function (d) {if (d.materials === undefined) return "#888888"; return d.materials[0].colour;})
+            .style("fill", function (d) {return d.colour;})
             .style("fill-opacity" , function (d){if (d.materials === undefined)  return 0.5 ; return 1.0})
             .style("stroke", function(d){
                 console.log("Manual Selected Layer:", selectedLayer);
@@ -487,7 +488,7 @@ function AsymmetricUnitRepo(auSet){
             svg.selectAll("auRepo")
                 .data(auRepo.auSet[j].layers)
                 .enter().append("rect")
-                .style("fill", function (d) { if (d.materials[0] === undefined) return "#888888"; return d.materials[0].colour;})
+                .style("fill", function (d) { if (d.materials === undefined) return "#888888"; return d.materials[0].colour;})
                 .attr("width", function (d) {return /*auRepo.auSet[j].length * */ vp.lengthScale;})
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})

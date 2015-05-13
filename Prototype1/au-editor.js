@@ -395,6 +395,14 @@ var auEditor = function () {
 
     //Handle Add Layer
     d3.select("#layerClone").on("click", function() {
+
+        //Ensure that an AU is selected where the layer can be added.
+        if (!selectedAU){
+            alert("No AU Selected. Please create/select AU first");
+            return;
+        }
+
+
         if (debugging) console.log("Adding new layer");
 
         //Create new blank layer
