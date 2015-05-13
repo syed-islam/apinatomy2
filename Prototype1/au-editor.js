@@ -33,17 +33,42 @@ var auEditor = function () {
     var selectedMaterialNode = null;  //Selected material
     var selectedMaterial = null;  //Selected material data
 
+
+    var onTabSelect = function (d){
+        console.log("Tab clicked")
+        selectedLayer = d;
+        console.log(d);
+
+        $("#thelist").empty()
+        $('#thelist').append('<option value=fake> ' + "No items common in the Layers" +   "</option")
+
+
+        $('#addMaterial').attr('disabled','disabled');
+        $('#removeMaterial').attr('disabled','disabled');
+
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+
+    }
+
+
     var onSelectLayer = function (d){
+        $('#addMaterial').removeAttr('disabled');
+        $('#removeMaterial').removeAttr('disabled');
+
+
         selectedLayer = d;
         console.log(d);
         updateLayerParameters(selectedLayer);
-        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+
+
 
         ////if (this != selectedLayerNode){
         //    d3.select(this).style("stroke", "red").style("stroke-width", 2);
         //    d3.select(selectedLayerNode).style("stroke", "black").style("stroke-width", 0);
         //    selectedLayerNode = this;
         //    selectedLayer = d;
+        //    console.log("Layer Selected")
         //    console.log("Layer Selected")
         //    updateLayerParameters(selectedLayer);
         //
@@ -96,7 +121,7 @@ var auEditor = function () {
     //Demo
     ///////////////////////////////////////////////////////
     ////Init visual parameters
-    var mainVP = new VisualParameters("horizontal", 500, 50, width, height, 10);
+    var mainVP = new VisualParameters("horizontal", 500, 30, width, height, 10);
     var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
     var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
@@ -117,7 +142,7 @@ var auEditor = function () {
     function syncSelectedAU(){
         updateAUParameters(selectedAU);
         updateVisualParameters(mainVP);
-        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
     }
 
     ////////////////////////////////////////////////////////////
@@ -339,10 +364,6 @@ var auEditor = function () {
             $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + "</option")
 
 
-
-
-
-
         }
 
 
@@ -397,7 +418,7 @@ var auEditor = function () {
                 if (confirm("Delete asymmetric unit " + selectedAU.id + "?")) {
                     auRepo.removeAt(index);
                     if (auRepo.auSet.length > 0) selectedAU = auRepo.auSet[0];
-                    selectedAU.draw(svg, mainVP, onSelectLayer);
+                    selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
                     //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                     redraw_aurepos();
                     updateAUParameters(selectedAU);
@@ -413,9 +434,9 @@ var auEditor = function () {
     function updateLayerParameters(layer){
         console.log("Updating parameter", layer);
         if (layer instanceof Layer){
-            //d3.select("#layerID").property("value", layer.id);
+            d3.select("#layerID").property("value", layer.id);
             //d3.select("#layerName").property("value", layer.name);
-            //d3.select("#layerThickness").property("value", layer.thickness);
+            d3.select("#layerThickness").property("value", layer.thickness);
             //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialName").property("value", layer.materials[0].name);
@@ -430,7 +451,7 @@ var auEditor = function () {
                 $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
             }
         } else if (layer instanceof AsymmetricUnit){
-            console.log("Tab selected", selectedAU.selectedtab);
+            //console.log("Tab selected", selectedAU.selectedtab);
 
             $("#thelist").empty()
             if (layer.misc_materials && layer.misc_materials.length > 0 ) {
@@ -520,7 +541,7 @@ var auEditor = function () {
              var newLayer = new Layer("Layer_1", materialName.value, 1, materials);
              layerRepo = new LayerRepo([newLayer]);
              selectedAU.addLayerAt(newLayer, 0);
-             selectedAU.draw(svg, mainVP, onSelectLayer);
+             selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
              //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
              redraw_aurepos();
              console.log(layerRepo);
@@ -530,7 +551,7 @@ var auEditor = function () {
                  //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
                  //if (index == 0) index = selectedAU.getNumberOfLayers();
                  selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
-                 selectedAU.draw(svg, mainVP, onSelectLayer);
+                 selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
                  //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                  redraw_aurepos();
              } else { // Layer does not exist, create a new layer
@@ -539,7 +560,7 @@ var auEditor = function () {
                  //if (index == 0) index = selectedAU.getNumberOfLayers();
                  layerRepo.addAt(newLayer, 0);
                  selectedAU.addLayerAt(newLayer, 0);
-                 selectedAU.draw(svg, mainVP, onSelectLayer);
+                 selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
                  //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                  redraw_aurepos();
              }
@@ -575,7 +596,7 @@ var auEditor = function () {
             selectedLayer.thickness = layerThickness.value;
             if (materialIndex >= 0)
                 selectedLayer.material = materialRepo.materials[materialIndex];
-            selectedAU.draw(svg, mainVP, onSelectLayer);
+            selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
             //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
             redraw_aurepos();
         } else {
@@ -614,20 +635,20 @@ var auEditor = function () {
     d3.select("#vpLength").on("input", function () {
         d3.select("#vpLength-value").text(vpLength.value);
         mainVP.lengthScale = vpLength.value;
-        selectedAU.draw(svg, mainVP, onSelectLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
     });
 
     d3.select("#vpThickness").on("input", function () {
         d3.select("#vpThickness-value").text(vpThickness.value);
         mainVP.widthScale = vpThickness.value;
-        selectedAU.draw(svg, mainVP, onSelectLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
     });
 
     d3.select("#vpOrientation").on("change", function () {
         var value = "horizontal";
         if (this.vpOrientation[1].checked) value = "vertical";
         mainVP.orientation = value;
-        selectedAU.draw(svg, mainVP, onSelectLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
     });
 
 
@@ -835,7 +856,7 @@ var auEditor = function () {
     rehashaueditor = function rehasheverything(){
         console.log("callback test");
         //console.log(layerRepo);
-        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
         redraw_aurepos();
     }

@@ -446,7 +446,6 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
         url += "&name=" +this.name;
 
         console.log(url);
-        //return;
 
         $.ajax
         ({
@@ -456,7 +455,6 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             jsonp: "callback",
 
             dataType: "jsonp",
-
 
             success: function (response) {
                 response;
@@ -557,7 +555,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
     }
 
     //Draw AU
-    this.draw = function(svg, vp, onSelectLayer, selectedLayer) {
+    this.draw = function(svg, vp, onSelectLayer, selectedLayer, onSelectInfoTab) {
         var au = this;
         console.log("AU", au);
         svg.selectAll('rect').remove();
@@ -657,11 +655,11 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .enter()
             .append("rect")
             .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
-            .style("fill-opacity" , function (d){return 0})
+            .style("fill-opacity" , function (d){return 0.2})
             .style("stroke", function(d){
                 if (selectedLayer === d) {
                     //selectedLayer = null;
-                    au.selectedtab = 1;
+                    //au.selectedtab = 1;
                     return "red";
                 }
                 return "blue";
@@ -681,9 +679,14 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .data(au)
             .enter()
             .append("rect")
-            //.style("fill", function (d) {return d.colour;})
-            .style("fill-opacity" , function (d){return 0})
+            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
+            .style("fill-opacity" , function (d){return 0.2})
             .style("stroke", function(d){
+                if (selectedLayer === d) {
+                    //selectedLayer = null;
+                    //au.selectedtab = 1;
+                    return "red";
+                }
                 return "blue";
             })
             .style("stroke-width", function(d){
@@ -693,6 +696,10 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
             .attr(attr_x, function () { return au.length * vp.lengthScale * 2/3;})
             .attr(attr_y, function (d, i) { prev += 1 * vp.widthScale; return prev - 1 * vp.widthScale;})
+            .on("click", function(d){
+                console.log("clicked");
+                onSelectInfoTab(d);
+            });
 
 
 
