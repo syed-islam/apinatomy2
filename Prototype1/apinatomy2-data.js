@@ -349,6 +349,7 @@ function AsymmetricUnit(id, name, layers, length){
     //Draw AU
     this.draw = function(svg, vp, onSelectLayer, selectedLayer) {
         var au = this;
+        console.log("AU", au);
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
         var prev = vp.margin;
@@ -387,82 +388,27 @@ function AsymmetricUnit(id, name, layers, length){
                 }
             })
             .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
-            .attr(attr_height, function (d) {
-                var materialCount = 1;
-                if (d.materials)
-                    materialCount = d.materials.length;
-                return d.thickness * materialCount *  vp.widthScale;
-            })
+            .attr(attr_height, function (d) {return d.thickness * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;})
             .on("click", onSelectLayer);
 
 
-        //TODO - Add either backgroun rectangle or other form of clickable txt
-        //Draw Inner rectangles for each material
-        //prev = vp.margin;
-        //svg.selectAll("chart").data(au.layers)
-        //    .data(function(d){
-        //        console.log(d);
-        //        if (d){
-        //            return d.materials;
-        //        }
-        //        return [];
-        //    })
-        //    .enter().append("rect")
-        //    .style("fill", function (d) {if (d.materials === undefined) return "#888888"; return d.materials[0].colour;})
-        //    .style("fill-opacity" , function (d){return 0.01})
-        //    .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
-        //    .attr(attr_height, function (d) {return d.thickness * vp.widthScale /2;})
-        //    .attr(attr_x, function () {return 0;})
-        //    .attr(attr_y, function (d) {
-        //        prev += d.thickness * vp.widthScale;
-        //        return prev - d.thickness * vp.widthScale / 2 - 15;})
-        //    .on("click", function (){console.log("inside clicked");})
-
-
-
-
-
-
-
-
-
-
-
 
         //Add labels
         prev = vp.margin;
-        var layerCounter =0;
-
-
-        svg.selectAll("chart").data(function (d){
-
-                return au.layers;
-            }
-
-        ).enter().append("g")
-                .selectAll(".layers").data (function (d) {
-                console.log("Layer number:",++layerCounter);
-            if (d.materials)
-                return d.materials
-            else return []
-        }).enter().append("text")
+        svg.selectAll("chart")
+            .data(au.layers)
+            .enter().append("text")
             .attr("class", "labelText")
             .attr(attr_x, function (d, i) {
-                console.log(d,i);
                 var offset = 0;
                 if (vp.orientation == "vertical") offset = 20 * (i % 2);
                 return au.length * vp.lengthScale / 2 + offset;})
-            .attr(attr_y, function (d, i) {
-                prev +=   20;
-                return prev -  20;
-            })
-            .text(function(d, i) {
-                console.log("Adding Label:", d,i);
-                return d.id + " " + d.name})
-            ;
-
+            .attr(attr_y, function (d) {
+                prev += d.thickness * vp.widthScale;
+                return prev - d.thickness * vp.widthScale / 2;})
+            .text(function(d, i) {  return d.id + " " + d.name});
 
 
 
