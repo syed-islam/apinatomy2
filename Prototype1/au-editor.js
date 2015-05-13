@@ -283,15 +283,18 @@ var auEditor = function () {
 
     d3.select("#removeMaterial").on("click", function(){
         console.log("Remove material button clicked");
-        if (thelist.value){
+        if (thelist.value && thelist.value != "fake" ){
             console.log($("#thelist").val());
             selectedLayer.materials.splice(selectedLayer.getIndexOfMaterialByID($("#thelist").val()),1);
             $("#thelist").find("option[value='"+$("#thelist").val()+"']").remove();
+
+            if (selectedLayer.materials.length == 0){
+                $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
+            }
+
         } else {
             console.log("No material selected for removal")
         }
-
-        console.log(selectedLayer);
     })
 
 
@@ -300,15 +303,11 @@ var auEditor = function () {
     d3.select("#addMaterial").on("click", function(){
       console.log("Add Material ", selectedMaterial, " to layer:" , selectedLayer);
 
-
       //Do not allow for duplicate materials in the same layer
         if (selectedLayer.materials && selectedLayer.materials.length> 0 && selectedLayer.getIndexOfMaterialByID(selectedMaterial.id) > -1){
             console.log("Material already exists in layer.")
             return;
         }
-
-
-
 
         var existingMaterials = selectedLayer.materials;
 
@@ -320,6 +319,8 @@ var auEditor = function () {
         }
 
         $('#thelist').append('<option value=' +  selectedMaterial.id  + '> ' +  selectedMaterial.id + "</option")
+
+        selectedLayer.sync_materials_to_server();
 
 
         console.log(selectedLayer.materials);
@@ -392,14 +393,17 @@ var auEditor = function () {
             d3.select("#layerName").property("value", layer.name);
             d3.select("#layerThickness").property("value", layer.thickness);
             //d3.select("#materialID").property("value", layer.materials[0].id);
+            //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialName").property("value", layer.materials[0].name);
 
             //Update the materials list
             $("#thelist").empty()
-            if (layer.materials) {
+            if (layer.materials && layer.materials.length > 0 ) {
                 for (var i = 0; i < layer.materials.length; i++) {
                     $('#thelist').append('<option value=' + layer.materials[i].id + '> ' + layer.materials[i].id + "  " +  layer.materials[i].name +   "</option")
                 }
+            } else {
+                $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
             }
         }
     }
@@ -433,7 +437,7 @@ var auEditor = function () {
         if (debugging) console.log("Adding new layer");
 
         //Create new blank layer
-        var newLayer = new Layer("Layer_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , layerName.value ? layerName.value : "Layer_" + (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1"), layerThickness.value ? layerThickness.value : 1)
+        var newLayer = new Layer("Layer_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , "", layerThickness.value ? layerThickness.value : 1)
 
         //TODO very bad way of chaining on Ajax return calls.
         newLayer.create_on_server(selectedAU, 0);
@@ -659,20 +663,29 @@ var auEditor = function () {
                     if (data[i].type === "shell"){
 
                         //if (i === 10) continue;
-                        console.log(i);
+                        console.log(i, data[i]);
 
                         //console.log(data[i]);
                         // Create appropriate layers for the lyph
 
                         var layers_content= [];
                         for (var j = 0; j < data[i].layers.length;j++){
-                            //TODO
+
+                            var materials = [];
+
+                            for (var k =0; k < data[i].layers[j].materials.length; k++){
+                                if (materialRepo && materialRepo.getIndexByID(data[i].layers[j].materials[k].id) > -1)
+                                    materials.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].materials[k].id)]);
+                                else{
+                                    materials.push(auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].materials[k].id)]);
+                                }
+                            }
 
                             var newLayer  = null;
                             if (auRepo)
-                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), (materialRepo.getIndexByID(data[i].layers[j].mtlid) > auRepo.getIndexByID(data[i].layers[j].mtlid)) ? materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)] : auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                                newLayer = new Layer(data[i].layers[j].id, "", ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
                             else
-                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   );
+                                newLayer = new Layer(data[i].layers[j].id, "", ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
                             if (layerRepo == null){
                                 layerRepo = new LayerRepo([newLayer]);
                             } else {

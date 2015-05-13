@@ -294,6 +294,55 @@ function Layer(id, name, thickness, materials, colour) {
         //}
     }
 
+
+
+    this.sync_materials_to_server = function (){
+        console.log("Syncing change in layer to server", "Layer:" + this.id , "Materials:" + this.materials);
+
+        //URL for accessing editlayer api
+        var url = "http://open-physiology.org:5055/editlayer/";
+        url += "?layer=" + this.id;
+
+        if (this.materials  &&  this.materials.length > 0) {
+            url += "&material="
+            for (var i =0; i < this.materials.length ; i ++){
+                url += this.materials[i].id;
+                if (i +1 < this.materials.length )
+                    url += ","
+            }
+
+        }
+        url+="&mutable=yes";
+
+        console.log(url);
+        //return;
+
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in udpating materials of the layer:", response);
+                    return;
+                }
+
+                console.log("Layer material update successfully:", response);
+                ;
+            }
+        });
+    }
+
+
+
     //Create a cloned/copies layer
     this.clone = function () {
         var newLayer = new Layer(this.id, this.name, this.thickness, this.materials);
@@ -366,6 +415,8 @@ function AsymmetricUnit(id, name, layers, length){
             }
         });
     }
+
+
 
 
 
