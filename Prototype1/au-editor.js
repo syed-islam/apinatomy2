@@ -380,7 +380,6 @@ var auEditor = function () {
     d3.select("#layerClone").on("click", function() {
         if (debugging) console.log("Adding new layer");
 
-
         //Create new blank layer
         var newLayer = new Layer("Layer_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , layerName.value ? layerName.value : "Layer_" + (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1"), layerThickness.value ? layerThickness.value : 1)
 
