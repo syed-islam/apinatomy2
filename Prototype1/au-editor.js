@@ -35,6 +35,7 @@ var auEditor = function () {
 
     var onSelectLayer = function (d){
         selectedLayer = d;
+        console.log(d);
         updateLayerParameters(selectedLayer);
         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
 
@@ -208,7 +209,7 @@ var auEditor = function () {
 
     function newAU(){
         var newAU = null;
-        newAU = new AsymmetricUnit("newAU" + (auRepo ? auRepo.auSet.length +1  : 1), "newAu" + + (auRepo ? auRepo.auSet.length +1  : 1), [], (auLength.value) ? auLength.value : 1);
+        newAU = new AsymmetricUnit("newAU" + (auRepo ? auRepo.auSet.length +1  : 1), "newAu" + + (auRepo ? auRepo.auSet.length +1  : 1), [], (auLength.value) ? auLength.value : 1, []);
         newAU.create_on_server();
         console.log("New AU Created:", newAU);
         if (auRepo == null)
@@ -271,15 +272,9 @@ var auEditor = function () {
             }
         });
 
-
-
-
-
-
-
-
-
     }
+
+
 
     d3.select("#removeMaterial").on("click", function(){
         console.log("Remove material button clicked");
@@ -304,30 +299,56 @@ var auEditor = function () {
 
     //Add Material to Layer
     d3.select("#addMaterial").on("click", function(){
-      console.log("Add Material ", selectedMaterial, " to layer:" , selectedLayer);
 
-      //Do not allow for duplicate materials in the same layer
-        if (selectedLayer.materials && selectedLayer.materials.length> 0 && selectedLayer.getIndexOfMaterialByID(selectedMaterial.id) > -1){
-            console.log("Material already exists in layer.")
-            return;
+        if (selectedLayer instanceof Layer) {
+
+            console.log("Add Material ", selectedMaterial, " to layer:", selectedLayer);
+
+            //Do not allow for duplicate materials in the same layer
+            if (selectedLayer.materials && selectedLayer.materials.length > 0 && selectedLayer.getIndexOfMaterialByID(selectedMaterial.id) > -1) {
+                console.log("Material already exists in layer.")
+                return;
+            }
+
+            var existingMaterials = selectedLayer.materials;
+
+            //if layer already has materials
+            if (existingMaterials) {
+                existingMaterials.splice(0, 0, selectedMaterial);
+            } else { // if layer is previously empty
+                selectedLayer.materials = [selectedMaterial];
+            }
+
+            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + "</option")
+
+            selectedLayer.sync_materials_to_server();
+
+
+            console.log(selectedLayer.materials);
+            onSelectLayer(selectedLayer);
+
+        } else if (selectedLayer instanceof AsymmetricUnit){
+            console.log("Dealing with Tabs")
+            console.log("Add Material ", selectedMaterial, " to outside layer of AU:", selectedLayer);
+
+            //Todo: Do not allow the same material to be added twice.
+
+            selectedLayer.misc_materials.push(selectedMaterial);
+            selectedLayer.sync_au_to_server();
+
+            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + "</option")
+
+
+
+
+
+
         }
 
-        var existingMaterials = selectedLayer.materials;
-
-        //if layer already has materials
-        if (existingMaterials){
-            existingMaterials.splice(0,0,selectedMaterial);
-        } else { // if layer is previously empty
-            selectedLayer.materials = [selectedMaterial];
-        }
-
-        $('#thelist').append('<option value=' +  selectedMaterial.id  + '> ' +  selectedMaterial.id + "</option")
-
-        selectedLayer.sync_materials_to_server();
 
 
-        console.log(selectedLayer.materials);
-        onSelectLayer(selectedLayer);
+
+
     });
 
 
@@ -391,10 +412,10 @@ var auEditor = function () {
     ////////////////////////////////////////////////////////////
     function updateLayerParameters(layer){
         console.log("Updating parameter", layer);
-        if (layer != null){
-            d3.select("#layerID").property("value", layer.id);
-            d3.select("#layerName").property("value", layer.name);
-            d3.select("#layerThickness").property("value", layer.thickness);
+        if (layer instanceof Layer){
+            //d3.select("#layerID").property("value", layer.id);
+            //d3.select("#layerName").property("value", layer.name);
+            //d3.select("#layerThickness").property("value", layer.thickness);
             //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialName").property("value", layer.materials[0].name);
@@ -407,6 +428,17 @@ var auEditor = function () {
                 }
             } else {
                 $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
+            }
+        } else if (layer instanceof AsymmetricUnit){
+            console.log("Tab selected", selectedAU.selectedtab);
+
+            $("#thelist").empty()
+            if (layer.misc_materials && layer.misc_materials.length > 0 ) {
+                for (var i = 0; i < layer.misc_materials.length; i++) {
+                    $('#thelist').append('<option value=' + layer.misc_materials[i].id + '> ' + layer.misc_materials[i].id + "  " +  layer.misc_materials[i].name +   "</option")
+                }
+            } else {
+                $('#thelist').append('<option value=fake> ' + "No Material outside defined layers" +   "</option")
             }
         }
     }
@@ -701,7 +733,7 @@ var auEditor = function () {
                         }
                         //console.log(layers_content);
                         //create AU with the layers
-                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1);
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1, data[i].misc_materials);
 
 
                         //console.log(toto);
