@@ -488,7 +488,7 @@ function AsymmetricUnitRepo(auSet){
             svg.selectAll("auRepo")
                 .data(auRepo.auSet[j].layers)
                 .enter().append("rect")
-                .style("fill", function (d) { if (d.materials === undefined) return "#888888"; return d.materials[0].colour;})
+                .style("fill", function (d) { return d.colour;})
                 .attr("width", function (d) {return /*auRepo.auSet[j].length * */ vp.lengthScale;})
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})
