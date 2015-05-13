@@ -115,7 +115,7 @@ var auEditor = function () {
     function syncSelectedAU(){
         updateAUParameters(selectedAU);
         updateVisualParameters(mainVP);
-        selectedAU.draw(svg, mainVP, onSelectLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
     }
 
     ////////////////////////////////////////////////////////////
@@ -208,14 +208,15 @@ var auEditor = function () {
     function newAU(){
         var newAU = null;
         newAU = new AsymmetricUnit("newAU" + (auRepo ? auRepo.auSet.length +1  : 1), "newAu" + + (auRepo ? auRepo.auSet.length +1  : 1), [], (auLength.value) ? auLength.value : 1);
+        newAU.create_on_server();
         console.log("New AU Created:", newAU);
-        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
-        else auRepo.addAt(newAU, 0);
+        if (auRepo == null)
+            auRepo  = new AsymmetricUnitRepo([newAU]);
+        else
+            auRepo.addAt(newAU, 0);
         newAU.draw(svg, mainVP, onSelectLayer);
         redraw_aurepos();
         onSelectAU(newAU); //Selecting the AU
-
-
     }
 
 
@@ -408,6 +409,9 @@ var auEditor = function () {
         //Create new blank layer
         var newLayer = new Layer("Layer_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , layerName.value ? layerName.value : "Layer_" + (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1"), layerThickness.value ? layerThickness.value : 1)
 
+        //TODO very bad way of chaining on Ajax return calls.
+        newLayer.create_on_server(selectedAU, 0);
+
         // Add blank layer to layer repo
         if (layerRepo){
             if (debugging) console.log("Layer Repo Exists");
@@ -417,23 +421,7 @@ var auEditor = function () {
             layerRepo = new LayerRepo([newLayer]);
         }
         if (debugging) console.log(layerRepo);
-
-        //Add new layer to AU
-        if (selectedAU){
-            console.log("Adding layer Selected AU:", selectedAU);
-            //TODO - Add layers in a more user-friendly way, below the  selected layer rather than at position 0.
-            selectedAU.addLayerAt(newLayer, 0);
-        } else {
-            //TODO - Perhaps move this error condition as a check before even creating the layers.
-            console.log("No AU Selected");
-            selectedAU.addLayerAt(newLayer, 0);
-        }
-
-        //Draw the AU
-        //selectedAU.draw(svg, mainVP, onSelectLayer);
         onSelectLayer(newLayer)
-
-
     })
 
 
@@ -773,7 +761,7 @@ var auEditor = function () {
     rehashaueditor = function rehasheverything(){
         console.log("callback test");
         //console.log(layerRepo);
-        selectedAU.draw(svg, mainVP, onSelectLayer);
+        selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
         redraw_aurepos();
     }

@@ -238,53 +238,63 @@ function Layer(id, name, thickness, materials, colour) {
 
     console.log(this.id, this.name, this.thickness, this.materials, this.colour);
 
-    //URL for accessing create layer api
-    var url = "http://open-physiology.org:5055/makelayer/";
 
-    //If creating a layer with known list of materials
-    if (materials  &&  materials.length === 0) {
-        url += "?material=" + this.materials[0].id +
-        "&thickness=" + this.thickness +
-        "&color=" + this.materials[0].colour
-    } else { // Creating a blank layer
-        url += "?material=none"+
+    this.create_on_server = function (AU, index){
+        //URL for accessing create layer api
+        var url = "http://open-physiology.org:5055/makelayer/";
+
+        //If creating a layer with known list of materials
+        if (materials  &&  materials.length === 0) {
+            url += "?material=" + this.materials[0].id +
+            "&thickness=" + this.thickness +
+            "&color=" + this.materials[0].colour
+        } else { // Creating a blank layer
+            url += "?material=none"+
             "&thickness=" + this.thickness;
+        }
+
+        //function ajax_create_layer () {
+        //   this.createLayerOnServer = function createLayerOnServer() {
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Layer creation error:", response);
+                    return;
+                }
+
+                console.log("Layer created successfully:", response);
+
+                //console.log("Layer Created", response);
+
+                //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
+                this.id = response.id;
+
+                //TODO bad design. Once the layer is successfuly created we attach it the AU where its meant to go.
+                AU.addLayerAt(this,index);
+
+
+
+                //if (typeof 'rehashaueditor' == 'function') {
+                rehashaueditor();
+                //}
+                ;
+            }
+        });
+        //}
     }
 
-    //function ajax_create_layer () {
-    //   this.createLayerOnServer = function createLayerOnServer() {
-           $.ajax
-           ({
-               context: this,
-               url: url,
 
-               jsonp: "callback",
-
-               dataType: "jsonp",
-
-
-               success: function (response) {
-                   response;
-
-                   if (response.hasOwnProperty("Error")) {
-                       console.log("Layer creation error:", response);
-                       return;
-                   }
-
-                   console.log("Layer created successfully:", response);
-
-                   //console.log("Layer Created", response);
-
-                   //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
-                   this.id = response.id;
-
-                   //if (typeof 'rehashaueditor' == 'function') {
-                       rehashaueditor();
-                   //}
-                   ;
-               }
-           });
-       //}
 
 
     //Create a cloned/copies layer
@@ -306,6 +316,54 @@ function AsymmetricUnit(id, name, layers, length){
     this.layers = layers;
     this.length = length;
 
+
+    this.create_on_server = function (){
+        console.log("Creating AU on server")
+
+        //URL for accessing make template api
+        var url = "http://open-physiology.org:5055/maketemplate/";
+        url += "?name=" + this.name;
+        url +=  "&type=shell";
+
+        if (layers && layers.length > 0){
+            for (var i =0; i < layers.length ; i++){
+                url += "&layer" + i+1 + "=" + layers[i].id;
+            }
+        }
+
+        console.log(url)
+
+        //Create AU on the server
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("AU Creation Error:", response);
+                    return;
+                }
+
+                console.log("AU created successfully:", response);
+
+                this.id = response.id;
+
+                rehashaueditor();
+                ;
+            }
+        });
+    }
+
+
+
     this.clone = function(){
         var newAU = new AsymmetricUnit(this.id, this.name, this.layers.slice(0), this.length);
         return newAU;
@@ -325,6 +383,44 @@ function AsymmetricUnit(id, name, layers, length){
     this.addLayerAt = function(layer, index){
         //insert layer to the position 'index'
         layers.splice(index, 0, layer);
+
+        //Add layer to AU at the server.
+
+        console.log("Adding Layer to AU on server")
+
+        //URL for accessing make template api
+        var url = "http://open-physiology.org:5055/layer_to_template/";
+        url += "?template=" + this.id;
+        url +=  "&layer=" + layer.id;
+        url += "&pos=" + index+1;
+
+        console.log(url)
+
+        //Create AU on the server
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Adding Layer to AU Error:", response);
+                    return;
+                }
+
+                console.log("AU created successfully:", response);
+
+                rehashaueditor();
+                ;
+            }
+        });
     }
 
     this.removeLayerAt = function(index){
@@ -384,7 +480,7 @@ function AsymmetricUnit(id, name, layers, length){
             .style("stroke", function(d){
                 console.log("Manual Selected Layer:", selectedLayer);
                 if (selectedLayer === d) {
-                    selectedLayer = null;
+                    //selectedLayer = null;
                     return "red";
                 }
             })
