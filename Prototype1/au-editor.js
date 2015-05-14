@@ -199,11 +199,12 @@ var auEditor = function () {
     }
 
     function updateAU(au){
-        au.id = auID.value;
+        //au.id = auID.value;
         au.name = auName.value;
         au.length = auLength.value;
+        au.sync_au_to_server();
 
-        au.draw(svg, mainVP, onSelectLayer);
+        au.draw(svg, mainVP, onSelectLayer, selectedLayer);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
         redraw_aurepos();
     }
@@ -553,67 +554,79 @@ var auEditor = function () {
 
     //Todo incorporate the code as handle material and remove the following function.
     //Previous Handle Add Layer
-     d3.select("#DefunctlayerClone").on("click", function() {
-         //if (selectedAU.getLayerIndex(layerID.value) > -1){
-         //    alert("Cannot create a new layer: another layer with such ID exists!");
-         //    return;
-         //}
-
-         //console.log(layers);
-
-         var material  = (materialRepo.getIndexByID(materialID.value) > auRepo.getIndexByID(materialID.value)) ? materialRepo.materials[materialRepo.getIndexByID(materialID.value)] : auRepo.auSet[auRepo.getIndexByID(materialID.value)];
-         if (!material) {
-             alert("Cannot update the level: no material with such ID exists!");
-             return;
-         }
-
-
-        var materials = [material];
-
-
-         //var  = materialRepo.materials[materialIndex];
-
-         console.log("LayerRepo:" ,(layerRepo == null));
-
-         //If this is the first AU we are creating and the layerRepo is null
-         if (layerRepo == null){
-             var newLayer = new Layer("Layer_1", materialName.value, 1, materials);
-             layerRepo = new LayerRepo([newLayer]);
-             selectedAU.addLayerAt(newLayer, 0);
-             selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
-             //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-             redraw_aurepos();
-             console.log(layerRepo);
-         } else { // If AUs already exist
-             var layerindex = layerRepo.containsLayer(layerThickness.value, materials);
-             if (layerindex > -1) {  // Layer exists so simply add
-                 //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
-                 //if (index == 0) index = selectedAU.getNumberOfLayers();
-                 selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
-                 selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
-                 //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-                 redraw_aurepos();
-             } else { // Layer does not exist, create a new layer
-                 newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
-                 //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
-                 //if (index == 0) index = selectedAU.getNumberOfLayers();
-                 layerRepo.addAt(newLayer, 0);
-                 selectedAU.addLayerAt(newLayer, 0);
-                 selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
-                 //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-                 redraw_aurepos();
-             }
-         }
-
-         console.log(auRepo);
-         //newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
-         ////layers.push(newLayer);
-         //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
-         //if (index == 0) index = selectedAU.getNumberOfLayers();
-         //selectedAU.addLayerAt(newLayer, index);
-         //selectedAU.draw(svg, mainVP, onSelectLayer);
-         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-    })
+    // d3.select("#DefunctlayerClone").on("click", function() {
+    //     //if (selectedAU.getLayerIndex(layerID.value) > -1){
+    //     //    alert("Cannot create a new layer: another layer with such ID exists!");
+    //     //    return;
+    //     //}
+    //
+    //     //console.log(layers);
+    //
+    //     var material  = (materialRepo.getIndexByID(materialID.value) > auRepo.getIndexByID(materialID.value)) ? materialRepo.materials[materialRepo.getIndexByID(materialID.value)] : auRepo.auSet[auRepo.getIndexByID(materialID.value)];
+    //     if (!material) {
+    //         alert("Cannot update the level: no material with such ID exists!");
+    //         return;
+    //     }
+    //
+    //
+    //    var materials = [material];
+    //
+    //
+    //     //var  = materialRepo.materials[materialIndex];
+    //
+    //     console.log("LayerRepo:" ,(layerRepo == null));
+    //
+    //     //If this is the first AU we are creating and the layerRepo is null
+    //     if (layerRepo == null){
+    //         var newLayer = new Layer("Layer_1", materialName.value, 1, materials);
+    //         layerRepo = new LayerRepo([newLayer]);
+    //
+    //         var pos = 0;
+    //
+    //         if (selectedLayer instanceof AsymmetricUnit)
+    //            pos = selectedAU.layers.length;
+    //
+    //
+    //
+    //
+    //        console.log(pos);
+    //
+    //
+    //         selectedAU.addLayerAt(newLayer, pos);
+    //         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+    //         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    //         redraw_aurepos();
+    //         console.log(layerRepo);
+    //     } else { // If AUs already exist
+    //         var layerindex = layerRepo.containsLayer(layerThickness.value, materials);
+    //         if (layerindex > -1) {  // Layer exists so simply add
+    //             //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
+    //             //if (index == 0) index = selectedAU.getNumberOfLayers();
+    //             selectedAU.addLayerAt(layerRepo.layers[layerindex], 0);
+    //             selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+    //             //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    //             redraw_aurepos();
+    //         } else { // Layer does not exist, create a new layer
+    //             newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
+    //             //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
+    //             //if (index == 0) index = selectedAU.getNumberOfLayers();
+    //             layerRepo.addAt(newLayer, 0);
+    //             selectedAU.addLayerAt(newLayer, 0);
+    //             selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+    //             //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    //             redraw_aurepos();
+    //         }
+    //     }
+    //
+    //     console.log(auRepo);
+    //     //newLayer = new Layer(layerID.value, materialName.value, layerThickness.value, material);
+    //     ////layers.push(newLayer);
+    //     //var index = selectedAU.getLayerIndex(selectedLayer.id) + 1;
+    //     //if (index == 0) index = selectedAU.getNumberOfLayers();
+    //     //selectedAU.addLayerAt(newLayer, index);
+    //     //selectedAU.draw(svg, mainVP, onSelectLayer);
+    //     //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    //})
 
 
 
