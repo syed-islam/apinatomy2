@@ -39,20 +39,67 @@ var auEditor = function () {
         selectedLayer = d;
         console.log(d);
 
+
+        d3.select("#layerID").property("value", "Common");
+        d3.select("#layerThickness").property("value", "-");
+
         $("#thelist").empty()
 
-        //TODO find elements common to all layers
+        //d3.select("#layerID").property("value", layer.id);
+        ////d3.select("#layerName").property("value", layer.name);
+        //d3.select("#layerThickness").property("value", layer.thickness);
 
 
+        //TODO For now we are using the ajax call below. But its better to cache this information at every change of the Lyph.
+        requestcommonmaterials(d);
 
-
-        $('#thelist').append('<option value=fake> ' + "No items common in the Layers" +   "</option")
-
-
+        //disable the add and remove buttons
         $('#addMaterial').attr('disabled','disabled');
         $('#removeMaterial').attr('disabled','disabled');
+        $('#layerDelete').attr('disabled','disabled');;
+        $('#layerUpdate').attr('disabled','disabled');;
+
 
         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+
+    }
+
+
+    var requestcommonmaterials = function requestcommonmaterials (au){
+
+        $.ajax
+        ({
+            url:
+                "http://open-physiology.org:5055/template/" + au.id + "?commons=yes" ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Not able to load the template:" , response);
+                    return;
+                }
+                console.log(response);
+
+                if (response.common_materials && response.common_materials.length > 0){
+                    for (var i =0; i < response.common_materials.length; i++){
+                        $('#thelist').append('<option value=' + response.common_materials[i].id + '> ' + response.common_materials[i].id + " " + response.common_materials[i].name  + "</option")
+                    }
+                } else {
+                    $('#thelist').append('<option value=fake> ' + "No items common in all Layers" +   "</option")
+                }
+            }
+        });
+
+
+
+
+
 
     }
 
@@ -60,6 +107,10 @@ var auEditor = function () {
     var onSelectLayer = function (d){
         $('#addMaterial').removeAttr('disabled');
         $('#removeMaterial').removeAttr('disabled');
+        $('#layerDelete').removeAttr('disabled');
+        $('#layerUpdate').removeAttr('disabled');
+
+
 
 
         selectedLayer = d;
@@ -490,6 +541,11 @@ var auEditor = function () {
             }
         } else if (layer instanceof AsymmetricUnit){
             //console.log("Tab selected", selectedAU.selectedtab);
+            d3.select("#layerID").property("value", "Location Unknown");
+            d3.select("#layerThickness").property("value", "-");
+
+            $('#layerDelete').attr('disabled','disabled');;
+            $('#layerUpdate').attr('disabled','disabled');;
 
             $("#thelist").empty()
             if (layer.misc_materials && layer.misc_materials.length > 0 ) {

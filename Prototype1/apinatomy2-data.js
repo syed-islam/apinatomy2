@@ -725,7 +725,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
 
         // Draw Tab2
         svg.selectAll("chart")
-            .data(au)
+            .data([au])
             .enter()
             .append("rect")
             .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
@@ -760,7 +760,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr(attr_x, function () { return (au.length * vp.lengthScale * 2/3) + (au.length * vp.lengthScale /6);})
             .attr(attr_y, function (d, i) { return prev + 13;})
             .text(function(d, i) {
-                return "Common contents";
+                return "Common";
             });
 
 
