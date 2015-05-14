@@ -40,6 +40,12 @@ var auEditor = function () {
         console.log(d);
 
         $("#thelist").empty()
+
+        //TODO find elements common to all layers
+
+
+
+
         $('#thelist').append('<option value=fake> ' + "No items common in the Layers" +   "</option")
 
 
@@ -495,13 +501,15 @@ var auEditor = function () {
         }
     }
 
+
+
     function deleteLayer(au, layer){
-        if (au != null && layer != null){
+        if (au != null && layer != null && layer instanceof Layer){
             if (confirm("Delete layer " + layer.id + " from AU " + au.id + "?")){
                 var index = au.getLayerIndex(selectedLayer.id);
                 if (index > -1){
                     au.removeLayerAt(index);
-                    au.draw(svg, mainVP, onSelectLayer);
+                    au.draw(svg, mainVP, onSelectLayer,selectedLayer);
                 }
             }
         } else {
@@ -642,7 +650,7 @@ var auEditor = function () {
     })
 
     d3.select("#layerDelete").on("click", function() {
-        if (selectedAU != null){
+        if (selectedAU != null && selectedLayer){
             deleteLayer(selectedAU, selectedLayer);
         }
     })

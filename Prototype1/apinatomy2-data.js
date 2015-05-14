@@ -439,8 +439,8 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                     url += ","
             }
 
-        } else if (this.materials  &&  this.materials.length === 0) {
-            url += "&material=none"
+        } else if (this.misc_materials &&  this.misc_materials.length === 0) {
+            url += "&misc_materials=none"
         }
 
         url += "&name=" +this.name;
@@ -543,10 +543,61 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
     }
 
     this.removeLayerAt = function(index){
+
+
+        //TODO The layer also need to be removed from the server.
+
+
+
+
+        console.log("Removing Layer from AU on server")
+
+        //URL for accessing make template api
+        var url = "http://open-physiology.org:5055/layer_from_template/";
+        url += "?template=" + this.id;
+        url +=  "&layer=" + layers[index].id;
+
+
+        console.log(url)
+        //return;
+
+        //Create AU on the server
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Removing Layer to AU Error:", response);
+                    return;
+                }
+
+                console.log("Layer successfully removed from AU", response);
+
+                //rehashaueditor();
+                //;
+            }
+        });
+
+
+
+
         //remove layer from position 'index'
         if (index > -1) {
             layers.splice(index, 1);
         }
+
+
+
+
     }
 
     this.replaceLayerAt = function(layer, index){
