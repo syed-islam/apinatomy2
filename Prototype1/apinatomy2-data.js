@@ -681,6 +681,89 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             });
 
 
+
+
+        // Draw Tab1
+        svg.selectAll("chart")
+            .data([au])
+            .enter()
+            .append("rect")
+            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
+            .style("fill-opacity" , function (d){return 0.7})
+            .style("stroke", function(d){
+                if (selectedLayer === d) {
+                    //selectedLayer = null;
+                    //au.selectedtab = 1;
+                    return "red";
+                }
+                //return "blue";
+            })
+            .style("stroke-width", function(d){
+                return 2;
+            })
+            .attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
+            .attr(attr_height, function (d) {return 0.6 * vp.widthScale;})
+            .attr(attr_x, function () { return 0;})
+            .attr(attr_y, function (d, i) { return prev;})
+            .on("click", onSelectLayer);
+
+
+        // Draw Tab1 Label
+        svg.selectAll("chart")
+            .data([au])
+            .enter().append("text")
+            .attr("class", "labelText")
+            //.attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
+            //.attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
+            .attr(attr_x, function () { return au.length * vp.lengthScale /6;})
+            .attr(attr_y, function (d, i) { return prev + 13;})
+            .text(function(d, i) {
+                return "Location Unknown";
+            });
+
+
+
+        // Draw Tab2
+        svg.selectAll("chart")
+            .data(au)
+            .enter()
+            .append("rect")
+            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
+            .style("fill-opacity" , function (d){return 0.7})
+            .style("stroke", function(d){
+                if (selectedLayer === d) {
+                    //selectedLayer = null;
+                    //au.selectedtab = 1;
+                    return "red";
+                }
+                //return "blue";
+            })
+            .style("stroke-width", function(d){
+                return 2;
+            })
+            .attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
+            .attr(attr_height, function (d) {return 0.6 * vp.widthScale;})
+            .attr(attr_x, function () { return au.length * vp.lengthScale * 2/3;})
+            .attr(attr_y, function (d, i) { return prev;})
+            .on("click", function(d){
+                console.log("clicked");
+                onSelectInfoTab(d);
+            });
+
+        // Draw Tab2 Label
+        svg.selectAll("chart")
+            .data([au])
+            .enter().append("text")
+            .attr("class", "labelText")
+            //.attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
+            //.attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
+            .attr(attr_x, function () { return (au.length * vp.lengthScale * 2/3) + (au.length * vp.lengthScale /6);})
+            .attr(attr_y, function (d, i) { return prev + 13;})
+            .text(function(d, i) {
+                return "Common contents";
+            });
+
+
         //Draw AU Highlights Separately
         prev = vp.margin;
         svg.selectAll("chart")
@@ -698,7 +781,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .style("stroke-width", function(d){
                 if (selectedLayer === d) {
                     //selectedLayer = null;
-                    return 4;
+                    return 3;
                 }
             })
             .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
@@ -706,61 +789,6 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;})
             .on("click", onSelectLayer);
-
-
-        // Draw Tab1
-        svg.selectAll("chart")
-            .data([au])
-            .enter()
-            .append("rect")
-            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
-            .style("fill-opacity" , function (d){return 0.2})
-            .style("stroke", function(d){
-                if (selectedLayer === d) {
-                    //selectedLayer = null;
-                    //au.selectedtab = 1;
-                    return "red";
-                }
-                return "blue";
-            })
-            .style("stroke-width", function(d){
-                return 2;
-            })
-            .attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
-            .attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
-            .attr(attr_x, function () { return 0;})
-            .attr(attr_y, function (d, i) { return prev;})
-            .on("click", onSelectLayer);
-
-
-        // Draw Tab2
-        svg.selectAll("chart")
-            .data(au)
-            .enter()
-            .append("rect")
-            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
-            .style("fill-opacity" , function (d){return 0.2})
-            .style("stroke", function(d){
-                if (selectedLayer === d) {
-                    //selectedLayer = null;
-                    //au.selectedtab = 1;
-                    return "red";
-                }
-                return "blue";
-            })
-            .style("stroke-width", function(d){
-                return 2;
-            })
-            .attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
-            .attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
-            .attr(attr_x, function () { return au.length * vp.lengthScale * 2/3;})
-            .attr(attr_y, function (d, i) { prev += 1 * vp.widthScale; return prev - 1 * vp.widthScale;})
-            .on("click", function(d){
-                console.log("clicked");
-                onSelectInfoTab(d);
-            });
-
-
 
 
     }
