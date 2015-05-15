@@ -99,12 +99,36 @@ var auEditor = function () {
 
 
 
-    d3.select('#applymaterialfilter').on("click", function (){
-        console.log("Filtering");
+    d3.select('#applymaterialfilter').on("click", function () {
+        applyFilter();
 
-        for (var i =0; i < materialRepo.materials.length ; i++){
-            materialRepo.materials[i].hide = true;
+    })
+
+    function applyFilter () {
+        console.log("Applying Filtering", materialFilter.value.trim());
+        if (materialFilter.value.trim() === "") {
+            console.log(worklist.value);
+
+            for (var i =0; i < materialRepo.materials.length ; i++){
+                materialRepo.materials[i].hide = false;
+                selectedMaterial = materialRepo.materials[0];
+                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
+            }
+
+
+
+            for (var i = 0; i < auRepo.auSet.length ; i++){
+                if (auRepo.auSet[i].id === worklist.value){
+                    auRepo.auSet[i].hide = true;
+                } else {
+                    auRepo.auSet[i].hide = false;
+                }
+            }
+            redraw_aurepos();
+            return;
         }
+
+
         $.ajax
         ({
             url:
@@ -116,37 +140,76 @@ var auEditor = function () {
             success: function (response) {
                 var data = response;
 
+                for (var i =0; i < materialRepo.materials.length ; i++){
+                    materialRepo.materials[i].hide = true;
+                }
+
+                for (i =0; i < auRepo.auSet.length; i ++){
+                    auRepo.auSet[i].hide = true;
+                }
+
+
+
                 if (data.hasOwnProperty("Error")) {
                     console.log("Nothing matching" , response);
                     materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
+                    redraw_aurepos();
                     return;
                 }
                 console.log(data)
+
+
+                for (var i =0; i < materialRepo.materials.length ; i++){
+                    materialRepo.materials[i].hide = true;
+                }
+
+                for (i =0; i < auRepo.auSet.length; i ++){
+                    auRepo.auSet[i].hide = true;
+                }
+
+
                 materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, null);
                 for (var j = 0; j < data.length; j++){
                     console.log(data[j].id);
                     console.log(materialRepo.getIndexByID(data[j].id));
+                    console.log(auRepo.getIndexByID(data[j].id));
                     if (materialRepo.getIndexByID(data[j].id) > -1){
                         materialRepo.materials[materialRepo.getIndexByID(data[j].id)].hide = false;
                         selectedMaterial = materialRepo.materials[materialRepo.getIndexByID(data[0].id)];
                         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
                         console.log(materialRepo);
+                    } else if (auRepo.getIndexByID(data[j].id) > -1){
+                        console.log(data[j].id);
+                        auRepo.auSet[auRepo.getIndexByID(data[j].id)].hide = false;
+                        auRepo.auSet[auRepo.getIndexByID(worklist.value)].hide = true;
+                        console.log(worklist.value);
+                        redraw_aurepos();
                     }
 
                 }
 
+
+
             }
         });
-    })
+    }
 
     d3.select('#clearfilter').on("click", function () {
         console.log("Removing filter");
         d3.select("#materialFilter").property("value", "");
-        for (var i =0; i < materialRepo.materials.length ; i++){
-            materialRepo.materials[i].hide = false;
-            selectedMaterial = materialRepo.materials[0];
-            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
-        }
+        applyFilter();
+        //for (var i =0; i < materialRepo.materials.length ; i++){
+        //    materialRepo.materials[i].hide = false;
+        //    selectedMaterial = materialRepo.materials[0];
+        //    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
+        //}
+        //
+        //for (var i =0; i < auRepo.auSet.length ; i++){
+        //    auRepo.auSet[i].hide = false;
+        //    redraw_aurepos();
+        //}
+
+
     })
 
 
@@ -195,7 +258,8 @@ var auEditor = function () {
         //    updateLayerParameters(selectedLayer);
         //}
         selectedAU = d;
-        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU, selectedAU);
+        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU, selectedAU);
+        auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU, true);
         syncSelectedAU();
     }
 
@@ -933,9 +997,10 @@ var auEditor = function () {
 
                         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                         //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
-                        redraw_aurepos();
-                        sync_lyphTemplate_list();
 
+                        //redraw_aurepos();
+                        sync_lyphTemplate_list();
+                        applyFilter();
                     }
                 }
 
@@ -1052,7 +1117,16 @@ var auEditor = function () {
 
     d3.select('#worklist').on("change", function(){
         console.log("selection changed", worklist.value);
+
+
+        //The apply filter method applies the filter and uses the selection change value as well.
+
+
+        applyFilter();
+
         handle_Lyph_Selection(worklist.value)
+
+        console.log(auRepo);
     })
 
 

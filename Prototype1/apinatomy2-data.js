@@ -862,8 +862,18 @@ function AsymmetricUnitRepo(auSet){
             maxWidth = Math.max(maxWidth, auRepo.auSet[j].getTotalWidth(vp.widthScale));
             //maxLength = Math.max(maxLength, auRepo.auSet[j].length * vp.lengthScale);
         }
-        for (var j = 0; j < auRepo.auSet.length  && (!filterable || !auRepo.auSet[j].hide || !auRepo.auSet[j].hide === false ); j++){
-            var yPosition = j * (maxWidth + delta);
+
+        var skipcount = 0;
+
+            for (var j = 0; j < auRepo.auSet.length ; j++){
+
+            if (auRepo.auSet[j].hide && auRepo.auSet[j].hide === true) {
+                skipcount ++;
+                continue;
+            }
+
+
+            var yPosition = (j - skipcount) * (maxWidth + delta);
             var prev = yPosition;
             svg.selectAll("auRepo")
                 .data(auRepo.auSet[j].layers)
@@ -873,10 +883,12 @@ function AsymmetricUnitRepo(auSet){
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})
                 .attr("y", function (d, i) { prev += d.thickness * vp.widthScale; return 10 + prev - d.thickness * vp.widthScale;});
+
+
         }
         svg.selectAll("auRepo")
             .data(auRepo.auSet.filter(function (el){
-                return !filterable || !el.hide || el.hide === false;
+                return !el.hide || el.hide === false;
             }))
             .enter().append("rect")
             .style("fill", "white")
@@ -897,14 +909,12 @@ function AsymmetricUnitRepo(auSet){
         svg.selectAll("auRepo")
             .data(auRepo.auSet.filter(function (el){
                 console.log("filterable",filterable)
-                return !filterable || !el.hide || el.hide === false;
+                return !el.hide || el.hide === false;
             }))
             .enter().append("text")
             .attr("x", maxLength + 2 * delta + 5)
             .attr("y", function(d, i){return 15+ (i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2);})
             .text(function(d){return d.id + " - " + d.name;})
-
-
 
     }
 }
