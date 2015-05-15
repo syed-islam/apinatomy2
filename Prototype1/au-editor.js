@@ -87,7 +87,7 @@ var auEditor = function () {
 
                 if (response.common_materials && response.common_materials.length > 0){
                     for (var i =0; i < response.common_materials.length; i++){
-                        $('#thelist').append('<option value=' + response.common_materials[i].id + '> ' + response.common_materials[i].id + " " + response.common_materials[i].name  + "</option")
+                        $('#thelist').append('<option value=' + response.common_materials[i].id + '> ' + (response.common_materials[i].id).replace("TEMPLATE_", "T_") + " " + response.common_materials[i].name  + "</option")
                     }
                 } else {
                     $('#thelist').append('<option value=fake> ' + "No items common in all Layers" +   "</option")
@@ -105,7 +105,10 @@ var auEditor = function () {
     })
 
     function applyFilter () {
+
+        d3.select("#materialFilter").property("value", (materialFilter.value).replace("T_", "TEMPLATE_"));
         console.log("Applying Filtering", materialFilter.value.trim());
+
         if (materialFilter.value.trim() === "") {
             console.log(worklist.value);
 
@@ -557,7 +560,7 @@ var auEditor = function () {
                 selectedLayer.materials = [selectedMaterial];
             }
 
-            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + "</option")
+            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + (selectedMaterial.id).replace("TEMPLATE_", "T_") + "</option")
 
             selectedLayer.sync_materials_to_server();
 
@@ -575,7 +578,7 @@ var auEditor = function () {
             selectedLayer.misc_materials.push(selectedMaterial);
             selectedLayer.sync_au_to_server();
 
-            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + selectedMaterial.id + " " + selectedMaterial.name + "</option")
+            $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + (selectedMaterial.id).replace("TEMPLATE_", "T_") + " " + selectedMaterial.name + "</option")
 
 
         }
@@ -659,7 +662,7 @@ var auEditor = function () {
             $("#thelist").empty()
             if (layer.materials && layer.materials.length > 0 ) {
                 for (var i = 0; i < layer.materials.length; i++) {
-                    $('#thelist').append('<option value=' + layer.materials[i].id + '> ' + layer.materials[i].id + "  " +  layer.materials[i].name +   "</option")
+                    $('#thelist').append('<option value=' + layer.materials[i].id + '> ' + (layer.materials[i].id).replace("TEMPLATE_", "T_") + "  " +  layer.materials[i].name +   "</option")
                 }
             } else {
                 $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
@@ -675,7 +678,7 @@ var auEditor = function () {
             $("#thelist").empty()
             if (layer.misc_materials && layer.misc_materials.length > 0 ) {
                 for (var i = 0; i < layer.misc_materials.length; i++) {
-                    $('#thelist').append('<option value=' + layer.misc_materials[i].id + '> ' + layer.misc_materials[i].id + "  " +  layer.misc_materials[i].name +   "</option")
+                    $('#thelist').append('<option value=' + layer.misc_materials[i].id + '> ' + (layer.misc_materials[i].id).replace("TEMPLATE_", "T_") + "  " +  layer.misc_materials[i].name +   "</option")
                 }
             } else {
                 $('#thelist').append('<option value=fake> ' + "No Material outside defined layers" +   "</option")
@@ -1105,7 +1108,7 @@ var auEditor = function () {
         $('#worklist').empty();
         console.log(auRepo);
         for (var i =0; i < auRepo.auSet.length; i++){
-            $('#worklist').append('<option value='+auRepo.auSet[i].id+'> ' + auRepo.auSet[i].id + " " + auRepo.auSet[i].name  +   "</option")
+            $('#worklist').append('<option value='+auRepo.auSet[i].id+'> ' + (auRepo.auSet[i].id).replace("TEMPLATE_", "T_") + " " + auRepo.auSet[i].name  +   "</option")
         }
 
         if (selection){

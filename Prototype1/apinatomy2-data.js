@@ -914,7 +914,7 @@ function AsymmetricUnitRepo(auSet){
             .enter().append("text")
             .attr("x", maxLength + 2 * delta + 5)
             .attr("y", function(d, i){return 15+ (i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2);})
-            .text(function(d){return d.id + " - " + d.name;})
+            .text(function(d){return (d.id).replace("TEMPLATE_", "T_") + " - " + d.name;})
 
     }
 }
@@ -992,7 +992,7 @@ function MaterialRepo(materials){
             .enter().append("text")
             .attr("x", vp.lengthScale + 2 * delta + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
-            .text(function(d){return d.id + " - " + d.name;})
+            .text(function(d){return (d.id).replace("TEMPLATE_", "T_") + " - " + d.name;})
 
     }
 }
