@@ -614,6 +614,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
         return res;
     }
 
+
     //Draw AU
     this.draw = function(svg, vp, onSelectLayer, selectedLayer, onSelectInfoTab) {
         var au = this;
@@ -719,7 +720,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr(attr_x, function () { return au.length * vp.lengthScale /6;})
             .attr(attr_y, function (d, i) { return prev + 13;})
             .text(function(d, i) {
-                return "Location Unknown";
+                return "Location Unknown - " + d.misc_materials.length;
             });
 
 
