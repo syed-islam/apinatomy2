@@ -75,9 +75,7 @@ var auEditor = function () {
             jsonp: "callback",
 
             dataType: "jsonp",
-
-
-            success: function (response) {
+       success: function (response) {
                 response;
 
                 if (response.hasOwnProperty("Error")) {
@@ -95,13 +93,65 @@ var auEditor = function () {
                 }
             }
         });
-
-
-
-
-
-
     }
+
+
+
+
+    d3.select('#applymaterialfilter').on("click", function (){
+        console.log("Filtering");
+
+        for (var i =0; i < materialRepo.materials.length ; i++){
+            materialRepo.materials[i].hide = true;
+        }
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5055/templates_involving/?ont=" + encodeURIComponent(materialFilter.value)  ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+            success: function (response) {
+                var data = response;
+
+                if (data.hasOwnProperty("Error")) {
+                    console.log("Nothing matching" , response);
+                    materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
+                    return;
+                }
+                console.log(data)
+                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, null);
+                for (var j = 0; j < data.length; j++){
+                    console.log(data[j].id);
+                    console.log(materialRepo.getIndexByID(data[j].id));
+                    if (materialRepo.getIndexByID(data[j].id) > -1){
+                        materialRepo.materials[materialRepo.getIndexByID(data[j].id)].hide = false;
+                        selectedMaterial = materialRepo.materials[materialRepo.getIndexByID(data[0].id)];
+                        materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
+                        console.log(materialRepo);
+                    }
+
+                }
+
+            }
+        });
+    })
+
+    d3.select('#clearfilter').on("click", function () {
+        console.log("Removing filter");
+        d3.select("#materialFilter").property("value", "");
+        for (var i =0; i < materialRepo.materials.length ; i++){
+            materialRepo.materials[i].hide = false;
+            selectedMaterial = materialRepo.materials[0];
+            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
+        }
+    })
+
+
+
+
+
 
 
     var onSelectLayer = function (d){
@@ -239,6 +289,9 @@ var auEditor = function () {
     d3.select("#thelist").on("change", function(){
         console.log(thelist.value);
     })
+
+
+
 
     ////////////////////////////////////////////////////////////
     //AU Parameters

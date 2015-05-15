@@ -18,6 +18,7 @@ function Material(id, name, colour, type, children, au) {
     this.type = type;
     this.children = children;
     this.au = au;
+    //this.hide = false;
 
     this.clone = function () {
         var newMaterial = new Material(this.id, this.name, this.colour, this.type, this.children.slice(0), this.au);
@@ -938,7 +939,9 @@ function MaterialRepo(materials){
         var delta = 10; //distance between icons
         if (materialRepo == null) return;
         svg.selectAll("materialRepo")
-            .data(materialRepo.materials)
+            .data(materialRepo.materials.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("rect")
             .style("fill", function (d) {return d.colour;})
             .attr("width", vp.lengthScale)
@@ -946,7 +949,9 @@ function MaterialRepo(materials){
             .attr("x", delta)
             .attr("y", function (d, i) { return i * (vp.widthScale + delta);});
         svg.selectAll("materialRepo")
-            .data(materialRepo.materials)
+            .data(materialRepo.materials.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("rect")
             .style("fill", "white")
             .style("stroke-width", 0.5)
@@ -965,7 +970,9 @@ function MaterialRepo(materials){
             .on("click", onClick);
 
         svg.selectAll("materialRepo")
-            .data(materialRepo.materials)
+            .data(materialRepo.materials.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("text")
             .attr("x", vp.lengthScale + 2 * delta + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
