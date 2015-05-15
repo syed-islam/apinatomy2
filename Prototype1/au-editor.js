@@ -43,7 +43,7 @@ var auEditor = function () {
         d3.select("#layerID").property("value", "Common");
         d3.select("#layerThickness").property("value", "-");
 
-        $("#thelist").empty()
+        //$("#thelist").empty()
 
         //d3.select("#layerID").property("value", layer.id);
         ////d3.select("#layerName").property("value", layer.name);
@@ -83,6 +83,7 @@ var auEditor = function () {
                     return;
                 }
                 console.log(response);
+                $("#thelist").empty()
 
                 if (response.common_materials && response.common_materials.length > 0){
                     for (var i =0; i < response.common_materials.length; i++){
@@ -310,8 +311,10 @@ var auEditor = function () {
 
         au.draw(svg, mainVP, onSelectLayer, selectedLayer);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-        redraw_aurepos();
+        //redraw_aurepos();
+        rehashaueditor();
     }
+
 
     function cloneAU(au){
         console.log("here");
@@ -352,9 +355,14 @@ var auEditor = function () {
             auRepo  = new AsymmetricUnitRepo([newAU]);
         else
             auRepo.addAt(newAU, 0);
-        newAU.draw(svg, mainVP, onSelectLayer);
+        //newAU.draw(svg, mainVP, onSelectLayer);
         redraw_aurepos();
-        onSelectAU(newAU); //Selecting the AU
+        //onSelectAU(newAU); //Selecting the AU
+
+        sync_lyphTemplate_list();
+        handle_Lyph_Selection(auRepo.auSet[0].id);
+
+
     }
 
 
@@ -926,6 +934,8 @@ var auEditor = function () {
                         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                         //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
                         redraw_aurepos();
+                        sync_lyphTemplate_list();
+
                     }
                 }
 
@@ -1019,15 +1029,47 @@ var auEditor = function () {
         //console.log(layerRepo);
         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        sync_lyphTemplate_list(selectedAU);
         redraw_aurepos();
     }
 
 
 
 
+    var sync_lyphTemplate_list = function sync_lyphTemplate_list(selection){
+        $('#worklist').empty();
+        console.log(auRepo);
+        for (var i =0; i < auRepo.auSet.length; i++){
+            $('#worklist').append('<option value='+auRepo.auSet[i].id+'> ' + auRepo.auSet[i].id + " " + auRepo.auSet[i].name  +   "</option")
+        }
 
+        if (selection){
+            $('#worklist').val(selection.id);
+        }
+    }
+
+
+
+    d3.select('#worklist').on("change", function(){
+        console.log("selection changed", worklist.value);
+        handle_Lyph_Selection(worklist.value)
+    })
+
+
+    var handle_Lyph_Selection = function handle_Lyph_Selection (selection){
+        selectedAU = auRepo.auSet[auRepo.getIndexByID(selection)]
+        console.log(selectedAU);
+        selectedLayer = null;
+        onSelectAU(selectedAU);
+        if (selectedAU.layers.length > 0){
+            selectedLayer = selectedAU.layers[0];
+            onSelectLayer(selectedLayer);
+        }
+    }
 
     //Initialisation of the materials from the Database.
     load_all_materials();
+
+
 
 }();

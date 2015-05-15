@@ -849,7 +849,8 @@ function AsymmetricUnitRepo(auSet){
     }
 
     //Load AUs from the repository
-    this.draw = function(svg, vp, onClick, manualSelectedAU) {
+    this.draw = function(svg, vp, onClick, manualSelectedAU, filterable) {
+        console.log(filterable);
         var auRepo = this;
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
@@ -861,7 +862,7 @@ function AsymmetricUnitRepo(auSet){
             maxWidth = Math.max(maxWidth, auRepo.auSet[j].getTotalWidth(vp.widthScale));
             //maxLength = Math.max(maxLength, auRepo.auSet[j].length * vp.lengthScale);
         }
-        for (var j = 0; j < auRepo.auSet.length; j++){
+        for (var j = 0; j < auRepo.auSet.length  && (!filterable || !auRepo.auSet[j].hide || !auRepo.auSet[j].hide === false ); j++){
             var yPosition = j * (maxWidth + delta);
             var prev = yPosition;
             svg.selectAll("auRepo")
@@ -874,7 +875,9 @@ function AsymmetricUnitRepo(auSet){
                 .attr("y", function (d, i) { prev += d.thickness * vp.widthScale; return 10 + prev - d.thickness * vp.widthScale;});
         }
         svg.selectAll("auRepo")
-            .data(auRepo.auSet)
+            .data(auRepo.auSet.filter(function (el){
+                return !filterable || !el.hide || el.hide === false;
+            }))
             .enter().append("rect")
             .style("fill", "white")
             .style("stroke-width", 0.5)
@@ -892,7 +895,10 @@ function AsymmetricUnitRepo(auSet){
             .attr("y", function(d, i){return 10 + (i * (maxWidth + delta));})
             .on("click", onClick);
         svg.selectAll("auRepo")
-            .data(auRepo.auSet)
+            .data(auRepo.auSet.filter(function (el){
+                console.log("filterable",filterable)
+                return !filterable || !el.hide || el.hide === false;
+            }))
             .enter().append("text")
             .attr("x", maxLength + 2 * delta + 5)
             .attr("y", function(d, i){return 15+ (i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2);})
