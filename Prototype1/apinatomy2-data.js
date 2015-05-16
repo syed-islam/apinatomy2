@@ -349,6 +349,40 @@ function Layer(id, name, thickness, materials, colour) {
     }
 
 
+    this.update_thickness_to_server = function update_thickness_to_server(){
+        console.log("Syncing layer thickness to server", "Layer:" + this.id , "Thickness:" + this.thickness);
+        //URL for accessing editlayer api
+        var url = "http://open-physiology.org:5055/editlayer/";
+        url += "?layer=" + this.id;
+        url += "&thickness=" + this.thickness;
+        url+="&mutable=yes";
+
+        console.log(url);
+
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in udpating thickness of the layer:", response);
+                    return;
+                }
+                console.log("Layer thickness update successfully:", response);
+                ;
+            }
+        });
+
+    }
+
+
 
     //Create a cloned/copies layer
     this.clone = function () {

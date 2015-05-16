@@ -97,6 +97,9 @@ var auEditor = function () {
     }
 
 
+    d3.select('#showMaterialDetails').on("click", function(){
+        console.log("Show Materials Details");
+    })
 
 
     d3.select('#applymaterialfilter').on("click", function () {
@@ -816,29 +819,39 @@ var auEditor = function () {
 
     d3.select("#layerUpdate").on("click", function() {
         if (selectedAU != null && selectedLayer != null){
-            var materialIndex  = materialRepo.getIndexByID(materialID.value);
-            if (materialIndex == -1){
-                alert("Cannot update the level: no material with such ID exists!");
-                return;
-            }
-            if (layerID.value != selectedLayer.id){
-                if (selectedAU.getLayerIndex(layerID.value) > -1) {
-                    alert("Cannot update the layer: another layer with such ID exists!");
-                    return;
-                }
-                selectedLayer.id = layerID.value;
-            }
-            selectedLayer.name = layerName.value;
-            selectedLayer.thickness = layerThickness.value;
-            if (materialIndex >= 0)
-                selectedLayer.material = materialRepo.materials[materialIndex];
+            //var materialIndex  = materialRepo.getIndexByID(materialID.value);
+            //if (materialIndex == -1){
+            //    alert("Cannot update the level: no material with such ID exists!");
+            //    return;
+            //}
+            //if (layerID.value != selectedLayer.id){
+            //    if (selectedAU.getLayerIndex(layerID.value) > -1) {
+            //        alert("Cannot update the layer: another layer with such ID exists!");
+            //        return;
+            //    }
+            //    selectedLayer.id = layerID.value;
+            //}
+            //selectedLayer.name = layerName.value;
+            //selectedLayer.thickness = layerThickness.value;
+            //if (materialIndex >= 0)
+            //    selectedLayer.material = materialRepo.materials[materialIndex];
+            //selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+            ////auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+            //redraw_aurepos();
+
+            console.log("Updating layer");
+            selectedLayer.thickness = (layerThickness.value) ? layerThickness.value : 1;
             selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
-            //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-            redraw_aurepos();
+            selectedLayer.update_thickness_to_server();
+
+
         } else {
             alert("Cannot update a layer: " + (selectedAU == null )? " AU is not selected!" : " layer is not selected!");
         }
     })
+
+
+
 
     d3.select("#layerRestore").on("click", function() {
         if (selectedAU != null){
