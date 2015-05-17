@@ -107,6 +107,14 @@ var auEditor = function () {
 
     })
 
+
+    d3.select("#materialFilter").on("input", function() {
+        console.log('change noted');
+        applyFilter();
+    })
+
+
+
     function applyFilter () {
 
         d3.select("#materialFilter").property("value", (materialFilter.value).replace("T_", "TEMPLATE_"));
