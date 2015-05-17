@@ -2,6 +2,14 @@ var rehashaueditor;
 
 var auEditor = function () {
 
+
+    var auRepo =  null //new AsymmetricUnitRepo([au]);
+    var layerRepo = null;
+    var materialRepo = new MaterialRepo([]);
+
+
+
+
     var width = 960, height = 500;
     var panelWidth = 300, panelHeight = 500;
 
