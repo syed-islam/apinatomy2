@@ -2,6 +2,13 @@
  * Created by Natallia on 07/11/2014.
  */
 var materialEditor = function () {
+
+    var auRepo =  new AsymmetricUnitRepo([]);
+    var layerRepo = new LayerRepo([]);
+    var materialRepo = new MaterialRepo([]);
+
+
+
     var width = 960, height = 500;
     var panelWidth = 300, panelHeight = 500;
 
@@ -68,8 +75,8 @@ var materialEditor = function () {
     var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
     var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
-    auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-    loadAURepoToDatalist(auRepo);
+    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+    //loadAURepoToDatalist(auRepo);
 
     materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
     loadMaterialRepoToDatalist(materialRepo);
@@ -513,90 +520,149 @@ var materialEditor = function () {
 ///////////////////////////////////
 
     var load_all_materials = function (){
-        console.log("Loading existing lyphs")
+
+        console.log("Loading existing lyphs/materials")
         $.ajax
         ({
             url:
-                "http://open-physiology.org:5054/all_lyphs/",
+                "http://open-physiology.org:5055/all_templates/",
             jsonp:
                 "callback",
             dataType:
                 "jsonp",
             success: function( response )
             {
+                if (debugging) console.log("Request URL:", this.url);
                 var data = response;
+                if (debugging) console.log("Response:", response);
+
 
                 if ( data.hasOwnProperty( "Error" ) )
                 {
-                    if ( path.Error == "No path found" )
-                        alert( "No path found" );
-                    else
-                        alert( "Error: " + path.Error );
-
+                    if (debugging) console.log("Error: " + path.Error );
                     return;
                 }
 
-                console.log("Lyph Loaded");
-
-
                 //Todo: We should only make a single pass through the dataset.
-                //load all basic types
+
+                if (debugging) console.log("Loading all Basic Templates")
                 for (var i = 0; i < data.length; i++) {
-                        if (data[i].type === "basic"){
-                                materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
-                        }
-                }
-
-
-                //load all mix types
-
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].type === "mix"){
-                        //console.log(data[i]);
-                        var composite_material_content = [];
-                        for (var j = 0; j < data[i].layers.length;j++){
-                            composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
-                        }
-                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "composite", composite_material_content, null), 0);
+                    if (data[i].type === "basic"){
+                        //TODO Replace type "simple" with basic for consistency
+                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                        materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                        //onSelectMaterial(materialRepo.materials[0]);
                     }
                 }
-                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
 
 
-                //load all shell types
+                //Todo - Load all Mix Types
+                //
+                //for (var i = 0; i < data.length; i++) {
+                //    if (data[i].type === "mix"){
+                //        //console.log(data[i]);
+                //        var composite_material_content = [];
+                //        for (var j = 0; j < data[i].layers.length;j++){
+                //            composite_material_content.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
+                //        }
+                //        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "composite", composite_material_content, null), 0);
+                //    }
+                //}
+
+
+
+
+
+                if (debugging) console.log("Loading all Shell Templates");
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "shell"){
-                        console.log(data[i]);
+
+                        //if (i === 10) continue;
+                        console.log(i, data[i]);
+
+                        //console.log(data[i]);
                         // Create appropriate layers for the lyph
 
                         var layers_content= [];
                         for (var j = 0; j < data[i].layers.length;j++){
-                            console.log(data[i].layers[j]);
-                            layers_content.push(new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]   ));
+
+                            var materials = [];
+
+                            for (var k =0; k < data[i].layers[j].materials.length; k++){
+                                if (materialRepo && materialRepo.getIndexByID(data[i].layers[j].materials[k].id) > -1)
+                                    materials.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].materials[k].id)]);
+                                else{
+                                    materials.push(auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].materials[k].id)]);
+                                }
+                            }
+
+                            var newLayer  = null;
+                            if (auRepo)
+                                newLayer = new Layer(data[i].layers[j].id, "", ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
+                            else
+                                newLayer = new Layer(data[i].layers[j].id, "", ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
+                            if (layerRepo == null){
+                                layerRepo = new LayerRepo([newLayer]);
+                            } else {
+                                layerRepo.addAt(newLayer,0);
+                            }
+
+                            //layers.push(newLayer);
+                            layers_content.push(newLayer);
+                            newLayer = null;
                         }
-                        console.log(layers_content);
+                        //console.log(layers_content);
                         //create AU with the layers
-                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1);
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1, data[i].misc_materials);
+
 
                         //console.log(toto);
-                        auRepo.addAt(toto,0);
+                        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([toto]);
+                        else auRepo.addAt(toto,0);
                         //console.log(auRepo.auSet[0]);
 
-                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                        //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
+
+                        //redraw_aurepos();
+                        //sync_lyphTemplate_list();
+                        //applyFilter();
                     }
                 }
 
-                console.log(auRepo);
 
 
+                if (auRepo != null ) {
+                    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    //redraw_aurepos();
+                    selectedAU = auRepo.auSet[0];
+                }
 
+                //TODO add this back
+                //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                loadMaterialRepoToDatalist(materialRepo);
+
+
+                if (selectedAU != null && selectedAU.layers != null && selectedAU.layers.length > 0)
+                    selectedLayer = selectedAU.layers[0];
+
+                if (materialRepo.materials != null && materialRepo.materials.length > 0)
+                    selectedMaterial = materialRepo.materials[0];
+
+                if (selectedAU != null) {
+                    syncSelectedAU();
+                    //updateLayerParameters(selectedLayer);
+                }
+
+
+                //window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
+
+                //console.log("LayerRepo:" , layerRepo);
 
             }
-
         });
-
-
     };
+
 
 
     load_all_materials();
