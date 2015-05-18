@@ -3,8 +3,8 @@ var rehashaueditor;
 var auEditor = function () {
 
 
-    var auRepo =  null //new AsymmetricUnitRepo([au]);
-    var layerRepo = null;
+    var auRepo =  new AsymmetricUnitRepo([]);
+    var layerRepo = new LayerRepo([]);
     var materialRepo = new MaterialRepo([]);
 
 
