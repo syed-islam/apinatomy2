@@ -499,8 +499,12 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
     this.check_contains = function check_contains (T,t){
         console.log(T,t);
         if (T.id === t.id) return true;
-        for (var i =0; i < t.layers.length; i++){
-            for (var j =0; t.layers[i].materials[j] && j < t.layers[i].materials[j].length; j++){
+        //TODO need to check the tabs <--> misc_materials recursively
+        
+        
+        //check layers recursively
+        for (var i =0; t.layers &&  i < t.layers.length; i++){
+            for (var j =0; t.layers[i].materials && j < t.layers[i].materials.length; j++){
                 return check_contains( T , t.layers[i].materials[j])
             }
         }
