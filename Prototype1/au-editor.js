@@ -975,7 +975,7 @@ var auEditor = function () {
                     if (data[i].type === "basic"){
                         //TODO Replace type "simple" with basic for consistency
                         materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
-                        materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+                        //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
                         onSelectMaterial(materialRepo.materials[0]);
                     }
                 }
@@ -1051,8 +1051,9 @@ var auEditor = function () {
 
                         //redraw_aurepos();
                         sync_lyphTemplate_list();
-                        applyFilter();
+
                     }
+                    applyFilter();
                 }
 
 

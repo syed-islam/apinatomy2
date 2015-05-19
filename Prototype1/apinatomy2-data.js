@@ -1071,7 +1071,7 @@ function MaterialRepo(materials){
             .style("fill", "white")
             .style("stroke-width", 0.5)
             .style("stroke", function(d){
-                console.log("Manual Selected Material:", manualSelectedMaterial);
+                //console.log("Manual Selected Material:", manualSelectedMaterial);
                 if (manualSelectedMaterial === d) {
                     manualSelectedMaterial = null;
                     return "red";
