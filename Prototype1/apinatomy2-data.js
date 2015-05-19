@@ -938,6 +938,7 @@ function AsymmetricUnitRepo(auSet){
     this.draw = function(svg, vp, onClick, manualSelectedAU, filterable) {
         console.log(filterable);
         var auRepo = this;
+
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
         var delta = 10; //distance between icons
@@ -968,10 +969,13 @@ function AsymmetricUnitRepo(auSet){
                 .attr("width", function (d) {return /*auRepo.auSet[j].length * */ vp.lengthScale;})
                 .attr("height", function (d) {return d.thickness * vp.widthScale;})
                 .attr("x", function () { return delta})
-                .attr("y", function (d, i) { prev += d.thickness * vp.widthScale; return 10 + prev - d.thickness * vp.widthScale;});
-
-
+                .attr("y", function (d, i) {
+                    prev += d.thickness * vp.widthScale;
+                    return 10 + prev - d.thickness * vp.widthScale;
+                });
         }
+
+
         svg.selectAll("auRepo")
             .data(auRepo.auSet.filter(function (el){
                 return !el.hide || el.hide === false;
@@ -992,6 +996,8 @@ function AsymmetricUnitRepo(auSet){
             .attr("x", maxLength + 2 * delta)
             .attr("y", function(d, i){return 10 + (i * (maxWidth + delta));})
             .on("click", onClick);
+
+
         svg.selectAll("auRepo")
             .data(auRepo.auSet.filter(function (el){
                 console.log("filterable",filterable)
@@ -1002,7 +1008,14 @@ function AsymmetricUnitRepo(auSet){
             .attr("y", function(d, i){return 15+ (i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2);})
             .text(function(d){return (d.id).replace("TEMPLATE_", "T_") + " - " + d.name;})
 
+        svg.attr("height", function(){
+            return 10 + (auRepo.auSet.length * (maxWidth + delta));
+            //return 15 + (auRepo.auSet.length * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2)
+        });
+
     }
+
+
 }
 
 //repository of materials
@@ -1079,6 +1092,12 @@ function MaterialRepo(materials){
             .attr("x", vp.lengthScale + 2 * delta + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
             .text(function(d){return (d.getID()).replace("TEMPLATE_", "T_") + " - " + d.getName();})
+
+
+        svg.attr("height", function(){
+            return 10 + (materialRepo.materials.length * (vp.widthScale + delta));
+            //return 15 + (auRepo.auSet.length * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2)
+        });
 
     }
 }

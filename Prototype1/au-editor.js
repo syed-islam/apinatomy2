@@ -11,7 +11,7 @@ var auEditor = function () {
 
 
     var width = 960, height = 500;
-    var panelWidth = 300, panelHeight = 500;
+    var panelWidth = 300, panelHeight = 50;
 
     // create canvas
     var svg = d3.select('#app-body .chart').append("svg")
