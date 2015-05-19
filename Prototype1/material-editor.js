@@ -1,6 +1,10 @@
 /**
  * Created by Natallia on 07/11/2014.
  */
+
+var rehashaueditor;
+
+
 var materialEditor = function () {
 
     var auRepo =  new AsymmetricUnitRepo([]);
@@ -39,6 +43,8 @@ var materialEditor = function () {
     var selectedChild = null;     //Selected submaterial
 
     var onSelectMaterial = function(d){
+        console.log("Test");
+        console.log(d);
         if (this != selectedMaterial){
             d3.select(this).style("stroke", "red");
             d3.select(selectedMaterialNode).style("stroke", "black");
@@ -49,13 +55,20 @@ var materialEditor = function () {
     }
 
     var onSelectAU = function(d){
-        if (this != selectedAUNode){
-            d3.select(this).style("stroke", "red");
-            d3.select(selectedAUNode).style("stroke", "black");
-            selectedAUNode = this;
-            selectedAU = d;
-            syncSelectedAU();
-        }
+        selectedAU = d;
+
+
+        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU, selectedAU);
+
+        d3.select("#childID").property("value", d.id);
+
+        //if (this != selectedAUNode){
+        //    d3.select(this).style("stroke", "red");
+        //    d3.select(selectedAUNode).style("stroke", "black");
+        //    selectedAUNode = this;
+        //    selectedAU = d;
+        //    syncSelectedAU();
+        //}
     }
 
     var onSelectChild = function(node, d){
@@ -75,7 +88,7 @@ var materialEditor = function () {
     var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
     var materialRepoVP = new VisualParameters("horizontal", 20, 20, panelWidth, panelHeight, 0);
 
-    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+
     //loadAURepoToDatalist(auRepo);
 
     materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
@@ -145,11 +158,11 @@ var materialEditor = function () {
     //AU
     /////////////////////////////////////
     function syncSelectedAU(){
-        if (selectedMaterial.type == "AU"){
-            updateAUParameters(selectedAU);
-        } else{
-            updateAUParameters(null);
-        }
+        //if (selectedMaterial.type == "AU"){
+        //    updateAUParameters(selectedAU);
+        //} else{
+        //    updateAUParameters(null);
+        //}
     }
 
     function updateAUParameters(au){
@@ -182,47 +195,69 @@ var materialEditor = function () {
     ////////////////////////////////
 
     d3.select("#materialClone").on("click", function () {
-        var current_MaterialID = $('#materialID').val();
-        $('#materialID').val(current_MaterialID + "_cloned");
-        //d3.select('#materialClone').attr("disabled", "true");
-        d3.select('#materialSave').attr("disabled", null);
 
-        if (materialRepo.getIndexByID(materialID.value) > -1) {
-            alert("Cannot create a new material: another material with such ID exists!");
-            return;
-        }
-        var newMaterial = null;
-        if (selectedMaterial != null) {
-            newMaterial = selectedMaterial.clone();
-            newMaterial.id = materialID.value;
-            newMaterial.name = materialName.value;
-            newMaterial.colour = materialColour.value;
-            newMaterial.type = materialType.value;
-        } else
-            newMaterial = new Material(materialID.value, materialName.value, materialColour.value, materialType.value, [], null);
-        if (newMaterial.type == "AU") {
-            var auIndex = auRepo.getIndexByID(auID.value);
-            if (auIndex > -1)
-                newMaterial.au = auRepo.auSet[auIndex];
-        } else
-            newMaterial.au = null;
-        if (newMaterial.type != "composite"){
-            newMaterial.children = [];
-        }
-        //materialRepo.addAt(newMaterial, materialRepo.materials.length - 1);
-        materialRepo.addAt(newMaterial, 0);
-        //console.log(materialRepo.materials);
-        //console.log(materialRepo.materials[0]);
-        //console.log(materialRepo.materials[1]);
 
+
+        //create an AU
+        var newAU = new AsymmetricUnit("newMix", "newMix", [], 1, []);
+        newAU.create_on_server('mix');
+
+
+        //TODO - Correct this Ajax chaining to ensure that the layer doesn't send request before AU is created.
+
+        //create a blank layer and attach to AU
+        var newLayer = new Layer("Layer", "Layer", 1, []);
+        newLayer.create_on_server(newAU,0);
+
+
+
+        //TODO create a 'composite' material and attach AU to material
+        var newMaterial = new Material("", "", "gray", "mix", newLayer.materials, newAU);
+        materialRepo.addAt(newMaterial,0);
         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
 
 
-
-        newMaterial.saveMaterialToDatabase();
-
-
-
+        //var current_MaterialID = $('#materialID').val();
+        //$('#materialID').val(current_MaterialID + "_cloned");
+        ////d3.select('#materialClone').attr("disabled", "true");
+        //d3.select('#materialSave').attr("disabled", null);
+        //
+        //if (materialRepo.getIndexByID(materialID.value) > -1) {
+        //    alert("Cannot create a new material: another material with such ID exists!");
+        //    return;
+        //}
+        //var newMaterial = null;
+        //if (selectedMaterial != null) {
+        //    newMaterial = selectedMaterial.clone();
+        //    newMaterial.id = materialID.value;
+        //    newMaterial.name = materialName.value;
+        //    newMaterial.colour = materialColour.value;
+        //    newMaterial.type = materialType.value;
+        //} else
+        //    newMaterial = new Material(materialID.value, materialName.value, materialColour.value, materialType.value, [], null);
+        //if (newMaterial.type == "AU") {
+        //    var auIndex = auRepo.getIndexByID(auID.value);
+        //    if (auIndex > -1)
+        //        newMaterial.au = auRepo.auSet[auIndex];
+        //} else
+        //    newMaterial.au = null;
+        //if (newMaterial.type != "composite"){
+        //    newMaterial.children = [];
+        //}
+        ////materialRepo.addAt(newMaterial, materialRepo.materials.length - 1);
+        //materialRepo.addAt(newMaterial, 0);
+        ////console.log(materialRepo.materials);
+        ////console.log(materialRepo.materials[0]);
+        ////console.log(materialRepo.materials[1]);
+        //
+        //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
+        //
+        //
+        //
+        //newMaterial.saveMaterialToDatabase();
+        //
+        //
+        //
 
     })
 
@@ -443,15 +478,15 @@ var materialEditor = function () {
             alert("Cannot add a new sub-material, a sub-material with such ID is already in the set!");
             return;
         }
-        var materialIndex  = materialRepo.getIndexByID(childID.value);
+        var materialIndex  = auRepo.getIndexByID(childID.value);
         if (materialIndex == -1){
             alert("Cannot update the sub-material: no material with such ID exists!");
             return;
         }
-        var newMaterial = materialRepo.materials[materialIndex];
+        var newMaterial = auRepo.auSet[materialIndex];
 
         selectedMaterial.addChildAt(newMaterial, 0);
-        console.log(materialRepo.materials);
+        console.log("Updated material repo:", materialRepo.materials);
         selectedMaterial.draw(svg, mainVP, onSelectChild);
     })
 
@@ -557,8 +592,15 @@ var materialEditor = function () {
 
 
                 //Todo - Load all Mix Types
-                //
-                //for (var i = 0; i < data.length; i++) {
+                if (debugging) console.log("Loading all mix Templates");
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].type === "mix") {
+                        console.log("mix", i, data[i]);
+                    }
+                }
+
+
+                        //for (var i = 0; i < data.length; i++) {
                 //    if (data[i].type === "mix"){
                 //        //console.log(data[i]);
                 //        var composite_material_content = [];
@@ -624,6 +666,7 @@ var materialEditor = function () {
                         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                         //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
 
+                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                         //redraw_aurepos();
                         //sync_lyphTemplate_list();
                         //applyFilter();
@@ -666,6 +709,16 @@ var materialEditor = function () {
 
 
     load_all_materials();
+
+
+    rehashaueditor = function rehasheverything(){
+        console.log(" rehash callback test");
+        //console.log(layerRepo);
+        //selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+        ////auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        //sync_lyphTemplate_list(selectedAU);
+        //redraw_aurepos();
+    }
 
 
 

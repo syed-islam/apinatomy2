@@ -12,12 +12,40 @@ debugging = true;
 //create material
 function Material(id, name, colour, type, children, au) {
 
-    this.id = id;
-    this.name = name;
-    this.colour = colour;
-    this.type = type;
-    this.children = children;
-    this.au = au;
+
+    if (type === 'simple'){
+        this.id = id;
+        this.name = name;
+        this.colour = colour;
+        this.type = type;
+    } else if (type === 'mix'){
+        this.au = au;
+        this.colour = colour;
+        this.type = type;
+        this.children = children;
+        //console.log(this.children);
+    } else {
+        console.log("Error creating materials");
+        return;
+    }
+
+
+    this.getID = function getID(){
+        if (this.type === 'simple'){
+            return this.id;
+        } else if (this.type === 'mix'){
+            return this.au.id;
+        }
+    }
+
+    this.getName = function getName(){
+        if (this.type === 'simple'){
+            return this.name;
+        } else if (this.type === 'mix'){
+            return this.au.name;
+        }
+    }
+
     //this.hide = false;
 
     this.clone = function () {
@@ -26,6 +54,9 @@ function Material(id, name, colour, type, children, au) {
     }
 
     this.draw = function (svg, vp, onClick) {
+
+        console.log("Drawing:", this.children);
+
         svg.selectAll("g.node").remove();
 
         var i = 0, duration = 400, root;
@@ -69,6 +100,8 @@ function Material(id, name, colour, type, children, au) {
                 .attr("width", vp.lengthScale)
                 .style("fill", function(d) {return d.colour;})
                 .on("click", function(d){
+                    console.log(d.children);
+                    console.log(d);
                     onClick(this, d);
                     click(d);
                 });
@@ -76,7 +109,7 @@ function Material(id, name, colour, type, children, au) {
             nodeEnter.append("text")
                 .attr("dy", 3.5)
                 .attr("dx", 5.5)
-                .text(function(d) { return d.id + " - " + d.name; });
+                .text(function(d) { return d.getID() + " - " + d.getName(); });
 
             // Transition nodes to their new position.
             nodeEnter.transition()
@@ -245,7 +278,7 @@ function Layer(id, name, thickness, materials, colour) {
         var url = "http://open-physiology.org:5055/makelayer/";
 
         //If creating a layer with known list of materials
-        if (materials  &&  materials.length === 0) {
+        if (materials  &&  materials.length > 0) {
             url += "?material=" + this.materials[0].id +
             "&thickness=" + this.thickness +
             "&color=" + this.materials[0].colour
@@ -281,12 +314,13 @@ function Layer(id, name, thickness, materials, colour) {
                 //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
                 this.id = response.id;
 
-                //TODO bad design. Once the layer is successfuly created we attach it the AU where its meant to go.
+                //TODO bad design. Ajax chaining is unpredictable in this case.
+                // Once the layer is successfuly created we attach it the AU where its meant to go.
                 AU.addLayerAt(this,index);
 
 
 
-                //if (typeof 'rehashaueditor' == 'function') {
+                //TODO bad design - Use of global function. Use callback function instead.
                 rehashaueditor();
                 //}
                 ;
@@ -413,13 +447,15 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
     this.misc_materials = misc_materials;
 
 
-    this.create_on_server = function (){
-        console.log("Creating AU on server")
+    this.create_on_server = function (type){
+        if (type != 'mix')
+            type = 'shell';
+        console.log("Creating AU on server of type", type);
 
         //URL for accessing make template api
         var url = "http://open-physiology.org:5055/maketemplate/";
         url += "?name=" + this.name;
-        url +=  "&type=shell";
+        url +=  "&type=" +type;
 
         if (layers && layers.length > 0){
             for (var i =0; i < layers.length ; i++){
@@ -451,6 +487,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                 console.log("AU created successfully:", response);
 
                 this.id = response.id;
+
 
                 rehashaueditor();
                 ;
@@ -662,7 +699,6 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
         }
         return res;
     }
-
 
     //Draw AU
     this.draw = function(svg, vp, onSelectLayer, selectedLayer, onSelectInfoTab) {
@@ -1042,7 +1078,7 @@ function MaterialRepo(materials){
             .enter().append("text")
             .attr("x", vp.lengthScale + 2 * delta + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
-            .text(function(d){return (d.id).replace("TEMPLATE_", "T_") + " - " + d.name;})
+            .text(function(d){return (d.getID()).replace("TEMPLATE_", "T_") + " - " + d.getName();})
 
     }
 }
