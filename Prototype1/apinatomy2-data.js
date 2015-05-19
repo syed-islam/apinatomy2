@@ -1090,7 +1090,7 @@ function MaterialRepo(materials){
             }))
             .enter().append("text")
             .attr("x", vp.lengthScale + 2 * delta + 5)
-            .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
+            .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2  + 4;})
             .text(function(d){return (d.getID()).replace("TEMPLATE_", "T_") + " - " + d.getName();})
 
 
