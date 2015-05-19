@@ -456,6 +456,7 @@ var auEditor = function () {
         //onSelectAU(newAU); //Selecting the AU
 
         sync_lyphTemplate_list();
+        applyFilter();
         handle_Lyph_Selection(auRepo.auSet[0].id);
 
 
