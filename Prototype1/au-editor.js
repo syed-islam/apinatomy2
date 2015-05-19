@@ -123,14 +123,21 @@ var auEditor = function () {
 
 
 
+    //function applyNegativeFilter()
+
+
+
+
     function applyFilter () {
 
         d3.select("#materialFilter").property("value", (materialFilter.value).replace("T_", "TEMPLATE_"));
         console.log("Applying Filtering", materialFilter.value.trim());
 
+        //If the filter is empty
         if (materialFilter.value.trim() === "") {
             console.log(worklist.value);
 
+            //Show all materials
             for (var i =0; i < materialRepo.materials.length ; i++){
                 materialRepo.materials[i].hide = false;
                 selectedMaterial = materialRepo.materials[0];
@@ -138,7 +145,7 @@ var auEditor = function () {
             }
 
 
-
+            //Show all AU's except the currently selected AU
             for (var i = 0; i < auRepo.auSet.length ; i++){
                 if (auRepo.auSet[i].id === worklist.value){
                     auRepo.auSet[i].hide = true;
@@ -146,6 +153,7 @@ var auEditor = function () {
                     auRepo.auSet[i].hide = false;
                 }
             }
+
             redraw_aurepos();
             return;
         }
@@ -215,6 +223,8 @@ var auEditor = function () {
             }
         });
     }
+
+
 
     d3.select('#clearfilter').on("click", function () {
         console.log("Removing filter");
@@ -560,6 +570,19 @@ var auEditor = function () {
     //Add Material to Layer
     d3.select("#addMaterial").on("click", function(){
 
+
+        //Validation to check that we are not adding material to self.
+        //Using filtering to perform validation
+
+        if (selectedAU.check_contains(selectedAU, selectedMaterial)){
+            console.log("Adding material would cause recursive error");
+            return;
+        }
+
+
+
+        //Validation passed
+
         if (selectedLayer instanceof Layer) {
 
             console.log("Add Material ", selectedMaterial, " to layer:", selectedLayer);
@@ -599,12 +622,7 @@ var auEditor = function () {
 
             $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + (selectedMaterial.id).replace("TEMPLATE_", "T_") + " " + selectedMaterial.name + "</option")
 
-
         }
-
-
-
-
 
     });
 
