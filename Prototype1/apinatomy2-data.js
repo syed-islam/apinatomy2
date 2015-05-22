@@ -456,6 +456,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
         var url = "http://open-physiology.org:5055/maketemplate/";
         url += "?name=" + this.name;
         url +=  "&type=" +type;
+        url +=  "&length=" +this.length;
 
         if (layers && layers.length > 0){
             for (var i =0; i < layers.length ; i++){
@@ -535,6 +536,8 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
         }
 
         url += "&name=" +this.name;
+        url += "&length=" +this.length;
+
 
         console.log(url);
 
@@ -720,8 +723,12 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
         }
 
         //Draw AU Base
+
+        //In the following substituting au.length with length so that it can be revived later but for now its fixed to 1.
+        var length =1;
+
         var baseLength = 0;
-        if (au != null) baseLength = au.length;
+        if (au != null) baseLength = length;
         svg.append("rect")
             .style("fill", "black")
             .attr(attr_width, baseLength * vp.lengthScale)
@@ -743,7 +750,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                     return "red";
                 }
             })
-            .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
+            .attr(attr_width, function (d) {return length * vp.lengthScale;})
             .attr(attr_height, function (d) {return d.thickness * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;})
@@ -792,7 +799,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .style("stroke-width", function(d){
                 return 2;
             })
-            .attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
+            .attr(attr_width, function (d) {return length * vp.lengthScale /3 ;})
             .attr(attr_height, function (d) {return 0.6 * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { return prev;})
@@ -806,7 +813,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr("class", "labelText")
             //.attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
             //.attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
-            .attr(attr_x, function () { return au.length * vp.lengthScale /6;})
+            .attr(attr_x, function () { return length * vp.lengthScale /6;})
             .attr(attr_y, function (d, i) { return prev + 13;})
             .text(function(d, i) {
                 return "Location Unknown - " + d.misc_materials.length;
@@ -832,9 +839,9 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .style("stroke-width", function(d){
                 return 2;
             })
-            .attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
+            .attr(attr_width, function (d) {return length * vp.lengthScale /3 ;})
             .attr(attr_height, function (d) {return 0.6 * vp.widthScale;})
-            .attr(attr_x, function () { return au.length * vp.lengthScale * 2/3;})
+            .attr(attr_x, function () { return length * vp.lengthScale * 2/3;})
             .attr(attr_y, function (d, i) { return prev;})
             .on("click", function(d){
                 console.log("clicked");
@@ -848,7 +855,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr("class", "labelText")
             //.attr(attr_width, function (d) {return au.length * vp.lengthScale /3 ;})
             //.attr(attr_height, function (d) {return 0.3 * vp.widthScale;})
-            .attr(attr_x, function () { return (au.length * vp.lengthScale * 2/3) + (au.length * vp.lengthScale /6);})
+            .attr(attr_x, function () { return (length * vp.lengthScale * 2/3) + (length * vp.lengthScale /6);})
             .attr(attr_y, function (d, i) { return prev + 13;})
             .text(function(d, i) {
                 return "Common";
@@ -875,7 +882,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                     return 3;
                 }
             })
-            .attr(attr_width, function (d) {return au.length * vp.lengthScale;})
+            .attr(attr_width, function (d) {return length * vp.lengthScale;})
             .attr(attr_height, function (d) {return d.thickness * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { prev += d.thickness * vp.widthScale; return prev - d.thickness * vp.widthScale;})

@@ -455,9 +455,9 @@ var auEditor = function () {
 
     function newAU(){
         var newAU = null;
-        newAU = new AsymmetricUnit("newAU" + (auRepo ? auRepo.auSet.length +1  : 1), "newAu" + + (auRepo ? auRepo.auSet.length +1  : 1), [], (auLength.value) ? auLength.value : 1, []);
+        newAU = new AsymmetricUnit("newTemplate" + (auRepo ? auRepo.auSet.length +1  : 1), "newTemplate" + + (auRepo ? auRepo.auSet.length +1  : 1), [], 1, []);
         newAU.create_on_server();
-        console.log("New AU Created:", newAU);
+        console.log("New Template Created:", newAU);
         if (auRepo == null)
             auRepo  = new AsymmetricUnitRepo([newAU]);
         else
@@ -1049,7 +1049,7 @@ var auEditor = function () {
                         }
                         //console.log(layers_content);
                         //create AU with the layers
-                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1, data[i].misc_materials);
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, (data[i].length && data[i].length != "unspecified") ? data[i].length : 1 , data[i].misc_materials);
 
 
                         //console.log(toto);
