@@ -251,6 +251,21 @@ var auEditor = function () {
 
 
     var onSelectLayer = function (d){
+
+
+
+        if (d === null ){
+            $('#addMaterial').attr('disabled','disabled');
+            $('#removeMaterial').attr('disabled','disabled');
+            $('#layerDelete').attr('disabled','disabled');
+            $('#layerUpdate').attr('disabled','disabled');
+            d3.select("#layerID").property("value", "");
+            d3.select("#layerName").property("value", "");
+            d3.select("#layerThickness").property("value","");
+            return;
+        }
+
+
         $('#addMaterial').removeAttr('disabled');
         $('#removeMaterial').removeAttr('disabled');
         $('#layerDelete').removeAttr('disabled');
@@ -291,7 +306,7 @@ var auEditor = function () {
         //}
         selectedAU = d;
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU, selectedAU);
-        auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU, true);
+        //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU, true);
         syncSelectedAU();
     }
 
@@ -1186,6 +1201,8 @@ var auEditor = function () {
         if (selectedAU.layers.length > 0){
             selectedLayer = selectedAU.layers[0];
             onSelectLayer(selectedLayer);
+        } else {
+            onSelectLayer(null);
         }
     }
 
