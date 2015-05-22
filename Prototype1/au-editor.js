@@ -455,7 +455,7 @@ var auEditor = function () {
 
     function newAU(){
         var newAU = null;
-        newAU = new AsymmetricUnit("newTemplate" + (auRepo ? auRepo.auSet.length +1  : 1), "newTemplate" + + (auRepo ? auRepo.auSet.length +1  : 1), [], 1, []);
+        newAU = new AsymmetricUnit("", "", [], 1, []);
         newAU.create_on_server();
         console.log("New Template Created:", newAU);
         if (auRepo == null)
@@ -1153,11 +1153,12 @@ var auEditor = function () {
 
 
     rehashaueditor = function rehasheverything(){
-        console.log("callback test");
+        //console.log("callback test");
         //console.log(layerRepo);
         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
         sync_lyphTemplate_list(selectedAU);
+        handle_Lyph_Selection(worklist.value)
         redraw_aurepos();
     }
 
@@ -1180,15 +1181,9 @@ var auEditor = function () {
 
     d3.select('#worklist').on("change", function(){
         console.log("selection changed", worklist.value);
-
-
         //The apply filter method applies the filter and uses the selection change value as well.
-
-
         applyFilter();
-
         handle_Lyph_Selection(worklist.value)
-
         console.log(auRepo);
     })
 
