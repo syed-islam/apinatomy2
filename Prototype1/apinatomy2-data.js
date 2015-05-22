@@ -940,7 +940,7 @@ function AsymmetricUnitRepo(auSet){
 
     //Load AUs from the repository
     this.draw = function(svg, vp, onClick, manualSelectedAU, filterable) {
-        console.log(filterable);
+        //console.log(filterable);
         var auRepo = this;
 
         svg.selectAll('rect').remove();
@@ -985,12 +985,18 @@ function AsymmetricUnitRepo(auSet){
                 return !el.hide || el.hide === false;
             }))
             .enter().append("rect")
-            .style("fill", "white")
+            .style("fill", function(d){
+                if (manualSelectedAU === d) {
+                    //manualSelectedAU = null;
+                    return "yellow";
+                }
+                return "white";
+            })
             .style("stroke-width", 0.5)
             .style("stroke", function(d){
-                console.log("Manual Selected AU:", manualSelectedAU);
+                //console.log("Manual Selected AU:", manualSelectedAU);
                 if (manualSelectedAU === d) {
-                    manualSelectedAU = null;
+                    //manualSelectedAU = null;
                     return "red";
                 }
                 return "black";
@@ -1004,7 +1010,7 @@ function AsymmetricUnitRepo(auSet){
 
         svg.selectAll("auRepo")
             .data(auRepo.auSet.filter(function (el){
-                console.log("filterable",filterable)
+                //console.log("filterable",filterable)
                 return !el.hide || el.hide === false;
             }))
             .enter().append("text")
@@ -1067,17 +1073,23 @@ function MaterialRepo(materials){
             .attr("height", vp.widthScale)
             .attr("x", delta)
             .attr("y", function (d, i) { return i * (vp.widthScale + delta);});
+
         svg.selectAll("materialRepo")
             .data(materialRepo.materials.filter(function (el){
                 return !el.hide || el.hide === false;
             }))
             .enter().append("rect")
-            .style("fill", "white")
+            .style("fill", function (d){
+                if (manualSelectedMaterial === d){
+                    return "yellow";
+                }
+                return "white";
+            })
             .style("stroke-width", 0.5)
             .style("stroke", function(d){
                 //console.log("Manual Selected Material:", manualSelectedMaterial);
                 if (manualSelectedMaterial === d) {
-                    manualSelectedMaterial = null;
+                    //manualSelectedMaterial = null;
                     return "red";
                 }
                 return "black";

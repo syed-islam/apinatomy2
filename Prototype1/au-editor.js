@@ -299,14 +299,9 @@ var auEditor = function () {
 
 
     var onSelectMaterialAU = function(d){
-        console.log(d);
-        if (this != selectedMaterial){
-            d3.select(this).style("stroke", "red");
-            d3.select(selectedMaterialNode).style("stroke", "black");
-            selectedMaterialNode = this;
-            selectedMaterial = d;
-            updateMaterialParameters(selectedMaterial);
-        }
+        selectedMaterial = d;
+        materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial, true);
+        auRepo.draw(auMaterialRepoSvg,auRepoVP,onSelectMaterialAU, selectedMaterial,true);
     }
 
 
@@ -315,8 +310,9 @@ var auEditor = function () {
     //@param {material} d material to be selected.
     var onSelectMaterial = function(d){
             selectedMaterial = d;
-            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
-            updateMaterialParameters(selectedMaterial);
+            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial, true);
+            auRepo.draw(auMaterialRepoSvg,auRepoVP,onSelectMaterialAU, selectedMaterial,true);
+
     }
 
 
@@ -370,11 +366,11 @@ var auEditor = function () {
             .attr("value", function(d){return d.id;});
     }
 
-    function updateMaterialParameters(material){
-        console.log(material);
-        d3.select("#materialID").property("value", material.id);
-        d3.select("#materialName").property("value", material.name);
-    }
+    //function updateMaterialParameters(material){
+    //    console.log(material);
+    //    d3.select("#materialID").property("value", material.id);
+    //    d3.select("#materialName").property("value", material.name);
+    //}
 
     d3.select("#materialID").on("input", function () {
         var materialIndex  = materialRepo.getIndexByID(materialID.value);
@@ -1135,7 +1131,7 @@ var auEditor = function () {
 
 
     function redraw_aurepos(){
-        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
         auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
     }
 
