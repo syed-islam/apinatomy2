@@ -767,7 +767,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr(attr_x, function (d, i) {
                 var offset = 0;
                 if (vp.orientation == "vertical") offset = 20 * (i % 2);
-                return au.length * vp.lengthScale / 2 + offset;})
+                return length * vp.lengthScale / 2 + offset;})
             .attr(attr_y, function (d) {
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
@@ -786,7 +786,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .data([au])
             .enter()
             .append("rect")
-            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
+            .style("fill", function (d) {return "#808080";})
             .style("fill-opacity" , function (d){return 0.7})
             .style("stroke", function(d){
                 if (selectedLayer === d) {
@@ -826,7 +826,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .data([au])
             .enter()
             .append("rect")
-            .style("fill", function (d) {return "#"+((1<<24)*Math.random()|0).toString(16);})
+            .style("fill", function (d) {return "#808080";;})
             .style("fill-opacity" , function (d){return 0.7})
             .style("stroke", function(d){
                 if (selectedLayer === d) {
@@ -1021,7 +1021,9 @@ function AsymmetricUnitRepo(auSet){
                 return !el.hide || el.hide === false;
             }))
             .enter().append("text")
-            .attr("x", maxLength + 2 * delta + 5)
+            .attr("x", function(){
+                return maxLength + 2 * delta + 5;
+            })
             .attr("y", function(d, i){return 15+ (i * (maxWidth + delta) + d.getTotalWidth(vp.widthScale) / 2);})
             .text(function(d){return (d.id).replace("TEMPLATE_", "T_") + " - " + d.name;})
 
