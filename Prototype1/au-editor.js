@@ -1215,14 +1215,14 @@ var auEditor = function () {
 
     //Create Basic Lyph
     d3.select("#createBasicLyph").on("click", function () {
-        console.log("Creating Basic Template", fmaID.value);
+        console.log("Creating Basic Template", autocomplete.value);
 
         //send request to create basic template
         $.ajax
         ({
             url:
             "http://open-physiology.org:5055/template/"+
-            encodeURIComponent(fmaID.value),
+            encodeURIComponent(autocomplete.value),
             jsonp:
                 "callback",
             dataType:
@@ -1319,6 +1319,66 @@ var auEditor = function () {
     //Initialisation of the materials from the Database.
     load_all_materials();
 
+
+
+    $(function() {
+        $( "#autocomplete" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: "http://open-physiology.org:5052/autocomplete-case-insensitive/" + request.term,
+                    dataType: "jsonp",
+                    data: {
+                        q: request.term
+                    },
+                    success: function( data ) {
+                        response( data.Results);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function( event, ui ) {
+                $.ajax
+                ({
+                    url:
+                    "http://open-physiology.org:5055/template/"+
+                    encodeURIComponent(autocomplete.value),
+                    jsonp:
+                        "callback",
+                    dataType:
+                        "jsonp",
+                    success: function( response )
+                    {
+                        console.log("Request URL:", this.url);
+                        var data = response;
+
+                        if ( data.hasOwnProperty( "Error" ) )
+                        {
+                            console.log("Error:", data.Error);
+                            return;
+                        }
+
+                        console.log("Response:" , data);
+                        if (materialRepo.getIndexByID(data.id)== -1 ) {
+                            console.log("Creating new basic material and added to material repo");
+                            materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null,data.ont_term), 0);
+                            console.log("Selecting the new material")
+                            onSelectMaterial(materialRepo.materials[0]);
+                        } else{
+                            console.log("Basic Material Already Exists");
+                        }
+                    }
+
+                });
+
+            },
+            open: function() {
+                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+            },
+            close: function() {
+                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+            }
+        });
+    });
 
 
 }();

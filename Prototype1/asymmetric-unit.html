@@ -2,6 +2,7 @@
 <meta charset="utf-8">
 <title>Lyph Template Editor 1.0</title>
 <link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <h1>Lyph Template Editor 1.0</h1>
 
 <div id="page-container">
@@ -164,12 +165,19 @@
                     <button class="parameterButton" id="clearfilter" title="Clear Filter">Clear</button>
                 </div>
 
+                <br>
+
 
                 <br>
                 <h3>Add Basic Template to Pallet</h3>
+                <!--<div>-->
+                    <!--<label for="fmaID" class="parameterLabel">Ontology Term:</label>-->
+                    <!--<input type="text" id="fmaID" size="200" style="width: 140px" title="Ontology Term to add to Pallet"; />-->
+                <!--</div>-->
+
                 <div>
-                    <label for="fmaID" class="parameterLabel">Ontology Term:</label>
-                    <input type="text" id="fmaID" size="200" style="width: 140px" title="Ontology Term to add to Pallet"; />
+                    <label for="autocomplete" class="parameterLabel">Ontology Term:</label>
+                    <input id="autocomplete" size="200" style="width: 140px" title="Ontology Term to add to Pallet"; />
                 </div>
                 <br>
                 <div>
@@ -186,5 +194,6 @@
 </div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script src="apinatomy2-data.js"></script>
 <script src="au-editor.js"></script>
