@@ -542,6 +542,40 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
     }
 
 
+    this.move_layer = function (layer, pos){
+        console.log("Moving Layer", "AU:" + this.id);
+
+        //URL for accessing editlayer api
+        var url = "http://open-physiology.org:5055/edit_template/";
+        url += "?template=" + this.id;
+        url += "&movelayer=" + layer.id;
+        url += "&topos=" + pos;
+
+
+        console.log(url);
+
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in moving layer within AU:", response);
+                    return;
+                }
+                console.log("Layer moved successfully:", response);
+                ;
+            }
+        });
+    }
+
 
 
     this.sync_au_to_server = function(){

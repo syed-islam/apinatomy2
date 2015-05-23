@@ -111,6 +111,43 @@ var auEditor = function () {
     })
 
 
+    d3.select('#layerUp').on("click", function(){
+        console.log("Layer Move Up");
+        if (selectedLayer && selectedAU.getLayerIndex(selectedLayer.id) > 0){
+            console.log("Moving up");
+            swap_layers(selectedAU.getLayerIndex(selectedLayer.id), selectedAU.getLayerIndex(selectedLayer.id) - 1);
+            onSelectLayer(selectedLayer);
+        } else {
+            console.log("Already at top");
+        }
+    })
+
+
+    d3.select('#layerDown').on("click", function(){
+        console.log("Layer Move Down");
+        if (selectedLayer && selectedAU.getLayerIndex(selectedLayer.id) < selectedAU.layers.length -1 ){
+            console.log("Moving Down");
+            swap_layers(selectedAU.getLayerIndex(selectedLayer.id), selectedAU.getLayerIndex(selectedLayer.id) + 1);
+            onSelectLayer(selectedLayer);
+
+        } else {
+            console.log("Already at bottom");
+        }
+    })
+
+
+    function swap_layers(layer1Index, layer2Index) {
+        //send server request to perform swap on the server.
+        selectedAU.move_layer(selectedAU.layers[layer1Index], layer1Index + 1 + (layer2Index - layer1Index));
+
+        tmp = selectedAU.layers[layer1Index];
+        selectedAU.layers[layer1Index] = selectedAU.layers[layer2Index];
+        selectedAU.layers[layer2Index]=  tmp ;
+
+
+    }
+
+
     d3.select('#applymaterialfilter').on("click", function () {
         applyFilter();
 
