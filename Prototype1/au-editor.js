@@ -49,6 +49,7 @@ var auEditor = function () {
 
 
         d3.select("#layerID").property("value", "Common");
+        d3.select("#layerName").property("value", "Common");
         d3.select("#layerThickness").property("value", "-");
 
         //$("#thelist").empty()
@@ -750,6 +751,7 @@ var auEditor = function () {
         } else if (layer instanceof AsymmetricUnit){
             //console.log("Tab selected", selectedAU.selectedtab);
             d3.select("#layerID").property("value", "Location Unknown");
+            d3.select("#layerName").property("value", "Location Unknown");
             d3.select("#layerThickness").property("value", "-");
 
             $('#layerDelete').attr('disabled','disabled');;

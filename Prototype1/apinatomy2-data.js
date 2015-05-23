@@ -799,10 +799,15 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                 prev += d.thickness * vp.widthScale;
                 return prev - d.thickness * vp.widthScale / 2;})
             .text(function(d, i) {
+                var lbl = "";
+                lbl = d.id + " - ";
+                d.name ? lbl += d.name : lbl += "";
+                lbl += " - ";
                 if (d.materials)
-                    return d.id + "  -   " + d.materials.length
+                    lbl += d.materials.length;
                 else
-                    return d.id + "  -  0"
+                    lbl+= "0";
+                return lbl;
             });
 
 
