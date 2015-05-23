@@ -1381,4 +1381,46 @@ var auEditor = function () {
     });
 
 
+    d3.select('#resetLyphLayerData').on("click", function(){
+        $( "#dialog-confirm" ).dialog({
+            resizable: false,
+            height:140,
+            modal: true,
+            buttons: {
+                "Delete all items": function() {
+                    $.ajax
+                    ({
+                        url:
+                        "http://open-physiology.org:5055/reset_db/?templates=yes",
+                        jsonp:
+                            "callback",
+                        dataType:
+                            "jsonp",
+                        success: function( response )
+                        {
+                            console.log("Request URL:", this.url);
+                            var data = response;
+
+                            if ( data.hasOwnProperty( "Error" ) )
+                            {
+                                console.log("Error:", data.Error);
+                                return;
+                            }
+
+                            console.log("Response:" , data);
+                            location.reload();
+                        }
+
+                    });
+                    $( this ).dialog( "close" );
+
+
+                },
+                Cancel: function() {
+                    $( this ).dialog( "close" );
+                }
+            }
+        });
+    })
+
 }();
