@@ -618,18 +618,13 @@ var auEditor = function () {
 
     //Add Material to Layer
     d3.select("#addMaterial").on("click", function(){
-
-
         //Validation to check that we are not adding material to self.
         //Using filtering to perform validation
+        selectedAU.is_built_from_template(selectedMaterial, selectedAU, addMaterialToLayer);
+    });
 
-        if (selectedAU.check_contains(selectedAU, selectedMaterial)){
-            console.log("Adding material would cause recursive error");
-            return;
-        }
-
-
-
+    function addMaterialToLayer (){
+        console.log("call back test f");
         //Validation passed
 
         if (selectedLayer instanceof Layer) {
@@ -672,8 +667,7 @@ var auEditor = function () {
             $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + (selectedMaterial.id).replace("TEMPLATE_", "T_") + " " + selectedMaterial.name + "</option")
 
         }
-
-    });
+    }
 
 
 

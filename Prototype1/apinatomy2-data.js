@@ -501,21 +501,44 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
     }
 
 
-    this.check_contains = function check_contains (T,t){
-        console.log(T,t);
-        if (T.id === t.id) return true;
-        //TODO need to check the tabs <--> misc_materials recursively
-        
-        
-        //check layers recursively
-        for (var i =0; t.layers &&  i < t.layers.length; i++){
-            for (var j =0; t.layers[i].materials && j < t.layers[i].materials.length; j++){
-                return check_contains( T , t.layers[i].materials[j])
-            }
-        }
-        return false;
-    }
+    this.is_built_from_template = function is_built_from_template(mat, au, callBack){
 
+        //URL for accessing editlayer api
+        var url = "http://open-physiology.org:5055/is_built_from_template/";
+        url += "?part=" + au.id;
+        url += "&templates=" + mat.id;
+
+        console.log(url);
+
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            success: function (response) {
+                response;
+
+                console.log(response);
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Validation error:", response);
+                    return;
+                }
+
+                if (response.response === "no")
+                    callBack();
+                else
+                    console.log("material can't be added to self");
+            }
+        });
+
+
+
+    }
 
 
 
