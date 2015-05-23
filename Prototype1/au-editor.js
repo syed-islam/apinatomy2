@@ -118,7 +118,9 @@ var auEditor = function () {
 
 
     d3.select("#materialFilter").on("input", function() {
-        console.log('change noted');
+        if (materialFilter.value.trim().length > 0 && materialFilter.value.trim().length < 3){
+            return;
+        }
         applyFilter();
     })
 
@@ -200,13 +202,15 @@ var auEditor = function () {
 
 
                 materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, null);
+                auRepo.draw(auMaterialRepoSvg,auRepoVP,onSelectMaterialAU, null ,true);
+
                 for (var j = 0; j < data.length; j++){
                     console.log(data[j].id);
                     console.log(materialRepo.getIndexByID(data[j].id));
                     console.log(auRepo.getIndexByID(data[j].id));
                     if (materialRepo.getIndexByID(data[j].id) > -1){
                         materialRepo.materials[materialRepo.getIndexByID(data[j].id)].hide = false;
-                        selectedMaterial = materialRepo.materials[materialRepo.getIndexByID(data[0].id)];
+                        selectedMaterial = materialRepo.materials[materialRepo.getIndexByID(data[j].id)];
                         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
                         console.log(materialRepo);
                     } else if (auRepo.getIndexByID(data[j].id) > -1){
@@ -214,11 +218,26 @@ var auEditor = function () {
                         auRepo.auSet[auRepo.getIndexByID(data[j].id)].hide = false;
                         auRepo.auSet[auRepo.getIndexByID(worklist.value)].hide = true;
                         console.log(worklist.value);
-                        redraw_aurepos();
+                        auRepo.draw(auMaterialRepoSvg,auRepoVP,onSelectMaterialAU, null ,true);
                     }
 
                 }
 
+                //select the first material showing after filtering finishes
+
+                for (var k = 0; k < materialRepo.materials.length; k++ ){
+                    if (materialRepo.materials[k].hide === false){
+                        onSelectMaterial(materialRepo.materials[k]);
+                        return;
+                    }
+                }
+
+                for (k = 0; k < auRepo.auSet.length; k++ ){
+                    if (auRepo.auSet[k].hide === false){
+                        onSelectMaterial(auRepo.auSet[k]);
+                        return;
+                    }
+                }
 
 
             }
