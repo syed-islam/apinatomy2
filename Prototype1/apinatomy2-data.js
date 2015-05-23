@@ -10,7 +10,7 @@ debugging = true;
 /////////////////////////////////////////////
 
 //create material
-function Material(id, name, colour, type, children, au) {
+function Material(id, name, colour, type, children, au, ont_term) {
 
 
     if (type === 'simple'){
@@ -18,6 +18,7 @@ function Material(id, name, colour, type, children, au) {
         this.name = name;
         this.colour = colour;
         this.type = type;
+        this.ont_term = ont_term;
     } else if (type === 'mix'){
         this.au = au;
         this.colour = colour;
@@ -286,6 +287,8 @@ function Layer(id, name, thickness, materials, colour) {
             url += "?material=none"+
             "&thickness=" + this.thickness;
         }
+        url += "?name="+ this.name;
+
 
         //function ajax_create_layer () {
         //   this.createLayerOnServer = function createLayerOnServer() {
@@ -383,12 +386,13 @@ function Layer(id, name, thickness, materials, colour) {
     }
 
 
-    this.update_thickness_to_server = function update_thickness_to_server(){
+    this.update_name_thickness_to_server = function update_name_thickness_to_server(){
         console.log("Syncing layer thickness to server", "Layer:" + this.id , "Thickness:" + this.thickness);
         //URL for accessing editlayer api
         var url = "http://open-physiology.org:5055/editlayer/";
         url += "?layer=" + this.id;
         url += "&thickness=" + this.thickness;
+        url += "&name=" + this.name;
         url+="&mutable=yes";
 
         console.log(url);

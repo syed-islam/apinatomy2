@@ -399,6 +399,43 @@ var auEditor = function () {
     })
 
 
+    d3.select("#auPopulate").on("click", function (){
+        console.log("click", this);
+        populateName(d3.select("#auName"))
+    })
+
+
+    d3.select("#layerPopulate").on("click", function (){
+        //console.log("click", this);
+        populateName(d3.select("#layerName"))
+    })
+
+    function populateName (component){
+        var name = "";
+        if (selectedMaterial) {
+            console.log(component, selectedMaterial);
+
+            //Create Name from selected Materail
+            name += selectedMaterial.name;
+            if (selectedMaterial.ont_term){
+                name += " - " + selectedMaterial.ont_term;
+            }
+
+
+            component.property("value", name);
+
+            //Update appropriate textbox
+
+
+
+            console.log(name);
+
+
+        } else {
+            alert("Material not selected");
+        }
+    }
+
 
 
     ////////////////////////////////////////////////////////////
@@ -701,7 +738,7 @@ var auEditor = function () {
         console.log("Updating parameter", layer);
         if (layer instanceof Layer){
             d3.select("#layerID").property("value", layer.id);
-            //d3.select("#layerName").property("value", layer.name);
+            d3.select("#layerName").property("value", (layer.name) ? layer.name : "" );
             d3.select("#layerThickness").property("value", layer.thickness);
             //d3.select("#materialID").property("value", layer.materials[0].id);
             //d3.select("#materialID").property("value", layer.materials[0].id);
@@ -743,6 +780,12 @@ var auEditor = function () {
                 var index = au.getLayerIndex(selectedLayer.id);
                 if (index > -1){
                     au.removeLayerAt(index);
+                    if (au.layers.length > 0){
+                        selectedLayer = selectedAU.layers[0];
+                        onSelectLayer(selectedLayer);
+                    } else {
+                        onSelectLayer(null);
+                    }
                     au.draw(svg, mainVP, onSelectLayer,selectedLayer);
                 }
             }
@@ -766,7 +809,7 @@ var auEditor = function () {
         if (debugging) console.log("Adding new layer");
 
         //Create new blank layer
-        var newLayer = new Layer("Layer_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , "", layerThickness.value ? layerThickness.value : 1)
+        var newLayer = new Layer("LAYER_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , "", layerThickness.value ? layerThickness.value : 1)
 
         //TODO very bad way of chaining on Ajax return calls.
         newLayer.create_on_server(selectedAU, 0);
@@ -887,12 +930,13 @@ var auEditor = function () {
 
             console.log("Updating layer");
             selectedLayer.thickness = (layerThickness.value) ? layerThickness.value : 1;
+            selectedLayer.name = layerName.value.trim();
             selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
-            selectedLayer.update_thickness_to_server();
+            selectedLayer.update_name_thickness_to_server();
 
 
         } else {
-            alert("Cannot update a layer: " + (selectedAU == null )? " AU is not selected!" : " layer is not selected!");
+            alert("Layer not selected");
         }
     })
 
@@ -985,11 +1029,12 @@ var auEditor = function () {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "basic"){
                         //TODO Replace type "simple" with basic for consistency
-                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null, data[i].ont_term),0);
                         //materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial);
                         onSelectMaterial(materialRepo.materials[0]);
                     }
                 }
+                console.log(materialRepo);
 
 
                 //Todo - Load all Mix Types
@@ -1034,9 +1079,9 @@ var auEditor = function () {
 
                             var newLayer  = null;
                             if (auRepo)
-                                newLayer = new Layer(data[i].layers[j].id, "", ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].name, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
                             else
-                                newLayer = new Layer(data[i].layers[j].id, "", ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].name, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
                             if (layerRepo == null){
                                 layerRepo = new LayerRepo([newLayer]);
                             } else {
@@ -1131,7 +1176,7 @@ var auEditor = function () {
                 console.log("Response:" , data);
                 if (materialRepo.getIndexByID(data.id)== -1 ) {
                     console.log("Creating new basic material and added to material repo");
-                    materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null), 0);
+                    materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null,data.ont_term), 0);
                     console.log("Selecting the new material")
                     onSelectMaterial(materialRepo.materials[0]);
                 } else{
