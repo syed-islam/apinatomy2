@@ -807,8 +807,9 @@ var auEditor = function () {
         //Create new blank layer
         var newLayer = new Layer("LAYER_" +  (layerRepo ? layerRepo.getNumberOfLayers() + 1 : "1") , "", layerThickness.value ? layerThickness.value : 1)
 
+
         //TODO very bad way of chaining on Ajax return calls.
-        newLayer.create_on_server(selectedAU, 0);
+        newLayer.create_on_server(selectedAU, layerInsertLocation());
 
         // Add blank layer to layer repo
         if (layerRepo){
@@ -818,9 +819,21 @@ var auEditor = function () {
             console.log("Layer Repo Uninitialised");
             layerRepo = new LayerRepo([newLayer]);
         }
-        if (debugging) console.log(layerRepo);
-        onSelectLayer(newLayer)
+        //if (debugging) console.log(layerRepo);
+        //onSelectLayer(newLayer)
     })
+
+
+    function layerInsertLocation(){
+        if (selectedAU.getNumberOfLayers() === 0 )
+            return 0;
+
+        if (selectedAU.getLayerIndex(selectedLayer.id) < 0){
+            return selectedAU.getNumberOfLayers();
+        }
+        return selectedAU.getLayerIndex(selectedLayer.id);
+
+    }
 
 
 
@@ -1193,13 +1206,13 @@ var auEditor = function () {
 
 
 
-    rehashaueditor = function rehasheverything(){
+    rehashaueditor = function rehashaueditor(selectLayer){
         //console.log("callback test");
         //console.log(layerRepo);
         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
         //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
         sync_lyphTemplate_list(selectedAU);
-        handle_Lyph_Selection(worklist.value)
+        handle_Lyph_Selection(worklist.value, selectLayer);
         redraw_aurepos();
     }
 
@@ -1229,16 +1242,21 @@ var auEditor = function () {
     })
 
 
-    var handle_Lyph_Selection = function handle_Lyph_Selection (selection){
+    var handle_Lyph_Selection = function handle_Lyph_Selection (selection, layerToSelect){
         selectedAU = auRepo.auSet[auRepo.getIndexByID(selection)]
         console.log(selectedAU);
         selectedLayer = null;
         onSelectAU(selectedAU);
-        if (selectedAU.layers.length > 0){
-            selectedLayer = selectedAU.layers[0];
-            onSelectLayer(selectedLayer);
+
+        if (layerToSelect){
+            onSelectLayer(layerToSelect);
         } else {
-            onSelectLayer(null);
+            if (selectedAU.layers.length > 0) {
+                selectedLayer = selectedAU.layers[0];
+                onSelectLayer(selectedLayer);
+            } else {
+                onSelectLayer(null);
+            }
         }
     }
 

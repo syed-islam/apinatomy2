@@ -271,7 +271,7 @@ function Layer(id, name, thickness, materials, colour) {
     this.materials = materials;
     this.colour = "#"+((1<<24)*Math.random()|0).toString(16);
 
-    console.log(this.id, this.name, this.thickness, this.materials, this.colour);
+    //console.log(this.id, this.name, this.thickness, this.materials, this.colour);
 
 
     this.create_on_server = function (AU, index){
@@ -319,12 +319,13 @@ function Layer(id, name, thickness, materials, colour) {
 
                 //TODO bad design. Ajax chaining is unpredictable in this case.
                 // Once the layer is successfuly created we attach it the AU where its meant to go.
+                //console.log(index);
                 AU.addLayerAt(this,index);
 
 
 
                 //TODO bad design - Use of global function. Use callback function instead.
-                rehashaueditor();
+                rehashaueditor(this);
                 //}
                 ;
             }
@@ -626,13 +627,13 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
 
         //Add layer to AU at the server.
 
-        console.log("Adding Layer to AU on server")
+        console.log("Adding Layer to AU on server", index)
 
         //URL for accessing make template api
         var url = "http://open-physiology.org:5055/layer_to_template/";
         url += "?template=" + this.id;
         url +=  "&layer=" + layer.id;
-        url += "&pos=" + index+1;
+        url += "&pos=" + (index + 1);
 
         console.log(url)
 
@@ -655,9 +656,9 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                     return;
                 }
 
-                console.log("AU created successfully:", response);
+                console.log("Added Layer to Template:", response);
 
-                rehashaueditor();
+                rehashaueditor(layer);
                 ;
             }
         });
@@ -771,7 +772,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .style("fill", function (d) {return d.colour;})
             .style("fill-opacity" , function (d){return 0.6})
             .style("stroke", function(d){
-                console.log("Manual Selected Layer:", selectedLayer);
+                //console.log("Manual Selected Layer:", selectedLayer);
                 if (selectedLayer === d) {
                     //selectedLayer = null;
                     return "red";
@@ -902,7 +903,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             //.style("fill", function (d) {return d.colour;})
             .style("fill-opacity" , function (d){return 0})
             .style("stroke", function(d){
-                console.log("Manual Selected Layer:", selectedLayer);
+                //console.log("Manual Selected Layer:", selectedLayer);
                 if (selectedLayer === d) {
                     //selectedLayer = null;
                     return "red";
