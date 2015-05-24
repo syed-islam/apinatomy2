@@ -92,8 +92,17 @@ var auEditor = function () {
 
 
     d3.select('#showMaterialDetails').on("click", function(){
-        console.log("Show Materials Details");
-    })
+        //console.log("Show Materials Details");
+        var localselection = thelist.value;
+        //console.log(localsection);
+
+        if (auRepo.getIndexByID(localselection) > -1){
+            console.log("Found AU");
+            window.open("http://localhost:63342/apinatomy2/Prototype1/asymmetric-unit.html?template=" + localselection, '_blank');
+        } else {
+            alert("Material is not a 'shell' structure");
+        }
+    });
 
 
     d3.select('#layerUp').on("click", function(){
@@ -304,6 +313,8 @@ var auEditor = function () {
             d3.select("#layerID").property("value", "");
             d3.select("#layerName").property("value", "");
             d3.select("#layerThickness").property("value","");
+            $("#thelist").empty()
+            $('#thelist').append('<option value=fake> ' + "" +   "</option")
             return;
         }
 
@@ -336,19 +347,11 @@ var auEditor = function () {
     }
 
     var onSelectAU = function(d){
-        //if (this != selectedAUNode){
-        //    d3.select(this).style("stroke", "red");
-        //    d3.select(selectedAUNode).style("stroke", "black");
-        //    selectedAUNode = this;
-        //    selectedAU = d;
-        //    if (selectedAU.layers != null && selectedAU.layers.length > 0)
-        //        selectedLayer = selectedAU.layers[0];
-        //    syncSelectedAU();
-        //    updateLayerParameters(selectedLayer);
-        //}
+
+        if ($('#worklist').value != d.id)
+            $('#worklist').val(d.id);
+
         selectedAU = d;
-        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU, selectedAU);
-        //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU, true);
         syncSelectedAU();
     }
 
@@ -503,12 +506,7 @@ var auEditor = function () {
 
 
     function cloneAU(au){
-        console.log("here");
 
-        //if (auRepo.getIndexByID(auID.value) > -1){
-        //    alert("Cannot create a new AU: another AU with such ID exists!");
-        //    return;
-        //}
         var newAU = null;
         if (au != null){
             newAU = au.clone();
@@ -531,6 +529,8 @@ var auEditor = function () {
         newAU.draw(svg, mainVP, onSelectLayer);
         redraw_aurepos();
     }
+
+
 
     function newAU(){
         var newAU = null;
@@ -718,12 +718,10 @@ var auEditor = function () {
 
     //New AU Button Click
     d3.select("#auNew").on("click", function() {
-        console.log("here");
         newAU();
     })
 
     d3.select("#auClone").on("click", function() {
-        console.log("here");
         cloneAU(selectedAU);
     })
 
@@ -824,8 +822,7 @@ var auEditor = function () {
                         onSelectLayer(selectedLayer);
                     } else {
                         onSelectLayer(null);
-                        $("#thelist").empty()
-                        $('#thelist').append('<option value=fake> ' + "No items common in all Layers" +   "</option")
+
                     }
                     au.draw(svg, mainVP, onSelectLayer,selectedLayer);
                 }
@@ -1194,6 +1191,7 @@ var auEditor = function () {
                 window.addEventListener("keydown", function (e) {onDocumentKeyDown(e);}, false);
 
                 //console.log("LayerRepo:" , layerRepo);
+                make_appropriate_selection();
 
             }
         });
@@ -1307,15 +1305,10 @@ var auEditor = function () {
                 onSelectLayer(selectedLayer);
             } else {
                 onSelectLayer(null);
-                $("#thelist").empty()
-                $('#thelist').append('<option value=fake> ' + "" +   "</option")
+
             }
         }
     }
-
-    //Initialisation of the materials from the Database.
-    load_all_materials();
-
 
 
     $(function() {
@@ -1419,5 +1412,43 @@ var auEditor = function () {
             }
         });
     })
+
+
+    function make_appropriate_selection(){
+        var selectionTemplate =getUrlParameter("template");
+        var redirectAU = null;
+        if (selectionTemplate){
+            console.log(selectionTemplate);
+            if (auRepo.getIndexByID(selectionTemplate) > -1) {
+                redirectAU = auRepo.auSet[auRepo.getIndexByID(selectionTemplate)];
+                onSelectAU(redirectAU);
+                if (redirectAU.getNumberOfLayers() > 0) {
+                    onSelectLayer(redirectAU.layers[0]);
+                } else {
+                    onSelectLayer(null);
+                }
+            }
+        }
+
+    }
+
+    function getUrlParameter(sParam)
+    {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++)
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam)
+            {
+                return sParameterName[1];
+            }
+        }
+    }
+
+
+    //Initialisation of the materials from the Database.
+    load_all_materials();
+
 
 }();
