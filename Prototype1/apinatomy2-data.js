@@ -444,12 +444,40 @@ function Layer(id, name, thickness, materials, colour) {
 
 
 //create Asymmetric Unit
-function AsymmetricUnit(id, name, layers, length, misc_materials){
+function AsymmetricUnit(id, name, layers, length, misc_materials, common_materials){
     this.id = id;
     this.name = name;
     this.layers = layers;
     this.length = length;
     this.misc_materials = misc_materials;
+    this.common_materials = common_materials;
+
+
+
+    this.update_common_materials = function update_common_materials(){
+        var au = this;
+        $.ajax
+        ({
+            url:
+            "http://open-physiology.org:5055/template/" + this.id + "?commons=yes" ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Not able to load the template:" , response);
+                    return;
+                }
+                console.log(response);
+                au.common_materials = response.common_materials;
+                rehashaueditor_onCurrentLayer();
+
+            }
+        });
+    }
 
 
     this.create_on_server = function (type){
@@ -493,6 +521,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                 console.log("AU created successfully:", response);
 
                 this.id = response.id;
+                this.update_common_materials();
 
 
                 rehashaueditor();
@@ -621,6 +650,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                 }
 
                 console.log("Misc material update successfully:", response);
+                this.update_common_materials();
                 ;
             }
         });
@@ -691,6 +721,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                 }
 
                 console.log("Added Layer to Template:", response);
+                this.update_common_materials();
 
                 rehashaueditor(layer);
                 ;
@@ -737,6 +768,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
                 }
 
                 console.log("Layer successfully removed from AU", response);
+                this.update_common_materials();
 
                 //rehashaueditor();
                 //;
@@ -925,7 +957,8 @@ function AsymmetricUnit(id, name, layers, length, misc_materials){
             .attr(attr_x, function () { return (length * vp.lengthScale * 2/3) + (length * vp.lengthScale /6);})
             .attr(attr_y, function (d, i) { return prev + 13;})
             .text(function(d, i) {
-                return "Common";
+                console.log(d.common_materials);
+                return "Common" + " - " + d.common_materials.length;
             });
 
 

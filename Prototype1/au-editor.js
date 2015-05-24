@@ -1,4 +1,7 @@
-var rehashaueditor;
+
+
+var rehashaueditor; // TODO BAD DESIGN
+var rehashaueditor_onCurrentLayer; // TODO BAD DESIGN
 
 var auEditor = function () {
 
@@ -68,42 +71,24 @@ var auEditor = function () {
         $('#layerDelete').attr('disabled','disabled');;
         $('#layerUpdate').attr('disabled','disabled');;
 
-
         selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
 
     }
 
 
     var requestcommonmaterials = function requestcommonmaterials (au){
-
-        $.ajax
-        ({
-            url:
-                "http://open-physiology.org:5055/template/" + au.id + "?commons=yes" ,
-
-            jsonp: "callback",
-
-            dataType: "jsonp",
-       success: function (response) {
-                response;
-
-                if (response.hasOwnProperty("Error")) {
-                    console.log("Not able to load the template:" , response);
-                    return;
-                }
-                console.log(response);
-                $("#thelist").empty()
-
-                if (response.common_materials && response.common_materials.length > 0){
-                    for (var i =0; i < response.common_materials.length; i++){
-                        $('#thelist').append('<option value=' + response.common_materials[i].id + '> ' + (response.common_materials[i].id).replace("TEMPLATE_", "T_") + " " + response.common_materials[i].name  + "</option")
-                    }
-                } else {
-                    $('#thelist').append('<option value=fake> ' + "No items common in all Layers" +   "</option")
-                }
-            }
-        });
+        //au.update_common_materials();
+        onSelectLayer(selectedLayer);
+         $("#thelist").empty()
+         if (au.common_materials && au.common_materials.length > 0){
+             for (var i =0; i < au.common_materials.length; i++){
+                 $('#thelist').append('<option value=' + au.common_materials[i].id + '> ' + (au.common_materials[i].id).replace("TEMPLATE_", "T_") + " " + au.common_materials[i].name  + "</option")
+             }
+         } else {
+             $('#thelist').append('<option value=fake> ' + "No items common in all Layers" +   "</option")
+         }
     }
+
 
 
     d3.select('#showMaterialDetails').on("click", function(){
@@ -549,7 +534,7 @@ var auEditor = function () {
 
     function newAU(){
         var newAU = null;
-        newAU = new AsymmetricUnit("", "", [], 1, []);
+        newAU = new AsymmetricUnit("", "", [], 1, [], []);
         newAU.create_on_server();
         console.log("New Template Created:", newAU);
         if (auRepo == null)
@@ -639,6 +624,7 @@ var auEditor = function () {
                 $("#thelist").find("option[value='" + $("#thelist").val() + "']").remove();
 
                 selectedLayer.sync_materials_to_server();
+                selectedAU.update_common_materials();
 
                 if (selectedLayer.materials.length == 0){
                     $('#thelist').append('<option value=fake> ' + "No Material in Layer" +   "</option")
@@ -706,6 +692,7 @@ var auEditor = function () {
             $('#thelist').append('<option value=' + selectedMaterial.id + '> ' + (selectedMaterial.id).replace("TEMPLATE_", "T_") + "</option")
 
             selectedLayer.sync_materials_to_server();
+            selectedAU.update_common_materials();
 
 
             console.log(selectedLayer.materials);
@@ -837,6 +824,8 @@ var auEditor = function () {
                         onSelectLayer(selectedLayer);
                     } else {
                         onSelectLayer(null);
+                        $("#thelist").empty()
+                        $('#thelist').append('<option value=fake> ' + "No items common in all Layers" +   "</option")
                     }
                     au.draw(svg, mainVP, onSelectLayer,selectedLayer);
                 }
@@ -1070,7 +1059,7 @@ var auEditor = function () {
         $.ajax
         ({
             url:
-                "http://open-physiology.org:5055/all_templates/",
+                "http://open-physiology.org:5055/all_templates/?commons=yes",
             jsonp:
                 "callback",
             dataType:
@@ -1159,7 +1148,7 @@ var auEditor = function () {
                         }
                         //console.log(layers_content);
                         //create AU with the layers
-                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, (data[i].length && data[i].length != "unspecified") ? data[i].length : 1 , data[i].misc_materials);
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, (data[i].length && data[i].length != "unspecified") ? data[i].length : 1 , data[i].misc_materials, data[i].common_materials);
 
 
                         //console.log(toto);
@@ -1262,6 +1251,12 @@ var auEditor = function () {
 
 
 
+    rehashaueditor_onCurrentLayer = function rehashaueditor_onCurrentLayer (){
+        rehashaueditor(selectedLayer)
+    }
+
+
+
     rehashaueditor = function rehashaueditor(selectLayer){
         //console.log("callback test");
         //console.log(layerRepo);
@@ -1312,6 +1307,8 @@ var auEditor = function () {
                 onSelectLayer(selectedLayer);
             } else {
                 onSelectLayer(null);
+                $("#thelist").empty()
+                $('#thelist').append('<option value=fake> ' + "" +   "</option")
             }
         }
     }
