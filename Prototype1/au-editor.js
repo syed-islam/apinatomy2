@@ -531,7 +531,7 @@ var auEditor = function () {
 
         if (au != null){
             console.log("Cloing selected Lyph Template")
-            au.clone(onSelectAU, onSelectLayer);
+            au.clone(onSelectAU, onSelectLayer,auRepo, layerRepo, materialRepo);
 
         } else {
             alert("No  Lyph Template Selected for Cloning.")

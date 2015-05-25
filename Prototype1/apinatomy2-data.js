@@ -669,7 +669,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         return -1;
     }
 
-    this.clone = function(onSelectAU, onSelectLayer){
+    this.clone = function(onSelectAU, onSelectLayer, auRepo, layerRepo, materialRepo){
         //The parameter functions are used for callback following successful cloning of the Lyph Template.
         var url = "http://open-physiology.org:5055/clone/";
         url += "?template=" + this.id;
@@ -694,7 +694,54 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
                 }
 
                 console.log(response);
+
                 // Load shell structure into local database
+                    if (response.type === "shell"){
+
+                        var layers_content= [];
+                        for (var j = 0; j < response.layers.length; j++){
+
+                            var materials = [];
+
+                            for (var k =0; k < response.layers[j].materials.length; k++){
+                                if (materialRepo && materialRepo.getIndexByID(response.layers[j].materials[k].id) > -1)
+                                    materials.push(materialRepo.materials[materialRepo.getIndexByID(response.layers[j].materials[k].id)]);
+                                else{
+                                    materials.push(auRepo.auSet[auRepo.getIndexByID(response.layers[j].materials[k].id)]);
+                                }
+                            }
+
+                            var newLayer  = null;
+                            if (auRepo)
+                                newLayer = new Layer(response.layers[j].id, response.layers[j].name, ((response.layers[j].thickness == "unspecified")? 1: response.layers[j].thickness), materials);
+                            else
+                                newLayer = new Layer(response.layers[j].id, response.layers[j].name, ((response.layers[j].thickness == "unspecified")? 1: response.layers[j].thickness), materials);
+                            if (layerRepo == null){
+                                layerRepo = new LayerRepo([newLayer]);
+                            } else {
+                                layerRepo.addAt(newLayer,0);
+                            }
+
+                            //layers.push(newLayer);
+                            layers_content.push(newLayer);
+                            newLayer = null;
+                        }
+
+                        var toto = new AsymmetricUnit(response.id, response.name, layers_content, (response.length && response.length != "unspecified") ? response.length : 1 , response.misc_materials, []);
+
+
+                        toto.update_common_materials();
+
+                        //console.log(toto);
+                        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([toto]);
+                        else auRepo.addAt(toto,0);
+
+                        //sync_lyphTemplate_list();
+                        onSelectAU(toto);
+                        onSelectLayer(toto.layers[0]);
+
+                    }
+                    //applyFilter();
 
                 //call onselectAU function
 
