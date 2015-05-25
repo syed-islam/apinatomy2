@@ -693,7 +693,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
                     return;
                 }
 
-
+                console.log(response);
                 // Load shell structure into local database
 
                 //call onselectAU function
