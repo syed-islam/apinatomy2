@@ -506,28 +506,36 @@ var auEditor = function () {
 
 
     function cloneAU(au){
+        //
+        //var newAU = null;
+        //if (au != null){
+        //    newAU = au.clone();
+        //    newAU.id = auID.value+"_clone";
+        //    newAU.name = auName.value+"_clone";
+        //    newAU.length = auLength.value;
+        //}
+        //else {
+        //    //newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
+        //    //console.log(newAU);
+        //    alert("No AU Selected");
+        //    return;
+        //}
+        //
+        //if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
+        //else auRepo.addAt(newAU, 0);
+        //
+        ////auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+        ////newau.draw()
+        //newAU.draw(svg, mainVP, onSelectLayer);
+        //redraw_aurepos();
 
-        var newAU = null;
         if (au != null){
-            newAU = au.clone();
-            newAU.id = auID.value+"_clone";
-            newAU.name = auName.value+"_clone";
-            newAU.length = auLength.value;
-        }
-        else {
-            //newAU = new AsymmetricUnit("newAU", "newAu", [], auLength.value);
-            //console.log(newAU);
-            alert("No AU Selected");
-            return;
+            console.log("Cloing selected Lyph Template")
+
+        } else {
+            alert("No  Lyph Template Selected for Cloning.")
         }
 
-        if (auRepo == null) auRepo  = new AsymmetricUnitRepo([newAU]);
-        else auRepo.addAt(newAU, 0);
-
-        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-        //newau.draw()
-        newAU.draw(svg, mainVP, onSelectLayer);
-        redraw_aurepos();
     }
 
 

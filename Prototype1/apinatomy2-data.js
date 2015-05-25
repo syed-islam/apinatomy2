@@ -669,9 +669,45 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         return -1;
     }
 
-    this.clone = function(){
-        var newAU = new AsymmetricUnit(this.id, this.name, this.layers.slice(0), this.length);
-        return newAU;
+    this.clone = function(onSelectAU, onSelectLayer){
+        //The parameter functions are used for callback following successful cloning of the Lyph Template.
+        var url = "http://open-physiology.org:5055/clone/";
+        url += "?template=" + this.id;
+
+        console.log(url);
+
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in cloning Template", response);
+                    return;
+                }
+
+
+                // Load shell structure into local database
+
+                //call onselectAU function
+
+                //call onselectLayer function.
+
+
+                ;
+            }
+        });
+
+
+
+
     }
 
     this.getNumberOfLayers = function(){
