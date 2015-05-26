@@ -175,8 +175,8 @@ var auEditor = function () {
             for (var i =0; i < materialRepo.materials.length ; i++){
                 materialRepo.materials[i].hide = false;
                 selectedMaterial = materialRepo.materials[0];
-                materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
             }
+            materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
 
 
             //Show all AU's except the currently selected AU
@@ -242,6 +242,7 @@ var auEditor = function () {
                     if (materialRepo.getIndexByID(data[j].id) > -1){
                         materialRepo.materials[materialRepo.getIndexByID(data[j].id)].hide = false;
                         selectedMaterial = materialRepo.materials[materialRepo.getIndexByID(data[j].id)];
+                        console.log("calling material repo.draw");
                         materialRepo.draw(materialRepoSvg, materialRepoVP, onSelectMaterial, selectedMaterial);
                         console.log(materialRepo);
                     } else if (auRepo.getIndexByID(data[j].id) > -1){
