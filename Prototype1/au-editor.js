@@ -542,6 +542,14 @@ var auEditor = function () {
 
 
 
+    function reSyncEverythingWithAUSetUpdate(){
+        redraw_aurepos();
+        sync_lyphTemplate_list();
+        applyFilter();
+        handle_Lyph_Selection(auRepo.auSet[0].id)
+    }
+
+
     function newAU(){
         var newAU = null;
         newAU = new AsymmetricUnit("", "", [], 1, [], []);
@@ -764,16 +772,22 @@ var auEditor = function () {
         if (selectedAU != null) {
             var index = auRepo.getIndexByID(selectedAU.id);
             if (index > -1) {
-                if (confirm("Delete asymmetric unit " + selectedAU.id + "?")) {
-                    auRepo.removeAt(index);
-                    if (auRepo.auSet.length > 0) selectedAU = auRepo.auSet[0];
-                    selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
-                    //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
-                    redraw_aurepos();
-                    updateAUParameters(selectedAU);
+                if (confirm("Delete Lyph Template" + selectedAU.id + "?")) {
+
+                    selectedAU.delete(auRepo, index, reSyncEverythingWithAUSetUpdate );
+
+
+                    //auRepo.removeAt(index);
+                    //if (auRepo.auSet.length > 0) selectedAU = auRepo.auSet[0];
+                    //selectedAU.draw(svg, mainVP, onSelectLayer, selectedLayer, onTabSelect);
+                    ////auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                    //redraw_aurepos();
+                    //updateAUParameters(selectedAU);
 
                 }
             }
+        } else {
+            alert("No Lyph Template Selected");
         }
     })
 

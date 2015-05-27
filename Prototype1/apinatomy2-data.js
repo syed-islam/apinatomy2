@@ -605,7 +605,40 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         });
     }
 
+    this.delete = function (auRepo, removeIndex, editorSyncFunction){
+        console.log("Deleting Lyph Template from Server", "Lyhp Template:" + this.id);
 
+        //URL for accessing editlayer api
+        var url = "http://open-physiology.org:5055/delete_templates/";
+        url += "?template=" + this.id;
+
+        console.log(url);
+
+        $.ajax
+        ({
+            context: this,
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in deleting Lyph Template:", response);
+                    alert("Error in deleting Lyph Template:" + response.Error);
+                    return;
+                }
+                console.log("Delete Lyph Template:", this.id, " " , response);
+
+                auRepo.removeAt(removeIndex);
+                editorSyncFunction();
+
+            }
+        });
+    }
 
     this.sync_au_to_server = function(){
         console.log("Syncing AU server", "AU:" + this.id);
