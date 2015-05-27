@@ -1005,9 +1005,11 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
             .style("fill-opacity" , function (d){return 0.7})
             .style("stroke", function(d){
                 if (selectedLayer === d) {
-                    //selectedLayer = null;
-                    //au.selectedtab = 1;
-                    return "red";
+                    if (d.tabselected === 1){
+                        return "red";
+                        d.tabselected = 0;
+                    }
+
                 }
                 //return "blue";
             })
@@ -1018,7 +1020,12 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
             .attr(attr_height, function (d) {return 0.6 * vp.widthScale;})
             .attr(attr_x, function () { return 0;})
             .attr(attr_y, function (d, i) { return prev;})
-            .on("click", onSelectLayer);
+            .on("click", function (d){
+                //console.log("tab 1 clicked");
+                d.tabselected = 1;
+                //console.log(d);
+                onSelectLayer(d);
+            });
 
 
         // Draw Tab1 Label
@@ -1045,9 +1052,11 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
             .style("fill-opacity" , function (d){return 0.7})
             .style("stroke", function(d){
                 if (selectedLayer === d) {
-                    //selectedLayer = null;
-                    //au.selectedtab = 1;
-                    return "red";
+                    //console.log(d.tabselected)
+                    if (d.tabselected === 2){
+                        return "red";
+                        d.tabselected = 0;
+                    }
                 }
                 //return "blue";
             })
@@ -1059,7 +1068,9 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
             .attr(attr_x, function () { return length * vp.lengthScale * 2/3;})
             .attr(attr_y, function (d, i) { return prev;})
             .on("click", function(d){
-                console.log("clicked");
+                //console.log(" tab 2 - clicked");
+                d.tabselected = 2;
+                //console.log(d);
                 onSelectInfoTab(d);
             });
 
@@ -1078,7 +1089,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
             });
 
 
-        //Draw AU Highlights Separately
+        //Draw AU Layer Highlights Separately to allow the highlight to override other drawings.
         prev = vp.margin;
         svg.selectAll("chart")
             .data(au.layers)
@@ -1089,6 +1100,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
                 //console.log("Manual Selected Layer:", selectedLayer);
                 if (selectedLayer === d) {
                     //selectedLayer = null;
+                    console.log("compare here", selectedLayer, d);
                     return "red";
                 }
             })
