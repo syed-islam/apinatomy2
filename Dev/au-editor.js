@@ -196,7 +196,7 @@ var auEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5055/templates_involving/?ont=" + encodeURIComponent(materialFilter.value)  ,
+            "http://open-physiology.org:"+ serverPort + "/templates_involving/?ont=" + encodeURIComponent(materialFilter.value)  ,
 
             jsonp: "callback",
 
@@ -573,7 +573,7 @@ var auEditor = function () {
 
     function saveAUtoServer(au){
         console.log(au);
-        var query = "http://open-physiology.org:5055/maketemplate/" +
+        var query = "http://open-physiology.org:"+ serverPort + "/maketemplate/" +
             "?name=" + encodeURIComponent(au.name) +
             "&type=" + encodeURIComponent("shell");
         for ( var i = 0; i < au.layers.length; i ++){
@@ -1080,7 +1080,7 @@ var auEditor = function () {
         $.ajax
         ({
             url:
-                "http://open-physiology.org:5055/all_templates/?commons=yes",
+                "http://open-physiology.org:"+ serverPort + "/all_templates/?commons=yes",
             jsonp:
                 "callback",
             dataType:
@@ -1232,7 +1232,7 @@ var auEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5055/template/"+
+            "http://open-physiology.org:"+ serverPort + "/template/"+
             encodeURIComponent(autocomplete.value),
             jsonp:
                 "callback",
@@ -1354,7 +1354,7 @@ var auEditor = function () {
                 $.ajax
                 ({
                     url:
-                    "http://open-physiology.org:5055/template/"+
+                    "http://open-physiology.org:"+ serverPort + "/template/"+
                     encodeURIComponent(autocomplete.value),
                     jsonp:
                         "callback",
@@ -1405,7 +1405,7 @@ var auEditor = function () {
                     $.ajax
                     ({
                         url:
-                        "http://open-physiology.org:5055/reset_db/?templates=yes",
+                        "http://open-physiology.org:"+ serverPort + "/reset_db/?templates=yes",
                         jsonp:
                             "callback",
                         dataType:

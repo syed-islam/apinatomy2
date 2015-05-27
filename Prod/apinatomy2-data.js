@@ -4,7 +4,7 @@
 
 
 debugging = true;
-
+var serverPort = 5055; // production - 5055, Development - 5056
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
@@ -276,7 +276,7 @@ function Layer(id, name, thickness, materials, colour) {
 
     this.create_on_server = function (AU, index){
         //URL for accessing create layer api
-        var url = "http://open-physiology.org:5055/makelayer/";
+        var url = "http://open-physiology.org:"+ serverPort + "/makelayer/";
 
         //If creating a layer with known list of materials
         if (materials  &&  materials.length > 0) {
@@ -339,7 +339,7 @@ function Layer(id, name, thickness, materials, colour) {
         console.log("Syncing change in layer to server", "Layer:" + this.id , "Materials:" + this.materials);
 
         //URL for accessing editlayer api
-        var url = "http://open-physiology.org:5055/editlayer/";
+        var url = "http://open-physiology.org:"+ serverPort + "/editlayer/";
         url += "?layer=" + this.id;
 
         if (this.materials  &&  this.materials.length > 0) {
@@ -390,7 +390,7 @@ function Layer(id, name, thickness, materials, colour) {
     this.update_name_thickness_to_server = function update_name_thickness_to_server(){
         console.log("Syncing layer thickness to server", "Layer:" + this.id , "Thickness:" + this.thickness);
         //URL for accessing editlayer api
-        var url = "http://open-physiology.org:5055/editlayer/";
+        var url = "http://open-physiology.org:"+ serverPort + "/editlayer/";
         url += "?layer=" + this.id;
         url += "&thickness=" + this.thickness;
         url += "&name=" + this.name;
@@ -459,7 +459,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5055/template/" + this.id + "?commons=yes" ,
+            "http://open-physiology.org:"+ serverPort + "/template/" + this.id + "?commons=yes" ,
 
             jsonp: "callback",
 
@@ -486,7 +486,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         console.log("Creating AU on server of type", type);
 
         //URL for accessing make template api
-        var url = "http://open-physiology.org:5055/maketemplate/";
+        var url = "http://open-physiology.org:"+ serverPort + "/maketemplate/";
         url += "?name=" + this.name;
         url +=  "&type=" +type;
         url +=  "&length=" +this.length;
@@ -534,7 +534,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
     this.is_built_from_template = function is_built_from_template(mat, au, callBack){
 
         //URL for accessing editlayer api
-        var url = "http://open-physiology.org:5055/is_built_from_template/";
+        var url = "http://open-physiology.org:"+ serverPort + "/is_built_from_template/";
         url += "?part=" + au.id;
         url += "&templates=" + mat.id;
 
@@ -575,7 +575,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         console.log("Moving Layer", "AU:" + this.id);
 
         //URL for accessing editlayer api
-        var url = "http://open-physiology.org:5055/edit_template/";
+        var url = "http://open-physiology.org:"+ serverPort + "/edit_template/";
         url += "?template=" + this.id;
         url += "&movelayer=" + layer.id;
         url += "&topos=" + pos;
@@ -609,7 +609,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         console.log("Deleting Lyph Template from Server", "Lyhp Template:" + this.id);
 
         //URL for accessing editlayer api
-        var url = "http://open-physiology.org:5055/delete_templates/";
+        var url = "http://open-physiology.org:"+ serverPort + "/delete_templates/";
         url += "?template=" + this.id;
 
         console.log(url);
@@ -644,7 +644,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         console.log("Syncing AU server", "AU:" + this.id);
 
         //URL for accessing editlayer api
-        var url = "http://open-physiology.org:5055/edit_template/";
+        var url = "http://open-physiology.org:"+ serverPort + "/edit_template/";
         url += "?template=" + this.id;
 
         if (this.misc_materials &&  this.misc_materials.length > 0) {
@@ -704,7 +704,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
 
     this.clone = function(onSelectAU, onSelectLayer, auRepo, layerRepo, materialRepo){
         //The parameter functions are used for callback following successful cloning of the Lyph Template.
-        var url = "http://open-physiology.org:5055/clone/";
+        var url = "http://open-physiology.org:"+ serverPort + "/clone/";
         url += "?template=" + this.id;
 
         console.log(url);
@@ -810,7 +810,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         console.log("Adding Layer to AU on server", index)
 
         //URL for accessing make template api
-        var url = "http://open-physiology.org:5055/layer_to_template/";
+        var url = "http://open-physiology.org:"+ serverPort + "/layer_to_template/";
         url += "?template=" + this.id;
         url +=  "&layer=" + layer.id;
         url += "&pos=" + (index + 1);
@@ -856,7 +856,7 @@ function AsymmetricUnit(id, name, layers, length, misc_materials, common_materia
         console.log("Removing Layer from AU on server")
 
         //URL for accessing make template api
-        var url = "http://open-physiology.org:5055/layer_from_template/";
+        var url = "http://open-physiology.org:"+ serverPort + "/layer_from_template/";
         url += "?template=" + this.id;
         url +=  "&layer=" + layers[index].id;
 
@@ -2415,7 +2415,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 $.ajax
                 ({
                     url:
-                        "http://open-physiology.org:5055/makelyphnode/" ,
+                        "http://open-physiology.org:"+ serverPort + "/makelyphnode/" ,
 
                     jsonp: "callback",
 
@@ -2702,7 +2702,7 @@ function Graph(id, name, nodes, links, rectangles) {
             ({
                 context: this,
                 url:
-                "http://open-physiology.org:5055/editlyphnode/" +
+                "http://open-physiology.org:"+ serverPort + "/editlyphnode/" +
                 "?node=" + graph.selected_node.name +
                     "&location=" + boundingRectangleLyphID +
                     "&loctype=" + locationType,
@@ -2788,7 +2788,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     $.ajax
                     ({
                         url:
-                            "http://open-physiology.org:5055/makelyphnode/" +
+                            "http://open-physiology.org:"+ serverPort + "/makelyphnode/" +
                                 "?location=" + encodeURIComponent(generatedNode.locationLyph) +
                                 "&loctype=" + encodeURIComponent(generatedNode.locationtype)
                         ,

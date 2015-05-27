@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Lyph Template Editor 1.</title>
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<h1>Lyph Template Editor 1.1</h1>
+
+<div id="page-container">
+    <section id="app">
+        <div id="app-body">
+            <div class="panel">
+                <div id="edit-pane" class="param-pane">
+                    <h2>Template Definition</h2>
+                    <div>
+                        <label for="auID" class="parameterLabel">
+                            ID:
+                        </label>
+                        <input type="text" id="auID" title="Generated Lyph ID" size=40 style="width: 140px;" readonly/>
+                    </div>
+                    <div>
+                        <label for="auName" class="parameterLabel">
+                            Name:
+                        </label>
+                        <input type="text" id="auName" title="Lyph Template Name" size="200" style="width: 140px;"/>
+                    </div>
+                    <div>
+                        <label for="auLength" class="parameterLabel">
+                            Length:
+                        </label>
+                        <input type="number" id="auLength" title="Length Parameter for Lyph Template (1-10)" min="1" max="10" style="width: 46px;" />
+                    </div>
+                    <br/>
+                    <div>
+                        <!--<button class="parameterButton" id="auClone">Clone</button>-->
+                        <button class="parameterButton" id="auNew" title="Create New Lyph Template">New</button>
+                        <button class="parameterButton" id="auUpdate" title="Update Name/Length Values of Lyph Template" >Update</button>
+                        <button class="parameterButton" id="auPopulate" title="Populate Lyph Template name from Selected Material" >Populate</button>
+                        <button class="parameterButton" id="auClone" title="Clone Slected Lyph Template" >Clone</button>
+                        <!--<button class="parameterButton" id="auRestore">Restore</b9utton>-->
+                        <button class="parameterButton" id="auDelete" title="Delete the Selected Lyph Template">Delete</button>
+                        <!--<button class="parameterButton" id="auSave">Save</button>-->
+                    </div>
+                    <br/>
+                    <h2>Layer Definition</h2>
+                    <div>
+                        <label for="layerID" class="parameterLabel">
+                            ID:
+                        </label>
+                        <input type="text" id="layerID" title="Generated Layer ID" size=40 style="width: 140px;" readonly/>
+                    </div>
+                    <div>
+                        <label for="layerName" class="parameterLabel">
+                            Name:
+                        </label>
+                        <input type="text" id="layerName" title="Layer Name" size="200" style="width: 140px;"/>
+                    </div>
+                    <div>
+                        <label for="layerThickness" class="parameterLabel">
+                            Thickness:
+                        </label>
+                        <input type="number" id="layerThickness" title="Thickness Parameter for Layer (1-10)" min="1" max="10" style="width: 46px;"/>
+                    </div>
+                    <br>
+                    <div>
+                        <button class="parameterButton" id="layerClone" title="Add new layer to selected Lyph Template. New Layer will be added above selected layer/tab." >Add</button>
+                        <button class="parameterButton" id="layerUpdate" title="Update Name/Thickness parameters of the Selected Layer" >Update</button>
+                        <button class="parameterButton" id="layerDelete" title="Delete Selected Layer" >Delete</button>
+                        <button class="parameterButton" id="layerPopulate" title="Populate Layer name from Selected Material" >Populate</button>
+                        <button class="parameterButton" id="layerUp" title="Move Selected Layer Up" >Up</button>
+                        <button class="parameterButton" id="layerDown" title="Move Selected Layer Down" >Down</button>
+                    </div>
+                    <br>
+                    <!--<label class="parameterLabel">-->
+                        <h2>Material Contents</h2>
+                    <!--</label>-->
+                        <div>
+                                <select id="thelist" size="20"  style="width: 300px";>
+                                <option value="1"></option>
+                                </select>
+                        </div>
+
+                    <!--<div>-->
+                        <!--<label for="materialID" class="parameterLabel">-->
+                            <!--ID:-->
+                        <!--</label>-->
+                        <!--<datalist id="materials"></datalist>-->
+                        <!--<input type="text" id="materialID" style="width: 140px;" list="materials">-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="materialName" class="parameterLabel">Name:</label>-->
+                        <!--<input type="text" id="materialName" style="width: 140px;" readonly="true">-->
+                    <!--</div>-->
+
+                    <br>
+
+                    <div>
+                        <button class="parameterButton" id="addMaterial" title="Add Selected Material from Pallet to Selected Layer">Add</button>
+                        <button class="parameterButton" id="removeMaterial" title="Remove Selected Material from Layer">Remove</button>
+                        <button class="parameterButton" id="showMaterialDetails" title="Show details of Material">Details</button>
+                    </div>
+                    <!--<br/>-->
+                    <!--<h2>Visual parameters:</h2>-->
+                    <!--<div>-->
+                        <!--<label for="vpOrientation" class="parameterLabel">-->
+                            <!--Orientation:-->
+                        <!--</label>-->
+                        <!--<form id="vpOrientation" class="parameterGroup">-->
+                            <!--<input type="radio" name="vpOrientation" id="vpOrientation_h" value="horizontal" checked=true>Horizontal<br>-->
+                            <!--<input type="radio" name="vpOrientation" id="vpOrientation_v">Vertical-->
+                        <!--</form>-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="vpLength" class="parameterLabel">-->
+                            <!--Length scale: <span id="vpLength-value"></span>-->
+                        <!--</label>-->
+                        <!--<input type="range" min="100" max="500" id="vpLength"/>-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="vpThickness" class="parameterLabel">-->
+                            <!--Width scale: <span id="vpThickness-value"></span>-->
+                        <!--</label>-->
+                        <!--<input type="range" min="20" max="80" id="vpThickness"/>-->
+                    <!--</div>-->
+
+                </div>
+            </div>
+            <div class="chart" id="chart"></div>
+            <div class="panel" style="left: 880px;">
+
+                <h2>Lyph Templates</h2>
+                <!--</label>-->
+                <div>
+                    <select id="worklist" size="1"  style="width: 300px";>
+                        <!--<option value="1"></option>-->
+                    </select>
+                </div>
+
+                <!--<br>-->
+                <!--<div id="au-pane" class="repo-pane">-->
+                    <!--<h2>Lyph Templates</h2>-->
+                    <!--<div class="repo">-->
+                        <!--<div class="auRepo"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <h2>Material Pallet</h2>
+                <div id="material-pane" class="repo-pane">
+                    <div class="repo">
+                        <div class="materialRepo"></div>
+                    </div>
+                </div>
+                <hr>
+                <div id="au-pane2" class="repo-pane">
+
+                    <!--<h2>Asymmetric Units</h2>-->
+                    <div class="repo">
+                        <div class="auRepo2"></div>
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <label for="materialFilter" class="parameterLabel">Filter:</label>
+                    <input type="text" id="materialFilter" size="200" style="width: 140px" title="Input terms for filtering the Pallet, min 3 chars"; />
+                </div>
+
+                <div>
+                    <button class="parameterButton" id="applymaterialfilter" title="Apply Filter">Filter</button>
+                    <button class="parameterButton" id="clearfilter" title="Clear Filter">Clear</button>
+                </div>
+
+                <!--<br>-->
+
+
+                <br>
+                <h3>Add Basic Template to Pallet</h3>
+                <!--<div>-->
+                    <!--<label for="fmaID" class="parameterLabel">Ontology Term:</label>-->
+                    <!--<input type="text" id="fmaID" size="200" style="width: 140px" title="Ontology Term to add to Pallet"; />-->
+                <!--</div>-->
+
+                <div>
+                    <label for="autocomplete" class="parameterLabel">Ontology Term:</label>
+                    <input id="autocomplete" size="200" style="width: 140px" title="Ontology Term to add to Pallet"; />
+                </div>
+                <!--<br>-->
+                <div>
+                    <button class="parameterButton" id="createBasicLyph" title="Add Ontology Term to Material Pallet">Add</button>
+                    <!--<br>-->
+                </div>
+                <br>
+                <hr>
+
+                <div>
+                    <button class="parameterButton" id="resetLyphLayerData" title="Reset all lyph/layer data">Reset</button>
+                    <!--<br>-->
+                </div>
+
+                <div id="dialog-confirm" title="Reset all Lyph/Layer Data??">
+                    <p><span class="ui-icon ui-icon-alert" style="float:right; margin:0 7px 20px 0;">These items will be permanently deleted and cannot be recovered. Are you sure?  </span></p>
+                </div>
+
+
+                <!--<div>-->
+                    <!--<a target='_blank' href='http://open-physiology.org:5055/reset_db/?templates=yes'>Click Here</a> to reset all lyphs and layers</a>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </section>
+</div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="apinatomy2-data.js"></script>
+<script src="au-editor.js"></script>
