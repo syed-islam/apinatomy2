@@ -98,7 +98,7 @@ var auEditor = function () {
 
         if (auRepo.getIndexByID(localselection) > -1){
             console.log("Found AU");
-            window.open("http://localhost:63342/apinatomy2/Prototype1/asymmetric-unit.html?template=" + localselection, '_blank');
+            window.open("asymmetric-unit.html?template=" + localselection, '_blank');
         } else {
             alert("Material is not a 'shell' structure");
         }
