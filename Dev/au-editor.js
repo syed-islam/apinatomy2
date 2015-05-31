@@ -1094,7 +1094,7 @@ var auEditor = function () {
 
                 if ( data.hasOwnProperty( "Error" ) )
                 {
-                    if (debugging) console.log("Error: " + path.Error );
+                    console.log(response);
                     return;
                 }
 
