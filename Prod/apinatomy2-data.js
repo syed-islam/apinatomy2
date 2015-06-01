@@ -2214,6 +2214,9 @@ function Graph(id, name, nodes, links, rectangles) {
                     return [];
                 }).enter() //we just started an iteration over layers
                 .append("rect")
+                .style("fill", function (d) {
+                    return d.colour;
+                })
                 .attr("height", function (d) {return d.thickness * 5;})
                 .attr("width", function (d) {return  20;})
                 .attr("x", function(d){return 0;})
@@ -2224,11 +2227,59 @@ function Graph(id, name, nodes, links, rectangles) {
                 //
                 //    return prev - d.thickness * layerHeight;
                 //})
-                .style("fill", function (d) {
-                    if (d.material.colour == undefined) return "#888888"; return d.material.colour;
-                })
                 .attr("class", "layer")
+
             ;
+
+            auIcon.selectAll(".outline")
+                .data(function (d){
+                    if (d.au){
+                        return [d.au];
+                    }
+                    return [];
+                }).enter().append("rect")
+                .attr("height", function (d) {return d.layers.length * 5;})
+                .attr("width", function (d) {return 20;})
+                .attr("x", function(d){return 0;})
+                .attr("y", function(d, i){ return 5;})
+                .on("mousedown", function (d){
+                    console.log("Clicked on Template:" + d.id );
+                    window.open("asymmetric-unit.html?template=" + d.id, '_blank');
+                })
+                .style("fill-opacity" , function (d){return 0})
+                .append("title")
+                .text(function(d) {
+                    var tooltip = "";
+                    for (var i =0; i < d.layers.length ; i++){
+
+                        tooltip += d.layers[i].name + ":";
+                        tooltip += "{";
+
+                        for (var j =0; j < d.layers[i].materials.length; j++){
+                            tooltip += d.layers[i].materials[j].name;
+                            if (j+1 < d.layers[i].materials.length  )
+                                tooltip += ",";
+                        }
+
+
+
+                        tooltip += "}";
+                        if (i+1 < d.layers.length  )
+                            tooltip += "\n";
+
+                    }
+
+
+                    return   tooltip; })
+
+                //.style("stroke", function(d){
+                //            return "red";
+                //})
+                //.style("stroke-width", function(d){
+                //    return 2;
+                //})
+                //.attr("class", "layer")
+
 
 
             //var au_layers = auIcon.enter().append("g");

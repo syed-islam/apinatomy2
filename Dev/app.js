@@ -463,7 +463,7 @@ var graphEditor = function () {
                 $.ajax
                 ({
                     url:
-                    "http://open-physiology.org:5054/assignlyph/"+
+                    "http://open-physiology.org:"+serverPort+"/assignlyph/"+
                     "?lyph="+ encodeURIComponent(selectedAU.id) +
                     "&edge="+encodeURIComponent(selectedGraph.getMultipleSection()[i].edgeid),
 
@@ -504,7 +504,7 @@ var graphEditor = function () {
             $.ajax
             ({
                 url:
-                "http://open-physiology.org:5054/assignlyph/"+
+                "http://open-physiology.org:"+serverPort+"/assignlyph/"+
                 "?lyph="+ encodeURIComponent(selectedAU.id) +
                 "&edge="+encodeURIComponent(selectedGraph.selected_link.edgeid),
 
@@ -550,7 +550,8 @@ var graphEditor = function () {
             url:
             "http://open-physiology.org:"+serverPort+"/annotate/"+
             "?lyph="+ encodeURIComponent(selectedGraph.selected_link.edgeid) +
-            "&annot="+encodeURIComponent($("#edgeAnnotation").val().trim()),
+            "&annot="+encodeURIComponent($("#edgeAnnotation").val().trim()) +
+            "&pubmed=dummy",
 
             jsonp: "callback",
 
@@ -591,17 +592,24 @@ var graphEditor = function () {
         selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
         selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
 
+
+
+
         // ajax call to create a lyphedge
-        $.ajax
-        ({
-            url:
-            "http://open-physiology.org:"+serverPort+"/makelyph/"+
+
+        var URL =  "http://open-physiology.org:"+serverPort+"/makelyph/"+
             "?type="+ encodeURIComponent($("#edgeType").val().trim())+
             "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
             "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)+
             "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)+
-            "&template="+ encodeURIComponent($("#auID").val().trim())
-            ,
+            "&template="+ encodeURIComponent($("#auID").val().trim());
+
+        console.log(URL);
+
+
+        $.ajax
+        ({
+            url: URL,
 
             jsonp: "callback",
 
@@ -610,6 +618,7 @@ var graphEditor = function () {
 
             success: function (response) {
                 response;
+
 
 
                 if (response.hasOwnProperty("Error")) {
@@ -634,7 +643,8 @@ var graphEditor = function () {
             url:
             "http://open-physiology.org:"+serverPort+"/annotate/"+
             "?lyphs=" + id +
-            "&annot=" + annotations
+            "&annot=" + annotations+
+            "&pubmed=dummy"
             ,
 
             jsonp: "callback",
@@ -645,6 +655,7 @@ var graphEditor = function () {
             success: function (response) {
                 response;
 
+                console.log(response);
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Edge creation error:" , response);
@@ -855,7 +866,7 @@ var graphEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5054/lyphpath/" +
+            "http://open-physiology.org:"+serverPort+"/lyphpath/" +
             "?from=" + encodeURIComponent( startNode ) +
             "&to=" + encodeURIComponent( endNode ),
 

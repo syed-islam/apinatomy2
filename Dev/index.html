@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>ApiNATOMY graph editor</title>
+<title>Lyph Editor 1.0.0</title>
 <link rel="stylesheet" href="app.css">
 
-<h1>ApiNATOMY graph editor</h1>
+<h1>Lyph Editor 1.0.0</h1>
 
 <div id="page-container">
     <section id="app">
         <div id="app-body">
             <div class="panel">
                 <div id="edit-pane" class="param-pane">
-                    <h2>Graph parameters:</h2>
+                    <h2>View Parameters:</h2>
                     <div>
                         <label for="graphID" class="parameterLabel">ID:</label>
                         <input type="text" id="graphID" style="width: 140px;">
@@ -29,17 +29,17 @@
                         <button class="parameterButton" id="graphSave">Save</button>
                     </div>
                     <br/>
-                    <h2>Edge parameters:</h2>
+                    <h2>Lyph Definition:</h2>
                     <div>
-                        <label for="edgeID" class="parameterLabel">Edge ID:</label>
+                        <label for="edgeID" class="parameterLabel">ID:</label>
                         <input type="text" id="edgeID" size="200" style="width: 140px;" readonly="true" value =""/>
                     </div>
                     <div>
-                        <label for="edgeDescription" class="parameterLabel">Edge Desciption:</label>
+                        <label for="edgeDescription" class="parameterLabel">Name:</label>
                         <input type="text" id="edgeDescription" size="200" style="width: 140px;"  value =""/>
                     </div>
                     <div>
-                        <label for="edgeType" class="parameterLabel">Edge Type:</label>
+                        <label for="edgeType" class="parameterLabel">Type:</label>
                         <input type="text" id="edgeType" size="200" style="width: 140px;" />
                     </div>
                     <div>
@@ -48,7 +48,7 @@
                     </div>
 
                     <div>
-                        <label for="auID" class="parameterLabel">AU ID:</label>
+                        <label for="auID" class="parameterLabel">Template:</label>
                         <datalist id="auSet"></datalist>
                         <input type="text" id="auID" style="width: 140px;" list="auSet" readonly="true">
                     </div>
@@ -66,14 +66,14 @@
                         <button class="parameterButton" id="edgeSave">Save</button>
                     </div>
                     <br/>
-                    <h2>Node parameters:</h2>
+                    <h2>Node Definition:</h2>
                     <div>
-                        <label for="nodeName1" class="parameterLabel">Name:</label>
+                        <label for="nodeName1" class="parameterLabel">Info:</label>
                         <input type="text" id="nodeName1" size="200" style="width: 140px;"/>
                     </div>
                     <br/>
                     <div>
-                        <button class="parameterButton" id="nodeUpdate">Update</button>
+                        <!--<button class="parameterButton" id="nodeUpdate">Update</button>-->
                         <button class="parameterButton" id="nodeDelete">Delete</button>
                     </div>
                     <!--<div>-->

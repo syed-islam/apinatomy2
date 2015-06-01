@@ -221,7 +221,7 @@ var graphEditor = function () {
         ({
             context: this,
             url:
-            "http://open-physiology.org:5055/lyph/" +
+            "http://open-physiology.org:"+serverPort+"/lyph/" +
             $("#rectangleID").val().trim() ,
 
             jsonp: "callback",
@@ -265,7 +265,7 @@ var graphEditor = function () {
         ({
             context: this,
             url:
-            "http://open-physiology.org:5055/lyphpath/" +
+            "http://open-physiology.org"+serverPort+"/lyphpath/" +
             "?fromlyph=" + $('#startLyph').val().trim() +
             "&tolyph=" + $('#endLyph').val().trim() +
             "&numpaths=" + numPaths
@@ -399,7 +399,7 @@ var graphEditor = function () {
         //console.log(actualSelectedGraphIndex);
 
 
-        var query = "http://open-physiology.org:5055/makeview/?"
+        var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
         for (var i =0; i < selectedGraph.nodes.length ; i++){
             query += "&node" + (i + 1)+ "="+ encodeURIComponent(selectedGraph.nodes[i].name);
             query += "&x"+ (i + 1) +"="+ encodeURIComponent(selectedGraph.nodes[i].x);
@@ -463,7 +463,7 @@ var graphEditor = function () {
                 $.ajax
                 ({
                     url:
-                    "http://open-physiology.org:5054/assignlyph/"+
+                    "http://open-physiology.org:"+serverPort+"/assignlyph/"+
                     "?lyph="+ encodeURIComponent(selectedAU.id) +
                     "&edge="+encodeURIComponent(selectedGraph.getMultipleSection()[i].edgeid),
 
@@ -504,7 +504,7 @@ var graphEditor = function () {
             $.ajax
             ({
                 url:
-                "http://open-physiology.org:5054/assignlyph/"+
+                "http://open-physiology.org:"+serverPort+"/assignlyph/"+
                 "?lyph="+ encodeURIComponent(selectedAU.id) +
                 "&edge="+encodeURIComponent(selectedGraph.selected_link.edgeid),
 
@@ -548,9 +548,10 @@ var graphEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5055/annotate/"+
+            "http://open-physiology.org:"+serverPort+"/annotate/"+
             "?lyph="+ encodeURIComponent(selectedGraph.selected_link.edgeid) +
-            "&annot="+encodeURIComponent($("#edgeAnnotation").val().trim()),
+            "&annot="+encodeURIComponent($("#edgeAnnotation").val().trim()) +
+            "&pubmed=dummy",
 
             jsonp: "callback",
 
@@ -591,17 +592,24 @@ var graphEditor = function () {
         selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
         selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
 
+
+
+
         // ajax call to create a lyphedge
-        $.ajax
-        ({
-            url:
-            "http://open-physiology.org:5055/makelyph/"+
+
+        var URL =  "http://open-physiology.org:"+serverPort+"/makelyph/"+
             "?type="+ encodeURIComponent($("#edgeType").val().trim())+
             "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
             "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)+
             "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)+
-            "&template="+ encodeURIComponent($("#auID").val().trim())
-            ,
+            "&template="+ encodeURIComponent($("#auID").val().trim());
+
+        console.log(URL);
+
+
+        $.ajax
+        ({
+            url: URL,
 
             jsonp: "callback",
 
@@ -610,6 +618,7 @@ var graphEditor = function () {
 
             success: function (response) {
                 response;
+
 
 
                 if (response.hasOwnProperty("Error")) {
@@ -632,9 +641,10 @@ var graphEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5055/annotate/"+
+            "http://open-physiology.org:"+serverPort+"/annotate/"+
             "?lyphs=" + id +
-            "&annot=" + annotations
+            "&annot=" + annotations+
+            "&pubmed=dummy"
             ,
 
             jsonp: "callback",
@@ -645,6 +655,7 @@ var graphEditor = function () {
             success: function (response) {
                 response;
 
+                console.log(response);
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Edge creation error:" , response);
@@ -671,7 +682,7 @@ var graphEditor = function () {
         // ajax call to load all graph view
         $.ajax
         ({
-            url:"http://open-physiology.org:5055/all_lyphviews/",
+            url:"http://open-physiology.org:"+serverPort+"/all_lyphviews/",
 
             jsonp: "callback",
 
@@ -806,7 +817,7 @@ var graphEditor = function () {
                 ({
 
                     context: this,
-                    url: "http://open-physiology.org:5055/lyph/" +
+                    url: "http://open-physiology.org:"+serverPort+"/lyph/" +
                     rect.id,
 
                     jsonp: "callback",
@@ -855,7 +866,7 @@ var graphEditor = function () {
         $.ajax
         ({
             url:
-            "http://open-physiology.org:5054/lyphpath/" +
+            "http://open-physiology.org:"+serverPort+"/lyphpath/" +
             "?from=" + encodeURIComponent( startNode ) +
             "&to=" + encodeURIComponent( endNode ),
 
@@ -984,11 +995,11 @@ var graphEditor = function () {
 
     var load_all_materials = function load_all_materials (){
 
-        console.log("Loading existing lyphs")
+        console.log("Loading existing lyphs/materials")
         $.ajax
         ({
             url:
-                "http://open-physiology.org:5055/all_templates/",
+                "http://open-physiology.org:"+serverPort+"/all_templates/",
             jsonp:
                 "callback",
             dataType:
@@ -1001,11 +1012,7 @@ var graphEditor = function () {
 
                 if ( data.hasOwnProperty( "Error" ) )
                 {
-                    if ( path.Error == "No path found" )
-                        alert( "No path found" );
-                    else
-                        alert( "Error: " + path.Error );
-
+                    console.log(response);
                     return;
                 }
 
@@ -1017,7 +1024,8 @@ var graphEditor = function () {
                 //load all basic types
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "basic"){
-                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null),0);
+                        //TODO Replace type "simple" with basic for consistency
+                        materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null, data[i].ont_term),0);
                     }
                 }
 
@@ -1041,24 +1049,34 @@ var graphEditor = function () {
 
 
 
-                //load all shell types
+                if (debugging) console.log("Loading all Shell Templates");
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].type === "shell"){
+
+                        //if (i === 10) continue;
+                        console.log(i, data[i]);
+
                         //console.log(data[i]);
                         // Create appropriate layers for the lyph
-                        //if (i === 10) continue;
-                        console.log(i);
 
                         var layers_content= [];
                         for (var j = 0; j < data[i].layers.length;j++){
-                            //TODO
 
-                            //console.log(data[i].layers[j])
+                            var materials = [];
+
+                            for (var k =0; k < data[i].layers[j].materials.length; k++){
+                                if (materialRepo && materialRepo.getIndexByID(data[i].layers[j].materials[k].id) > -1)
+                                    materials.push(materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].materials[k].id)]);
+                                else{
+                                    materials.push(auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].materials[k].id)]);
+                                }
+                            }
+
                             var newLayer  = null;
                             if (auRepo)
-                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), (materialRepo.getIndexByID(data[i].layers[j].mtlid) > auRepo.getIndexByID(data[i].layers[j].mtlid)) ? materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)] : auRepo.auSet[auRepo.getIndexByID(data[i].layers[j].mtlid)]);
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].name, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
                             else
-                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].mtlname, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materialRepo.materials[materialRepo.getIndexByID(data[i].layers[j].mtlid)]);
+                                newLayer = new Layer(data[i].layers[j].id, data[i].layers[j].name, ((data[i].layers[j].thickness == "unspecified")? 1: data[i].layers[j].thickness), materials);
                             if (layerRepo == null){
                                 layerRepo = new LayerRepo([newLayer]);
                             } else {
@@ -1071,7 +1089,7 @@ var graphEditor = function () {
                         }
                         //console.log(layers_content);
                         //create AU with the layers
-                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, 1);
+                        var toto = new AsymmetricUnit(data[i].id, data[i].name, layers_content, (data[i].length && data[i].length != "unspecified") ? data[i].length : 1 , data[i].misc_materials, data[i].common_materials);
 
 
                         //console.log(toto);
@@ -1079,10 +1097,14 @@ var graphEditor = function () {
                         else auRepo.addAt(toto,0);
                         //console.log(auRepo.auSet[0]);
 
-                        auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
+                        //auRepo.draw(auRepoSvg, auRepoVP, onSelectAU);
                         //auRepo.draw(auMaterialRepoSvg, auRepoVP, onSelectMaterialAU);
+
                         //redraw_aurepos();
+                        //sync_lyphTemplate_list();
+
                     }
+                    //applyFilter();
                 }
 
 
