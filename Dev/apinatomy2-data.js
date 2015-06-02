@@ -1534,7 +1534,7 @@ function Node(id, name, x, y, tree, fixed, location, locationtype){
 }
 
 //graph link
-function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations){
+function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations, species){
     this.source = source;
     this.target = target;
     this.au = au;
@@ -1546,6 +1546,7 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     this.right = right;
     this.highlighted = highlighted;
     this.annotations = annotations;
+    this.species = species;
 }
 
 function Rectangle(id, x, y, width, height, lyphID, lyphName, from, to, location){
@@ -2081,7 +2082,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-            console.log(graph.selected_link);
+            //console.log(graph.selected_link);
 
 
             //svg.selectAll("path.link").remove();
