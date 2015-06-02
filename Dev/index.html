@@ -42,8 +42,7 @@
                     <!--<br/>-->
                     <div>
                         <button class="parameterButton" id="searchRectangleLyph">Search Lyph</button>
-                        <button class="parameterButton" id="assignRectangleLyph">Assign Lyph R_</button>
-                        <button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>
+                        <button class="parameterButton" id="assignRectangleLyph">Assign Lyph</button>
                     </div>
                     <div>
                         <label for="edgeID" class="parameterLabel">ID:</label>
@@ -58,45 +57,26 @@
                         <input type="text" id="edgeType" size="200" style="width: 140px;" />
                     </div>
                     <div>
-                        <label for="auID" class="parameterLabel">Template ID:</label>
+                        <label for="auID" class="parameterLabel">Template:</label>
                         <datalist id="auSet"></datalist>
                         <input type="text" id="auID" style="width: 140px;" list="auSet" readonly="true">
                     </div>
                     <div>
-                        <label for="auName" class="parameterLabel">Template Name:</label>
+                        <label for="auName" class="parameterLabel">AU Name:</label>
                         <input type="text" id="auName" size="200" style="width: 140px;" readonly="true"/>
                     </div>
                     <div>
-                        <label for="edgeSpecies" class="parameterLabel">Species:</label>
-                        <input type="text" id="edgeSpecies" size="200" style="width: 140px;" readonly="true"/>
-                    </div>
-                    <div>
-                        <label for="annotationType" class="parameterLabel">Annotation Type:</label>
-                        <input type="text" id="annotationType" size="200" style="width: 140px;"/>
-                    </div>
-                    <div>
-                        <label for="edgeAnnotation" class="parameterLabel">Annotation:</label>
+                        <label for="edgeAnnotation" class="parameterLabel">Annotations:</label>
                         <input type="text" id="edgeAnnotation" size="200" style="width: 140px;"/>
-                    </div>
-                    <div>
-                        <label for="provenance" class="parameterLabel">Pubmed ID:</label>
-                        <input type="text" id="provenance" size="200" style="width: 140px;"/>
-                    </div>
-                    Annotations:
-                    <div>
-                        <select id="thelist" size="3"  style="width: 300px";>
-                            <option value="1"></option>
-                        </select>
                     </div>
                     <br/>
                     <div>
-                        <button class="parameterButton" id="annotateEdge">Add An.</button>
-                        <button class="parameterButton" id="removeAnnotation">Del An.</button>
-                        <button class="parameterButton" id="auUpdate">Assign T_</button>
+                        <button class="parameterButton" id="annotateEdge">Annotate</button>
+                        <button class="parameterButton" id="auUpdate">AU Assign</button>
+                        <button class="parameterButton" id="auRestore">Restore</button>
                         <button class="parameterButton" id="auDelete">Delete</button>
                         <button class="parameterButton" id="edgeSave">Save</button>
                     </div>
-
                     <br/>
                     <h2>Node Definition:</h2>
                     <div>
