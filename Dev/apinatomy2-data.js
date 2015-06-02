@@ -2050,7 +2050,16 @@ function Graph(id, name, nodes, links, rectangles) {
             //    .attr("y", function(d){return ((d.source.y+ + d.target.y) /2) + 10;})
 
             auIcon.attr("transform", function (d) {
-                return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ")";
+                var rot = 0;
+                var dy = parseInt(d.target.y) - parseInt(d.source.y);
+                var dx = parseInt(d.target.x) - parseInt(d.source.x);
+                rot = Math.atan2(dy, dx) * 180/Math.PI;
+                //console.log(rot);
+                if (rot < -90 || rot > 90 )
+                    rot += 180;
+                if (d.edgeid === "7")
+                    console.log(rot);
+                return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ") rotate (" + rot + ")";
             });
 
             //restart();
