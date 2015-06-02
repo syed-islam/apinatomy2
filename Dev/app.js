@@ -34,6 +34,7 @@ var graphEditor = function () {
         customfocus('#endLyph');
         customfocus('#rectangleID');
         customfocus('#edgeSpecies');
+        customfocus('#provenance')
 
     }();
 
@@ -150,9 +151,18 @@ var graphEditor = function () {
         edge.edgeid != null ? d3.select("#edgeID").property("value", edge.edgeid) : d3.select("#edgeID").property("value", "")
         edge.type != null ? d3.select("#edgeType").property("value", edge.type) : d3.select("#edgeType").property("value", "")
         edge.description != null ? d3.select("#edgeDescription").property("value", edge.description) : d3.select("#edgeDescription").property("value", "");
-        edge.annotations != null ? d3.select("#edgeAnnotation").property("value", edge.annotations) :d3.select("#edgeAnnotation").property("value", "");
+        //edge.annotations != null ? d3.select("#edgeAnnotation").property("value", edge.annotations) :d3.select("#edgeAnnotation").property("value", "");
+        d3.select("#edgeAnnotation").property("value", "");
+        d3.select("#provenance").property("value", "");
         edge.species != null ? d3.select("#edgeSpecies").property("value", edge.species) : d3.select("#edgeSpecies").property("value", "");
+        $('#thelist').empty();
+        for (var i = 0; i < edge.annotations.length; i ++){
+            //console.log(edge.annotations[i].annotation, edge.annotations[i].pubmedID.id);
+            $('#thelist').append('<option value='+  edge.annotations[i].annotation +"|"+ edge.annotations[i].pubmedID.id +'> ' + edge.annotations[i].annotation +" | "+ edge.annotations[i].pubmedID.id  +   "</option");
+        }
     }
+
+
 
 
     function updateNodeParameter(node){
@@ -242,6 +252,40 @@ var graphEditor = function () {
             }
         })
     })
+
+
+    d3.select('#removeAnnotation').on('click', function (){
+       console.log('Remove Annotation Clicked');
+        console.log(thelist.value);
+        var clinicalIndexToRemove = thelist.value.split("|")[0];
+        console.log(clinicalIndexToRemove);
+        //ajax call to remove annotation
+        var URL =
+            "http://open-physiology.org:"+serverPort+"/remove_annotations/"+
+            "?lyphs="+ encodeURIComponent(selectedGraph.selected_link.edgeid) +
+            "&annot="+encodeURIComponent(clinicalIndexToRemove) ;
+        console.log(URL);
+        $.ajax
+        ({
+            url: URL,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Annotation Removal Error:" , response);
+                    return;
+                }
+                $("#thelist").find("option[value='" + $("#thelist").val() + "']").remove();
+                console.log(response);
+            }
+        });
+    });
 
 
     d3.select("#searchRectangleLyph").on("click", function() {
@@ -570,10 +614,10 @@ var graphEditor = function () {
         console.log("Annotage edge");
         console.log("Annotations", $("#edgeAnnotation").val().trim());
         selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
+        $('#thelist').append('<option value='+ $("#edgeAnnotation").val().trim() +"|" + $("#provenance").val().trim()+'> ' + $("#edgeAnnotation").val().trim() +" | " + $("#provenance").val().trim() +   "</option")
 
         //ajax call to save annotations
         annotate_lyph();
-
     });
 
     var annotate_lyph = function annotate_lyph(){
@@ -587,7 +631,7 @@ var graphEditor = function () {
             "http://open-physiology.org:"+serverPort+"/annotate/"+
             "?lyph="+ encodeURIComponent(selectedGraph.selected_link.edgeid) +
             "&annot="+encodeURIComponent($("#edgeAnnotation").val().trim()) +
-            "&pubmed=dummy",
+            "&pubmed=" + encodeURIComponent($("#provenance").val().trim()),
 
             jsonp: "callback",
 
@@ -597,7 +641,6 @@ var graphEditor = function () {
             success: function (response) {
                 response;
 
-
                 if (response.hasOwnProperty("Error")) {
                     console.log("Annotation error:" , response);
                     return;
@@ -606,9 +649,8 @@ var graphEditor = function () {
                 console.log(response);
             }
         });
-
-
     };
+
 
     d3.select("#edgeSave").on("click", function(){
         console.log("Selected link:", selectedGraph.selected_link);
@@ -852,13 +894,13 @@ var graphEditor = function () {
                                 function(){
                                     //console.log("in");
                                     console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
-                                    var annotations = "";
+                                    var annotations = [];
                                     for (var ai = 0; ai < response[i].nodes[j].exits[k].via.annots.length; ai++){
-                                        annotations = annotations + response[i].nodes[j].exits[k].via.annots[ai].obj + " ";
+                                        annotations.push(new Annotations(response[i].nodes[j].exits[k].via.annots[ai].obj, response[i].nodes[j].exits[k].via.annots[ai].pubmed));
                                         //annotations += response[i].nodes[j].exits[k].vai.annots[ai].obj;
                                     }
                                     //console.log("Annnots" , annotations)
-                                    return annotations.trim();
+                                    return annotations;
                                 }(),
                                 response[i].nodes[j].exits[k].via.species
                                 //j % 2 ===0 ?true: false

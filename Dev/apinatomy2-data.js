@@ -1533,6 +1533,13 @@ function Node(id, name, x, y, tree, fixed, location, locationtype){
     this.locationtype = locationtype;
 }
 
+//Annoation
+
+function Annotations(annotation, pubmedID){
+    this.annotation = annotation;
+    this.pubmedID = pubmedID;
+}
+
 //graph link
 function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations, species){
     this.source = source;
