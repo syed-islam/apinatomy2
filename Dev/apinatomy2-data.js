@@ -2057,8 +2057,6 @@ function Graph(id, name, nodes, links, rectangles) {
                 //console.log(rot);
                 if (rot < -90 || rot > 90 )
                     rot += 180;
-                if (d.edgeid === "7")
-                    console.log(rot);
                 return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ") rotate (" + rot + ")";
             });
 
@@ -2081,6 +2079,9 @@ function Graph(id, name, nodes, links, rectangles) {
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             boxlabels = svg.append('g').attr('class', 'graph');
 
+
+
+            console.log(graph.selected_link);
 
 
             //svg.selectAll("path.link").remove();
@@ -2448,6 +2449,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         $("#ins").text("Deselected Link:" + d.id);
                     } else {
                         graph.selected_link = mousedown_link;
+                        console.log(graph.selected_link);
                         $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
                     }
                     graph.selected_node = null;
