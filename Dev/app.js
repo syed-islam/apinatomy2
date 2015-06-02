@@ -205,12 +205,42 @@ var graphEditor = function () {
     })
 
 
-    d3.select("#assignRectangleLyph").on("click", function(){
-        selectedGraph.selected_rectangle.lyphID = $('#rectangleID').val().trim();
-        selectedGraph.selected_rectangle.lyphName = $('#rectangleName').val().trim();
-        console.log(selectedGraph.selected_rectangle)
-        refresh_graph();
+    d3.select("#assignRectangleLyph").on("click", function() {
+        //send ajax request
+        $.ajax
+        ({
+            context: this,
+            url: "http://open-physiology.org:" + serverPort + "/lyph/" +
+            $("#rectangleID").val().trim(),
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                console.log(response);
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Lyph not found", response);
+                    $('#userconsole').text(response.Error);
+                    $("#rectangleName").val("");
+                    return;
+                }
+
+
+                //selectedGraph.selected_rectangle.lyphID = $('#rectangleID').val().trim();
+                //selectedGraph.selected_rectangle.lyphName = $('#rectangleName').val().trim();
+                //console.log(selectedGraph.selected_rectangle)
+                selectedGraph.selected_rectangle.lyphID = response.id;
+                selectedGraph.selected_rectangle.lyphName = response.name;
+                selectedGraph.selected_rectangle.from = response.from;
+                selectedGraph.selected_rectangle.to = response.to;
+                refresh_graph();
+            }
+        })
     })
+
 
     d3.select("#searchRectangleLyph").on("click", function() {
 
@@ -718,7 +748,9 @@ var graphEditor = function () {
 
                     //load rectangles
                     for (var j =0; j < response[i].lyphs.length; j++){
-                        rectangles.push(new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, ""));
+                        var tmpRect = new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, "", response[i].lyphs[j].from, response[i].lyphs[j].to, response[i].lyphs[j].location);
+                        //tmpRect.location
+                        rectangles.push(tmpRect);
                     }
 
                     populateRectangleNames(rectangles);
@@ -1148,6 +1180,8 @@ var graphEditor = function () {
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
 
     }
+
+    //load_all_lyphs();
     load_all_materials();
 
 
