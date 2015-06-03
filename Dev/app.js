@@ -255,6 +255,9 @@ var graphEditor = function () {
 
 
     d3.select('#removeAnnotation').on('click', function (){
+
+        //TODO - currently causes a server crash.
+
        console.log('Remove Annotation Clicked');
         console.log(thelist.value);
         var clinicalIndexToRemove = thelist.value.split("|")[0];
@@ -401,10 +404,15 @@ var graphEditor = function () {
 
             console.log(selectedGraph.links[i].annotations);
                 selectedGraph.links[i].highlighted = false;
-            if (selectedGraph.links[i].annotations){
-                if (selectedGraph.links[i].annotations.indexOf($("#highlightAnnotation").val().trim()) > -1)
-                   selectedGraph.links[i].highlighted = true;
+
+            for (var j =0; j < selectedGraph.links[i].annotations.length; j++){
+                if (selectedGraph.links[i].annotations[j].annotation.indexOf($("#highlightAnnotation").val().trim()) > -1)
+                    selectedGraph.links[i].highlighted = true;
             }
+            //if (selectedGraph.links[i].annotations){
+            //    if (selectedGraph.links[i].annotations.indexOf($("#highlightAnnotation").val().trim()) > -1)
+            //       selectedGraph.links[i].highlighted = true;
+            //}
             //if (selectedGraph.links[i].annotations.contains($("#highlightAnnotation").val().trim()))
             //   selectedGraph.links[i].highlighted = true;
             //else
@@ -412,6 +420,9 @@ var graphEditor = function () {
         }
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
     })
+
+
+
 
     d3.select("#clearHighlight1").on("click", function() {
         clearHighlight();
