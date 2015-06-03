@@ -156,9 +156,11 @@ var graphEditor = function () {
         d3.select("#provenance").property("value", "");
         edge.species != null ? d3.select("#edgeSpecies").property("value", edge.species) : d3.select("#edgeSpecies").property("value", "");
         $('#thelist').empty();
-        for (var i = 0; i < edge.annotations.length; i ++){
-            //console.log(edge.annotations[i].annotation, edge.annotations[i].pubmedID.id);
-            $('#thelist').append('<option value='+  edge.annotations[i].annotation +"|"+ edge.annotations[i].pubmedID.id +'> ' + edge.annotations[i].annotation +" | "+ edge.annotations[i].pubmedID.id  +   "</option");
+        if(edge.annotation){
+            for (var i = 0; i < edge.annotations.length; i ++){
+                //console.log(edge.annotations[i].annotation, edge.annotations[i].pubmedID.id);
+                $('#thelist').append('<option value='+  edge.annotations[i].annotation +"|"+ edge.annotations[i].pubmedID.id +'> ' + edge.annotations[i].annotation +" | "+ edge.annotations[i].pubmedID.id  +   "</option");
+            }
         }
     }
 
