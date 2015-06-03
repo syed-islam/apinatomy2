@@ -1554,6 +1554,20 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     this.highlighted = highlighted;
     this.annotations = annotations;
     this.species = species;
+
+
+    this.getAnnotationIndexByID = function (id) {
+
+        if (!annotations || !annotations.length)
+            return;
+
+        for (var i =0; i < annotations.length; i++){
+            if (annoations[i].annotation === id){
+                return i;
+            }
+        }
+        return -1;
+    }
 }
 
 function Rectangle(id, x, y, width, height, lyphID, lyphName, from, to, location){

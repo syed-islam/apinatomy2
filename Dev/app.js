@@ -284,8 +284,14 @@ var graphEditor = function () {
                     console.log("Annotation Removal Error:" , response);
                     return;
                 }
-                $("#thelist").find("option[value='" + $("#thelist").val() + "']").remove();
+
                 console.log(response);
+
+                //Remove from the dropdown box
+                $("#thelist").find("option[value='" + $("#thelist").val() + "']").remove();
+
+                //Remove from the link structure.
+
             }
         });
     });
