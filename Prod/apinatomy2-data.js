@@ -1533,8 +1533,15 @@ function Node(id, name, x, y, tree, fixed, location, locationtype){
     this.locationtype = locationtype;
 }
 
+//Annoation
+
+function Annotations(annotation, pubmedID){
+    this.annotation = annotation;
+    this.pubmedID = pubmedID;
+}
+
 //graph link
-function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations){
+function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations, species){
     this.source = source;
     this.target = target;
     this.au = au;
@@ -1546,9 +1553,24 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     this.right = right;
     this.highlighted = highlighted;
     this.annotations = annotations;
+    this.species = species;
+
+
+    this.getAnnotationIndexByID = function (id) {
+
+        if (!annotations || !annotations.length)
+            return;
+
+        for (var i =0; i < annotations.length; i++){
+            if (annoations[i].annotation === id){
+                return i;
+            }
+        }
+        return -1;
+    }
 }
 
-function Rectangle(id, x, y, width, height, lyphID, lyphName){
+function Rectangle(id, x, y, width, height, lyphID, lyphName, from, to, location){
     this.id = id;
     this.x = x;
     this.y = y;
@@ -1556,7 +1578,11 @@ function Rectangle(id, x, y, width, height, lyphID, lyphName){
     this.height = height;
     this.lyphID = lyphID;
     this.lyphName = lyphName;
+    this.from = from;
+    this.to = to;
+    this.location = location;
 }
+
 
 
 //repository of Graphs
@@ -1657,6 +1683,15 @@ function Graph(id, name, nodes, links, rectangles) {
     this.getLinkIndexbyID = function (id){
         for (var i =0; i < links.length; i++){
             if (links[i].edgeid === id)
+                return i;
+        }
+        return -1;
+    }
+
+    this.getRectangleIndexByID = function (id){
+        console.log(id);
+        for (var i =0; i < rectangles.length; i++){
+            if (rectangles[i].id === id)
                 return i;
         }
         return -1;
@@ -1788,7 +1823,7 @@ function Graph(id, name, nodes, links, rectangles) {
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
 
-            //move all nodes related to the rectangle
+            //move all nodes related to the selected rectangle
 
             for (var i =0; i < nodes.length; i++){
                 if (nodes[i].location === d.id ){
@@ -1806,8 +1841,33 @@ function Graph(id, name, nodes, links, rectangles) {
                 }
             }
 
+            //move all contained rectangles.
+            for (var j =0; j < rectangles.length; j++){
+                console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
+                if (isContainedIn(d,rectangles[j])){
+                    console.log("true", rectangles[j]);
+                    rectangles[j].x = rectangles[j].x + (d3.event.x - offset[0] - d.x);
+                    rectangles[j].y = rectangles[j].y + (d3.event.y - offset[1] - d.y);
+
+
+                    //move nodes of the contained rectangle
+                    for (var k =0; k < nodes.length; k++){
+                        if (nodes[k].location === rectangles[j].id) {
+
+                            nodes[k].px = nodes[k].px + (d3.event.x - offset[0] - d.x);
+                            nodes[k].py = nodes[k].py + (d3.event.y - offset[1] - d.y);
+                            //console.log(d3.event.y - offset[1]- d.y)
+                        }
+                    }
+                }
+            }
+
+
+            //actually move the current rectangle.
             d.x = d3.event.x - offset[0];
             d.y = d3.event.y - offset[1];
+
+
 
 
             //d.y = d3.event.y;
@@ -1815,6 +1875,23 @@ function Graph(id, name, nodes, links, rectangles) {
             restart();
         }
 
+
+        function isContainedIn(container, item){
+            if (container === item) return false;
+
+            var p = item;
+
+            while(p){
+                if (p === container) return true;
+                if (p.location){
+                    p = rectangles[graph.getRectangleIndexByID(p.location)];
+                } else {
+                    return false;
+                }
+            }
+            return false;
+
+        }
 
 
 
@@ -1995,7 +2072,14 @@ function Graph(id, name, nodes, links, rectangles) {
             //    .attr("y", function(d){return ((d.source.y+ + d.target.y) /2) + 10;})
 
             auIcon.attr("transform", function (d) {
-                return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ")";
+                var rot = 0;
+                var dy = parseInt(d.target.y) - parseInt(d.source.y);
+                var dx = parseInt(d.target.x) - parseInt(d.source.x);
+                rot = Math.atan2(dy, dx) * 180/Math.PI;
+                //console.log(rot);
+                if (rot < -90 || rot > 90 )
+                    rot += 180;
+                return "translate(" + (d.target.x + d.source.x) / 2 + "," + (d.target.y + d.source.y) / 2 + ") rotate (" + rot + ")";
             });
 
             //restart();
@@ -2017,6 +2101,9 @@ function Graph(id, name, nodes, links, rectangles) {
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             boxlabels = svg.append('g').attr('class', 'graph');
 
+
+
+            //console.log(graph.selected_link);
 
 
             //svg.selectAll("path.link").remove();
@@ -2384,6 +2471,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         $("#ins").text("Deselected Link:" + d.id);
                     } else {
                         graph.selected_link = mousedown_link;
+                        console.log(graph.selected_link);
                         $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
                     }
                     graph.selected_node = null;
@@ -2692,10 +2780,74 @@ function Graph(id, name, nodes, links, rectangles) {
                     attachNodeToLyph("border");
                     break;
 
+                case 69:  //e - assign rectangle to rectangle.
+                    assignRectangleToRectange();
+                    break;
+
 
             }
         }
 
+        function assignRectangleToRectange(){
+            console.log("Assigning rectangle to rectangle");
+            //console.log(graph.selected_rectangle);
+            var smallestContainer =null;
+            var smallestContainerSize =0;
+
+
+            for (var i = 0; i < rectangles.length; i++){
+
+                if (graph.selected_rectangle.id === rectangles[i].id)
+                    continue;
+                console.log("checking containment against", rectangles[i]);
+
+                if (graph.selected_rectangle.x >= rectangles[i].x && graph.selected_rectangle.y >= rectangles[i].y
+                    && graph.selected_rectangle.width <= rectangles[i].width - (graph.selected_rectangle.x - rectangles[i].x)
+                    && graph.selected_rectangle.height <= rectangles[i].height - (graph.selected_rectangle.y - rectangles[i].y)
+                ){
+                    console.log(graph.selected_rectangle, "is contained in", rectangles[i]);
+                    if (smallestContainer == null || rectangles[i].height * rectangles[i].width < smallestContainerSize){
+                        smallestContainer = rectangles[i];
+                        smallestContainerSize = rectangles[i].height * rectangles[i].width;
+                    }
+                }
+            }
+
+            if (smallestContainer === null) {
+                console.log("No valid container found");
+            } else {
+                console.log(smallestContainer, " is the containing rectangle");
+
+                graph.selected_rectangle.location = smallestContainer.id;
+
+
+                //Send ajax call to update the lyph with the location information
+                $.ajax
+                ({
+                    url:
+                    "http://open-physiology.org:"+serverPort+"/editlyph/"+
+                    "?lyph="+ graph.selected_rectangle.lyphID +
+                    "&location=" + smallestContainer.lyphID,
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        response;
+
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Lyph Locaiton Assignmnet Error" , response);
+                            return;
+                        }
+
+                        console.log(response);
+                    }
+                });
+            }
+        }
 
         function attachNodeToLyph(locationType){
             //console.log(graph.selected_node.x, graph.selected_node.y);
