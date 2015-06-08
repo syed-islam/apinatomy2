@@ -1723,6 +1723,7 @@ function Graph(id, name, nodes, links, rectangles) {
             var rectangle_draw_started = null;
             var rectangle_x =  null;
             var rectangle_y = null;
+            var resize_rectangle = null;
             var drag_button_enabled = false;
 
 
@@ -1808,6 +1809,21 @@ function Graph(id, name, nodes, links, rectangles) {
 
         }
 
+
+
+
+        var resizeRectangle= function resizeRectangle(d){
+
+
+            var offset = [d3.event.x - d.x - d.width, d3.event.y - d.y - d.height];
+            resize_rectangle = d;
+
+            d.width = d3.event.x - offset[0] - d.x;
+            console.log(d.width);
+            //d.height = 50;
+            console.log(offset);
+
+        }
 
 
         var customRectdrag = d3.behavior.drag()
@@ -1905,7 +1921,8 @@ function Graph(id, name, nodes, links, rectangles) {
             labels = svg.append('g').attr('class', 'graph').selectAll('text'),
             auIcon = svg.append('g').attr('class','graph').selectAll('rect'),
             boxes = svg.append('g').attr('class', 'graph'),
-            boxlabels = svg.append('g').attr('class', 'graph')
+            boxlabels = svg.append('g').attr('class', 'graph'),
+            boxcorners = svg.append('g').attr('class', 'boxcorners');
             ;
 
 
@@ -2098,6 +2115,7 @@ function Graph(id, name, nodes, links, rectangles) {
             auIcon = svg.append('g').attr('class','graph').selectAll('rect');
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             boxlabels = svg.append('g').attr('class', 'graph');
+            boxcorners = svg.append('g').attr('class', 'graph').selectAll('g');
 
 
 
@@ -2112,6 +2130,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
             boxes = boxes.data(rectangles);
+            boxcorners = boxcorners.data(rectangles);
 
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
@@ -2134,13 +2153,30 @@ function Graph(id, name, nodes, links, rectangles) {
                 })
                 .call(customRectdrag)
                 .on('mousedown', function (d) {
-                    //console.log("rectangle click");
+                    console.log("rectangle click");
                     graph.selected_rectangle = d;
 
                     console.log("rectangle clicked", graph.selected_rectangle);
                     onSelectRectangle(d);
                     restart();
                 });
+
+            boxcorners = boxcorners.enter().append('svg:rect');
+            boxcorners.attr('x' ,function (d) {return d.x + d.width - 5})
+                .attr('y' ,function (d) {return d.y + d.height - 5})
+                .attr('width' ,function (d) {return 10})
+                .attr('height' ,function (d) {return 10})
+                .attr('class', 'boxcorners')
+                .on('mousedown', function (d) {
+                    console.log("resize click");
+                    resizeRectangle(d);
+                    restart();
+                });
+
+
+
+
+
 
 
 
@@ -2307,6 +2343,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr("x", function(d){return 0;})
                 .attr("y", function(d, i){ return ((i+1) * 5);})
                 //.attr("y", function (d, i) {
+                //    if (i ==0) prev =0; // reset the starting y for layers for each link
                 //    if (i ==0) prev =0; // reset the starting y for layers for each link
                 //    prev += d.thickness * layerHeight; //remember the relative Y coordinate of the current layer
                 //
@@ -2589,6 +2626,19 @@ function Graph(id, name, nodes, links, rectangles) {
             }
 
 
+            if (resize_rectangle){
+
+                var newWidth = (d3.mouse(this)[0] - resize_rectangle.x > 5) ? d3.mouse(this)[0] - resize_rectangle.x : 5 ;
+                var newHeight = (d3.mouse(this)[1] - resize_rectangle.y > 5) ? d3.mouse(this)[1] - resize_rectangle.y : 5 ;
+
+                resize_rectangle.width = newWidth;
+                resize_rectangle.height = newHeight;
+                console.log("Resizing rectangle", resize_rectangle.width)
+                restart();
+                return;
+            }
+
+
             if (!mousedown_node) return;
 
             if (drag_button_enabled) return;
@@ -2596,7 +2646,7 @@ function Graph(id, name, nodes, links, rectangles) {
             // update drag line
             drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
 
-            restart();
+            restart();r
         }
 
         function mouseup() {
@@ -2609,8 +2659,11 @@ function Graph(id, name, nodes, links, rectangles) {
 
             }
 
-
-
+            if (resize_rectangle){
+                console.log("Resizing done")
+                resize_rectangle = null;
+                restart();
+            }
 
 
 

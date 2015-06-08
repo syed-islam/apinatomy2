@@ -248,6 +248,15 @@ text.id {
     stroke-dasharray: 10,2;
 }
 
+.boxcorners {
+    fill: blue;
+    stroke: blue;
+    stroke-width: 2px;
+    fill-opacity: 0.5;
+    stroke-opacity: 0.6;
+    cursor: nesw-resize;
+}
+
 .ui-autocomplete-loading {
     background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
 }
