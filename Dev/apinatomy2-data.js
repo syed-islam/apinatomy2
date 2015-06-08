@@ -1813,16 +1813,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
         var resizeRectangle= function resizeRectangle(d){
-
-
-            var offset = [d3.event.x - d.x - d.width, d3.event.y - d.y - d.height];
             resize_rectangle = d;
-
-            d.width = d3.event.x - offset[0] - d.x;
-            console.log(d.width);
-            //d.height = 50;
-            console.log(offset);
-
         }
 
 
@@ -2119,28 +2110,16 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-            //console.log(graph.selected_link);
-
-
-            //svg.selectAll("path.link").remove();
-            //svg.selectall("").remove();
-            //path = svg.append('g').attr('class', 'graph');
-
-
-
-
             boxes = boxes.data(rectangles);
-            boxcorners = boxcorners.data(rectangles);
 
+            //Rendering labels for the boxes
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
                 .text( function (d) { if(d.lyphID) return d.lyphID + " - " + d.lyphName; })
 
-
-
+            //Rendering the boxes themselves
             boxes = boxes.enter().append('svg:rect');
-
             boxes.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y})
                 .attr('width' ,function (d) {return d.width})
@@ -2155,12 +2134,16 @@ function Graph(id, name, nodes, links, rectangles) {
                 .on('mousedown', function (d) {
                     console.log("rectangle click");
                     graph.selected_rectangle = d;
+                    graph.selected_link = null;
+                    graph.selected_node = null;
 
                     console.log("rectangle clicked", graph.selected_rectangle);
                     onSelectRectangle(d);
                     restart();
                 });
 
+            //Rendering corner boxes for resize
+            boxcorners = boxcorners.data(rectangles);
             boxcorners = boxcorners.enter().append('svg:rect');
             boxcorners.attr('x' ,function (d) {return d.x + d.width - 5})
                 .attr('y' ,function (d) {return d.y + d.height - 5})
@@ -2169,17 +2152,12 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr('class', 'boxcorners')
                 .on('mousedown', function (d) {
                     console.log("resize click");
+                    graph.selected_link = null;
+                    graph.selected_node = null;
+                    graph.selected_rectangle = d;
                     resizeRectangle(d);
                     restart();
                 });
-
-
-
-
-
-
-
-
 
 
 
@@ -2240,6 +2218,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         $("#ins").text("Selected node:" + d.id);
                     }
                     graph.selected_link = null;
+                    graph.selected_rectangle = null;
 
                     // reposition drag line
                     drag_line
@@ -2394,51 +2373,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
                     return   tooltip; })
 
-                //.style("stroke", function(d){
-                //            return "red";
-                //})
-                //.style("stroke-width", function(d){
-                //    return 2;
-                //})
-                //.attr("class", "layer")
-
-
-
-            //var au_layers = auIcon.enter().append("g");
-            //
-            //console.log(au_layers);
-            //    au_layers.selectAll(".layer")
-            //    .data(function (d){
-            //        if (d.au) {
-            //            for (var i = 0; i < d.au.layers.length; i++) {
-            //                d.au.layers[i].x = 0;
-            //                //console.log(d.au.layers[i]);
-            //                d.au.layers[i].y = (i + 1) * 10;
-            //            }
-            //            console.log("Updating layers:", d.au.layers);
-            //            return d.au.layers;
-            //        }
-            //        return [];
-            //    }).enter()
-            //    .append('text')
-            //    .attr("x", function(d, i) {d.x;/*return (d.source.y + d.target.y) / 2;*/ })
-            //    .attr("y", function(d, i ) {d.y; })
-            //    .attr("text-anchor", "middle")
-            //    .text(function(d) {return "help" });
-
-
-
-
-
-
-            //
-            //labels = labels.data(links);
-            //
-            //labels.enter().append('text')
-            //    .attr("x", function(d) { return (d.source.y + d.target.y) / 2; })
-            //    .attr("y", function(d) { return (d.source.x + d.target.x) / 2; })
-            //    .attr("text-anchor", "middle")
-            //    .text(function(d) {if (d.au) return d.au.id; });
 
 
             // path (link) group
@@ -2449,12 +2383,9 @@ function Graph(id, name, nodes, links, rectangles) {
             path = path.classed('selected', function (d) {
                 return d === graph.selected_link;
             })
-                //.style('marker-start', function (d) {
-                //    return d.left ? 'url(#start-arrow)' : '';
-                //})
-                //.style('marker-end', function (d) {
-                //    return d.right ? 'url(#end-arrow)' : '';
-                //});
+
+
+
             pathoverlay = pathoverlay.classed('selected', function (d) {
                 return d === graph.selected_link;
             })
@@ -2482,21 +2413,7 @@ function Graph(id, name, nodes, links, rectangles) {
                .style('stroke', function (d) {
                    return d3.rgb(colors(d.type));
                })
-                //.attr('d', function (d) {
-                //    var deltaX = d.target.x - d.source.x,
-                //        deltaY = d.target.y - d.source.y,
-                //        dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-                //        normX = deltaX / dist,
-                //        normY = deltaY / dist,
-                //        sourcePadding = 12,
-                //        targetPadding = 12,
-                //        sourceX = d.source.x + (sourcePadding * normX),
-                //        sourceY = d.source.y + (sourcePadding * normY),
-                //        targetX = d.target.x - (targetPadding * normX),
-                //        targetY = d.target.y - (targetPadding * normY);
-                //    return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
-                //})
-                .on('mousedown', function (d) {
+               .on('mousedown', function (d) {
                     if (d3.event.ctrlKey) return;
 
                     // select link
@@ -2510,6 +2427,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
                     }
                     graph.selected_node = null;
+                   graph.selected_rectangle = null;
                     onSelectLink(d);
                     restart();
                 })
@@ -2527,20 +2445,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 })
             ;
-
-            //path.append('text')
-            //    .attr('x', function (d) {
-            //        return (d.target.x + d.source.x)/2;
-            //    })
-            //    .attr('y', function (d) {
-            //        return (d.target.y + d.source.y)/2;
-            //    })
-            //    .attr('class', 'au')
-            //    .text(function (d) {
-            //        //return "test";
-            //        if (d.au)
-            //            return d.au.id;
-            //    });
 
 
             // remove old links
@@ -2633,7 +2537,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 resize_rectangle.width = newWidth;
                 resize_rectangle.height = newHeight;
-                console.log("Resizing rectangle", resize_rectangle.width)
+                //console.log("Resizing rectangle", resize_rectangle.width)
                 restart();
                 return;
             }
