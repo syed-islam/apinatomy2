@@ -274,7 +274,7 @@ function Layer(id, name, thickness, materials, colour) {
     //console.log(this.id, this.name, this.thickness, this.materials, this.colour);
 
 
-    this.create_on_server = function (AU, index){
+    this.create_on_server = function (cb){
         //URL for accessing create layer api
         var url = "http://open-physiology.org:"+ serverPort + "/makelayer/";
 
@@ -290,46 +290,44 @@ function Layer(id, name, thickness, materials, colour) {
         url += "?name="+ this.name;
 
 
+
+
         //function ajax_create_layer () {
         //   this.createLayerOnServer = function createLayerOnServer() {
-        $.ajax
+        return P.resolve($.ajax
         ({
-            context: this,
             url: url,
 
             jsonp: "callback",
 
-            dataType: "jsonp",
+            dataType: "jsonp"
+        })).then(function (response) {
 
-
-            success: function (response) {
-                response;
-
-                if (response.hasOwnProperty("Error")) {
-                    console.log("Layer creation error:", response);
-                    return;
-                }
-
-                console.log("Layer created successfully:", response);
-
-                //console.log("Layer Created", response);
-
-                //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
-                this.id = response.id;
-
-                //TODO bad design. Ajax chaining is unpredictable in this case.
-                // Once the layer is successfuly created we attach it the AU where its meant to go.
-                //console.log(index);
-                AU.addLayerAt(this,index);
-
-
-
-                //TODO bad design - Use of global function. Use callback function instead.
-                rehashaueditor(this);
-                //}
-                ;
+            if (response.hasOwnProperty("Error")) {
+                throw response.Error;
             }
-        });
+
+            console.log("Layer created successfully:", response);
+
+            //console.log("Layer Created", response);
+
+            //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
+            this.id = response.id;
+
+            ////TODO bad design. Ajax chaining is unpredictable in this case.
+            //// Once the layer is successfuly created we attach it the AU where its meant to go.
+            ////console.log(index);
+            //;
+
+
+
+            //TODO bad design - Use of global function. Use callback function instead.
+            //rehashaueditor(this);
+            //}
+
+
+            return response;
+        }.bind(this));
         //}
     }
 

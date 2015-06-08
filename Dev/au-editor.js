@@ -6,6 +6,118 @@ var rehashaueditor_onCurrentLayer; // TODO BAD DESIGN
 var auEditor = function () {
 
 
+
+
+
+
+
+    var config = {
+        content: [{
+            type: 'row',
+            content: [
+                {
+                    type:'component',
+                    componentName: 'left',
+                    componentState: {  },
+                    width: 25,
+                    isClosable: false
+                },
+                {
+                    type:'component',
+                    componentName: 'center',
+                    componentState: {  },
+                    width: 50,
+                    isClosable: false
+                },
+                {
+                    type:'column',
+                    componentState: {  },
+                    width: 25,
+                    content: [
+                        {
+                            type:'component',
+                            componentName: 'Lyph Templates',
+                            componentState: {  },
+                            width: 25,
+                            isClosable: false
+                        },
+                        {
+                            type:'component',
+                            componentName: 'Material Pallet',
+                            componentState: {  },
+                            width: 25,
+                            isClosable: false
+                        },
+                        {
+                            type:'component',
+                            componentName: 'Lyph Pallet',
+                            componentState: {  },
+                            width: 25,
+                            isClosable: false
+                        },
+                        {
+                            type:'component',
+                            componentName: 'Bunch of other stuff',
+                            componentState: {  },
+                            width: 25,
+                            isClosable: false
+                        },
+                        {
+                            type:'component',
+                            componentName: 'Whatever',
+                            componentState: {  },
+                            width: 25,
+                            isClosable: false
+                        }
+                    ]
+                }
+            ]
+        }]
+    };
+
+    var myLayout = new GoldenLayout( config, $('#app-body') );
+
+    myLayout.registerComponent( 'left', function( container, state ){
+        container.getElement().css('position', 'relative').append($('#left-panel').detach());
+    });
+    myLayout.registerComponent( 'center', function( container, state ){
+        container.getElement().css('position', 'relative').append($('#chart').detach());
+    });
+    myLayout.registerComponent( 'Lyph Templates', function( container, state ){
+        container.getElement().css({
+            overflowY: 'scroll'
+        }).append($('#lyph-templates').detach());
+    });
+    myLayout.registerComponent( 'Material Pallet', function( container, state ){
+        container.getElement().css({
+            overflowY: 'scroll'
+        }).append($('#material-pane').detach());
+    });
+    myLayout.registerComponent( 'Lyph Pallet', function( container, state ){
+        container.getElement().css({
+            overflowY: 'scroll'
+        }).append($('#au-pane2').detach());
+    });
+    myLayout.registerComponent( 'Bunch of other stuff', function( container, state ){
+        container.getElement().css({
+            overflowY: 'scroll'
+        }).append($('#filter-thing').detach());
+    });
+    myLayout.registerComponent( 'Whatever', function( container, state ){
+        container.getElement().css({
+            overflowY: 'scroll'
+        }).append($('#repos').detach());
+    });
+
+    myLayout.init();
+
+
+
+
+
+
+
+
     var auRepo =  new AsymmetricUnitRepo([]);
     var layerRepo = new LayerRepo([]);
     var materialRepo = new MaterialRepo([]);
@@ -875,7 +987,19 @@ var auEditor = function () {
 
 
         //TODO very bad way of chaining on Ajax return calls.
-        newLayer.create_on_server(selectedAU, layerInsertLocation());
+        newLayer.create_on_server().then(function (/*response*/) {
+            return selectedAU.addLayerAt(newLayer, layerInsertLocation());
+        }).then(function (/*response*/) {
+            rehashaueditor(newLayer);
+        }).catch(function (err) {
+            console.error("Error:", err);
+        });
+
+
+
+
+
+
 
         // Add blank layer to layer repo
         if (layerRepo){
