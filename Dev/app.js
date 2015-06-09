@@ -527,6 +527,7 @@ var graphEditor = function () {
     }
 
     d3.select("#graphSave").on("click",function(){
+        $("#graphSave").css('color','');
         var actualSelectedGraphIndex = graphRepo.getIndexByID(selectedGraph.id);
         //console.log(actualSelectedGraphIndex);
 
@@ -707,6 +708,8 @@ var graphEditor = function () {
 
 
     d3.select("#edgeSave").on("click", function(){
+
+
 
         console.log("Selected link:", selectedGraph.selected_link);
         console.log("Selected rect:", selectedGraph.selected_rectangle);

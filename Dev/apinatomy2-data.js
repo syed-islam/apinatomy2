@@ -2573,6 +2573,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mouseup() {
 
+            console.log($('graphSave'))
+            $('#graphSave').css('color','red');
+
 
             if (rectangle_draw){
                 rectangle_draw = false;
