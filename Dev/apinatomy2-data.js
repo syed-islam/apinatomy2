@@ -2645,6 +2645,11 @@ function Graph(id, name, nodes, links, rectangles) {
                         spliceLinksForNode(graph.selected_node);
                     } else if (graph.selected_link) {
                         links.splice(links.indexOf(graph.selected_link), 1);
+                    } else if (graph.selected_rectangle){
+                        console.log(graph.selected_rectangle);
+                        console.log(rectangles);
+                        rectangles.splice(rectangles.indexOf(graph.selected_rectangle), 1)
+                        console.log(rectangles);
                     }
                     graph.selected_link = null;
                     graph.selected_node = null;
