@@ -133,16 +133,37 @@ var graphEditor = function () {
     }
 
     var onSelectLink = function(d){
-        //console.log(d)
-        if (d){
+
+        if (d instanceof Link){
             //Update link parameters
             updateEdgeParameters(d);
             selectedAU = d.au;
             updateAUParameters(selectedAU);
             $('#userconsole').text("Edge " + d.edgeid + " selected");
-
-
         }
+
+        if (d instanceof Rectangle){
+            console.log("Taking Parameter from Rectangle");
+            updateRectangleParameters(d);
+        }
+    }
+
+
+    function updateRectangleParameters(rect){
+        rect.lyphID != null ? d3.select("#edgeID").property("value", rect.lyphID) : d3.select("#edgeID").property("value", "")
+        rect.lyphName != null ? d3.select("#edgeDescription").property("value", rect.lyphName) : d3.select("#edgeDescription").property("value", "");
+        rect.type != null ? d3.select("#edgeType").property("value", rect.type) : d3.select("#edgeType").property("value", "")
+        rect.species != null ? d3.select("#edgeSpecies").property("value", rect.species) : d3.select("#edgeSpecies").property("value", "");
+        d3.select("#edgeAnnotation").property("value", "");
+        d3.select("#provenance").property("value", "");
+        $('#thelist').empty();
+        if(rect.annotation){
+            for (var i = 0; i < rect.annotations.length; i ++){
+                $('#thelist').append('<option value='+  rect.annotations[i].annotation +"|"+ rect.annotations[i].pubmedID.id +'> ' + rect.annotations[i].annotation +" | "+ rect.annotations[i].pubmedID.id  +   "</option");
+            }
+        }
+
+
     }
 
     function updateEdgeParameters(edge){
@@ -250,6 +271,8 @@ var graphEditor = function () {
                 selectedGraph.selected_rectangle.lyphName = response.name;
                 selectedGraph.selected_rectangle.from = response.from;
                 selectedGraph.selected_rectangle.to = response.to;
+                selectedGraph.selected_rectangle.fma = response.fma;
+                selectedGraph.selected_rectangle.species = response.species;
                 refresh_graph();
             }
         })
@@ -873,7 +896,6 @@ var graphEditor = function () {
                     //load rectangles
                     for (var j =0; j < response[i].lyphs.length; j++){
                         var tmpRect = new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, "", response[i].lyphs[j].from, response[i].lyphs[j].to, response[i].lyphs[j].location);
-                        //tmpRect.location
                         rectangles.push(tmpRect);
                     }
 
@@ -1292,7 +1314,7 @@ var graphEditor = function () {
 
                 //console.log("LayerRepo:" , layerRepo);
 
-                load_all_graphs();
+
 
             }
         });
@@ -1306,8 +1328,41 @@ var graphEditor = function () {
 
     }
 
-    //load_all_lyphs();
+
+
+    function load_all_lyphs (){
+        console.log("Loading existing lyphs")
+        $.ajax
+        ({
+            context: this,
+
+            url: "http://open-physiology.org:" + serverPort + "/all_lyphs/",
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                console.log(response);
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in getting all lyphs", response)
+                    return;
+                }
+
+                //
+                console.log(response);
+
+
+            }
+        })
+    }
+
+
+    load_all_lyphs();
     load_all_materials();
+    load_all_graphs();
 
 
 }();

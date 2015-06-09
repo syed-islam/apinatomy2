@@ -258,10 +258,27 @@ function LayerRepo(layers){
         return -1;
     }
 
-
-
-
 }
+
+
+
+//LinkRepo - LyphRepo
+function LinkRepo (links){
+    this.links = links;
+
+
+    this.getIndexByID = function (id){
+        for (var i =0; i < links.length; i++){
+            if (links[i].id == id) return i;
+        }
+        return -1;
+    }
+
+    this.addAt = function (link, index){
+        links.splice(index, 0, link);
+    }
+}
+
 
 //create layer
 function Layer(id, name, thickness, materials, colour) {
@@ -1538,6 +1555,9 @@ function Annotations(annotation, pubmedID){
     this.pubmedID = pubmedID;
 }
 
+
+
+
 //graph link
 function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations, species){
     this.source = source;
@@ -2138,7 +2158,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     graph.selected_node = null;
 
                     console.log("rectangle clicked", graph.selected_rectangle);
-                    onSelectRectangle(d);
+                    onSelectLink(d);
                     restart();
                 });
 
@@ -2550,7 +2570,7 @@ function Graph(id, name, nodes, links, rectangles) {
             // update drag line
             drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
 
-            restart();r
+            restart();
         }
 
         function mouseup() {
