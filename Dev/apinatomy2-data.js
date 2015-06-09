@@ -2134,7 +2134,7 @@ function Graph(id, name, nodes, links, rectangles) {
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
-                .text( function (d) { if(d.lyph.id) return d.lyph.id + " - " + d.lyph.name; })
+                .text( function (d) { if(d.lyph && d.lyph.id) return d.lyph.id + " - " + d.lyph.name; return ""})
 
             //Rendering the boxes themselves
             boxes = boxes.enter().append('svg:rect');
@@ -2855,12 +2855,12 @@ function Graph(id, name, nodes, links, rectangles) {
                     if ((boundingwidth * boundingheight) < boundingRectangleSize){
                         boundingRectangleSize = boundingwidth * boundingheight;
                         boundingRectangleID = rectangles[i].id;
-                        boundingRectangleLyphID = rectangles[i].lyphID;
+                        boundingRectangleLyphID = rectangles[i].lyph.id;
                     }
                 } else {
                     boundingRectangleSize = boundingwidth * boundingheight;
                     boundingRectangleID = rectangles[i].id;
-                    boundingRectangleLyphID = rectangles[i].lyphID;
+                    boundingRectangleLyphID = rectangles[i].lyph.id;
                 }
 
             }

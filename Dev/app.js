@@ -148,21 +148,25 @@ var graphEditor = function () {
         if (d instanceof Rectangle){
             console.log("Taking Parameter from Rectangle");
 
-            updateAUParameters(d.lyph.template);
+            if (d.lyph && d.lyph.template)
+                updateAUParameters(d.lyph.template);
+            else
+                updateAUParameters(null);
             updateRectangleParameters(d);
         }
     }
 
 
     function updateRectangleParameters(rect){
-        rect.lyph.id != null ? d3.select("#edgeID").property("value", rect.lyph.id) : d3.select("#edgeID").property("value", "")
-        rect.lyph.name != null ? d3.select("#edgeDescription").property("value", rect.lyph.name) : d3.select("#edgeDescription").property("value", "");
-        rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "")
-        rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "");
+
+        rect.lyph && rect.lyph.id != null ? d3.select("#edgeID").property("value", rect.lyph.id) : d3.select("#edgeID").property("value", "")
+        rect.lyph && rect.lyph.name != null ? d3.select("#edgeDescription").property("value", rect.lyph.name) : d3.select("#edgeDescription").property("value", "");
+        rect.lyph && rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "")
+        rect.lyph && rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "");
         d3.select("#edgeAnnotation").property("value", "");
         d3.select("#provenance").property("value", "");
         $('#thelist').empty();
-        if(rect.lyph.annots){
+        if(rect.lyph && rect.lyph.annots){
             console.log(rect.lyph.annots)
             for (var i = 0; i < rect.lyph.annots.length; i ++){
                 console.log(rect.lyph.annots[i].obj );
@@ -537,7 +541,7 @@ var graphEditor = function () {
         console.log(selectedGraph);
 
         for (var i =0; i < selectedGraph.rectangles.length; i++){
-            query += "&lyph"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].lyphID)
+            query += "&lyph"+ (i + 1) +"="+  (selectedGraph.rectangles[i].lyph ? encodeURIComponent(selectedGraph.rectangles[i].lyph.id) : "null");
             query += "&lx"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].x)
             query += "&ly"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].y)
             query += "&width"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].width)
@@ -700,117 +704,217 @@ var graphEditor = function () {
     };
 
 
+
+
     d3.select("#edgeSave").on("click", function(){
+
         console.log("Selected link:", selectedGraph.selected_link);
-        var actualEdge = selectedGraph.selected_link;
-        var edgeType = $("#edgeType").val().trim();
-        var edgeName = $("#edgeDescription").val().trim();
-        var fromNode = selectedGraph.selected_link.source ;
-        var toNode = selectedGraph.selected_link.target;
-        var edgeLyphID = $("#auID").val().trim();
-        var lyphSpecies = $("#edgeSpecies").val().trim();
+        console.log("Selected rect:", selectedGraph.selected_rectangle);
+
+        if (selectedGraph.selected_link && selectedGraph.selected_rectangle === null){
+
+            var actualEdge = selectedGraph.selected_link;
+            var edgeType = $("#edgeType").val().trim();
+            var edgeName = $("#edgeDescription").val().trim();
+            var fromNode = selectedGraph.selected_link.source ;
+            var toNode = selectedGraph.selected_link.target;
+            var edgeLyphID = $("#auID").val().trim();
+            var lyphSpecies = $("#edgeSpecies").val().trim();
 
 
-        console.log("EdgeSave:", edgeType, edgeName, fromNode, toNode, edgeLyphID);
+            console.log("EdgeSave:", edgeType, edgeName, fromNode, toNode, edgeLyphID);
 
-        //Update the local data
-        selectedGraph.selected_link.au = auRepo.auSet[auRepo.getIndexByID($("#auID").val().trim())];
-        selectedGraph.selected_link.type = $("#edgeType").val().trim();
-        selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
-        selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
-        selectedGraph.selected_link.species = $("#edgeSpecies").val().trim();
-
-
-
-        //ajax call to check if lyph already exists.
-
-        var URL = "http://open-physiology.org:" + serverPort + "/lyph/" +
-             encodeURIComponent($("#edgeID").val().trim());
-        $.ajax
-        ({
-            url: URL,
-
-            jsonp: "callback",
-
-            dataType: "jsonp",
-
-
-            success: function (response) {
-                console.log(response);
+            //Update the local data
+            selectedGraph.selected_link.au = auRepo.auSet[auRepo.getIndexByID($("#auID").val().trim())];
+            selectedGraph.selected_link.type = $("#edgeType").val().trim();
+            selectedGraph.selected_link.description = $("#edgeDescription").val().trim();
+            selectedGraph.selected_link.annotations = $("#edgeAnnotation").val().trim();
+            selectedGraph.selected_link.species = $("#edgeSpecies").val().trim();
 
 
 
-                if (response.hasOwnProperty("Error")) {
-                    console.log("Lyph Doesn't Exist:" , response);
+            //ajax call to check if lyph already exists.
 
-                    //create new lyph
-                    var URL2 =  "http://open-physiology.org:"+serverPort+"/makelyph/?"
-                    URL2 += "type="+ encodeURIComponent($("#edgeType").val().trim())+
-                    "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
-                    "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)+
-                    "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)+
-                    "&template="+ encodeURIComponent($("#auID").val().trim()) +
-                    "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+            var URL = "http://open-physiology.org:" + serverPort + "/lyph/" +
+                encodeURIComponent($("#edgeID").val().trim());
+            $.ajax
+            ({
+                url: URL,
 
-                } else {
-                    console.log("Lyph Exists");
+                jsonp: "callback",
 
-                    // edit exiting lyph
-                    var URL2 =  "http://open-physiology.org:"+serverPort+"/editlyph/"
-                    URL2+= "?lyph=" + response.id;
-                    URL2 += "&type="+ encodeURIComponent($("#edgeType").val().trim())+
-                    "&name="+ encodeURIComponent($("#edgeDescription").val().trim())+
-                    "&template="+ encodeURIComponent($("#auID").val().trim()) +
-                    "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+                dataType: "jsonp",
+
+
+                success: function (response) {
+                    console.log(response);
+
+
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Lyph Doesn't Exist:" , response);
+
+                        //create new lyph
+                        var URL2 =  "http://open-physiology.org:"+serverPort+"/makelyph/?"
+                        URL2 += "type="+ encodeURIComponent($("#edgeType").val().trim())
+                        URL2 +=  "&name="+ encodeURIComponent($("#edgeDescription").val().trim())
+                        URL2 +=  "&from="+ encodeURIComponent(selectedGraph.selected_link.source.name)
+                        URL2 +=  "&to="+ encodeURIComponent(selectedGraph.selected_link.target.name)
+                        if ($("#auID").val().trim() != "")
+                            URL2 +=  "&template="+ encodeURIComponent($("#auID").val().trim())
+                        URL2 +=  "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+
+                    } else {
+                        console.log("Lyph Exists");
+
+                        // edit exiting lyph
+                        var URL2 =  "http://open-physiology.org:"+serverPort+"/editlyph/"
+                        URL2+= "?lyph=" + response.id;
+                        URL2 += "&type="+ encodeURIComponent($("#edgeType").val().trim())
+                        URL2 += "&name="+ encodeURIComponent($("#edgeDescription").val().trim())
+                        if ($("#auID").val().trim() != "")
+                            URL2 +=  "&template="+ encodeURIComponent($("#auID").val().trim())
+                        URL2 += "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+                    }
+
+
+                    // ajax call to create a lyphedge
+
+
+                    console.log(URL2);
+
+                    $.ajax
+                    ({
+                        url: URL2,
+
+                        jsonp: "callback",
+
+                        dataType: "jsonp",
+
+
+                        success: function (response) {
+                            response;
+
+
+
+                            if (response.hasOwnProperty("Error")) {
+                                console.log("Edge creation error:" , response);
+                                return;
+                            }
+
+                            console.log("Response:", response);
+                            selectedGraph.selected_link.edgeid = response.id;
+
+                            addEdgeAnnotations(response.id, $("#edgeAnnotation").val().trim() );
+                            //actualEdge.edgeid = response.id;
+                            refresh_graph();
+                            updateEdgeParameters(selectedGraph.selected_link);
+                        }
+                    });
+
+
+
+
+                    //console.log("Response:", response);
+                    //selectedGraph.selected_link.edgeid = response.id;
+                    //
+                    //addEdgeAnnotations(response.id, $("#edgeAnnotation").val().trim() );
+                    ////actualEdge.edgeid = response.id;
+                    //refresh_graph();
+                    //updateEdgeParameters(selectedGraph.selected_link);
+                }
+            });
+        } else if (selectedGraph.selected_link === null && selectedGraph.selected_rectangle) {
+            var actualRect = selectedGraph.selected_rectangle;
+            var edgeType = $("#edgeType").val().trim();
+            var edgeName = $("#edgeDescription").val().trim();
+            var edgeLyphID = $("#auID").val().trim();
+            var lyphSpecies = $("#edgeSpecies").val().trim();
+
+
+            //check if lyphs already exists
+            var URL = "http://open-physiology.org:" + serverPort + "/lyph/" +
+                encodeURIComponent($("#edgeID").val().trim());
+            $.ajax
+            ({
+                url: URL,
+
+                jsonp: "callback",
+
+                dataType: "jsonp",
+
+
+                success: function (response) {
+                    console.log(response);
+
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Lyph Doesn't Exist:", response);
+
+                        //create new lyph
+                        var URL2 = "http://open-physiology.org:" + serverPort + "/makelyph/?"
+                        URL2 += "type=" + encodeURIComponent($("#edgeType").val().trim())
+                        URL2 += "&name=" + encodeURIComponent($("#edgeDescription").val().trim())
+                        URL2 += "&from=new"
+                        URL2 += "&to=new"
+                        if ($("#auID").val().trim() != "")
+                            URL2 += "&template=" + encodeURIComponent($("#auID").val().trim())
+                        URL2 += "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+
+                    } else {
+                        console.log("Lyph Exists");
+
+                        // edit exiting lyph
+                        var URL2 = "http://open-physiology.org:" + serverPort + "/editlyph/"
+                        URL2 += "?lyph=" + response.id;
+                        URL2 += "&type=" + encodeURIComponent($("#edgeType").val().trim())
+                        URL2 += "&name=" + encodeURIComponent($("#edgeDescription").val().trim())
+                        if ($("#auID").val().trim() != "")
+                            URL2 += "&template=" + encodeURIComponent($("#auID").val().trim())
+                        URL2 += "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+                    }
+
+
+                    // ajax call to create a lyphedge
+
+
+                    console.log(URL2);
+
+                    $.ajax
+                    ({
+                        url: URL2,
+
+                        jsonp: "callback",
+
+                        dataType: "jsonp",
+
+
+                        success: function (response) {
+                            response;
+
+
+                            if (response.hasOwnProperty("Error")) {
+                                console.log("Edge creation error:", response);
+                                return;
+                            }
+
+                            console.log("Response:", response);
+                            selectedGraph.selected_rectangle.lyph = response;
+
+                            //actualEdge.edgeid = response.id;
+                            refresh_graph();
+                            //updateRectangleParameter(selectedGraph.selected_rectangle);
+                            onSelectLink(selectedGraph.selected_rectangle)
+                        }
+                    });
+
+
                 }
 
-
-                // ajax call to create a lyphedge
-
-
-                console.log(URL2);
-
-                $.ajax
-                ({
-                    url: URL2,
-
-                    jsonp: "callback",
-
-                    dataType: "jsonp",
-
-
-                    success: function (response) {
-                        response;
-
-
-
-                        if (response.hasOwnProperty("Error")) {
-                            console.log("Edge creation error:" , response);
-                            return;
-                        }
-
-                        console.log("Response:", response);
-                        selectedGraph.selected_link.edgeid = response.id;
-
-                        addEdgeAnnotations(response.id, $("#edgeAnnotation").val().trim() );
-                        //actualEdge.edgeid = response.id;
-                        refresh_graph();
-                        updateEdgeParameters(selectedGraph.selected_link);
-                    }
-                });
-
-
-
-
-                //console.log("Response:", response);
-                //selectedGraph.selected_link.edgeid = response.id;
-                //
-                //addEdgeAnnotations(response.id, $("#edgeAnnotation").val().trim() );
-                ////actualEdge.edgeid = response.id;
-                //refresh_graph();
-                //updateEdgeParameters(selectedGraph.selected_link);
-            }
-        });
+            })
+        } else {
+            console.log("Selection of Lyph ambigious")
+        }
 
 
     });
