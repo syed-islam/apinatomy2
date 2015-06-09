@@ -277,6 +277,7 @@ function LinkRepo (links){
     this.addAt = function (link, index){
         links.splice(index, 0, link);
     }
+
 }
 
 
@@ -1588,16 +1589,13 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     }
 }
 
-function Rectangle(id, x, y, width, height, lyphID, lyphName, from, to, location){
+function Rectangle(id, x, y, width, height, lyph, location){
     this.id = id;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.lyphID = lyphID;
-    this.lyphName = lyphName;
-    this.from = from;
-    this.to = to;
+    this.lyph = lyph;
     this.location = location;
 }
 
@@ -2136,7 +2134,7 @@ function Graph(id, name, nodes, links, rectangles) {
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
-                .text( function (d) { if(d.lyphID) return d.lyphID + " - " + d.lyphName; })
+                .text( function (d) { if(d.lyph.id) return d.lyph.id + " - " + d.lyph.name; })
 
             //Rendering the boxes themselves
             boxes = boxes.enter().append('svg:rect');
@@ -2790,19 +2788,21 @@ function Graph(id, name, nodes, links, rectangles) {
 
             if (smallestContainer === null) {
                 console.log("No valid container found");
-            } else {
+                graph.selected_rectangle.location = null;
+            }
+            else {
                 console.log(smallestContainer, " is the containing rectangle");
 
                 graph.selected_rectangle.location = smallestContainer.id;
-
+            }
 
                 //Send ajax call to update the lyph with the location information
                 $.ajax
                 ({
                     url:
                     "http://open-physiology.org:"+serverPort+"/editlyph/"+
-                    "?lyph="+ graph.selected_rectangle.lyphID +
-                    "&location=" + smallestContainer.lyphID,
+                    "?lyph="+ graph.selected_rectangle.lyph.id +
+                    "&location=" + graph.selected_rectangle.location,
 
                     jsonp: "callback",
 
@@ -2812,7 +2812,6 @@ function Graph(id, name, nodes, links, rectangles) {
                     success: function (response) {
                         response;
 
-
                         if (response.hasOwnProperty("Error")) {
                             console.log("Lyph Locaiton Assignmnet Error" , response);
                             return;
@@ -2821,7 +2820,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         console.log(response);
                     }
                 });
-            }
+            //}
         }
 
         function attachNodeToLyph(locationType){

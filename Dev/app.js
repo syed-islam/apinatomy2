@@ -6,6 +6,8 @@ var selectedAU = null;
 var graphEditor = function () {
 
 
+
+
     $('#userconsole').text("Hello, Welcome to ApiNATOMY 2.0");
 
 
@@ -47,6 +49,7 @@ var graphEditor = function () {
     var height = 580;
     var auRepoVP = new VisualParameters("horizontal", 30, 5, panelWidth, panelHeight, 0);
     var graphRepoVP = new VisualParameters("horizontal", 5, 20, panelWidth, panelHeight, 0);
+
 
 
     //Creating the required svgs for the page
@@ -144,26 +147,29 @@ var graphEditor = function () {
 
         if (d instanceof Rectangle){
             console.log("Taking Parameter from Rectangle");
+
+            updateAUParameters(d.lyph.template);
             updateRectangleParameters(d);
         }
     }
 
 
     function updateRectangleParameters(rect){
-        rect.lyphID != null ? d3.select("#edgeID").property("value", rect.lyphID) : d3.select("#edgeID").property("value", "")
-        rect.lyphName != null ? d3.select("#edgeDescription").property("value", rect.lyphName) : d3.select("#edgeDescription").property("value", "");
-        rect.type != null ? d3.select("#edgeType").property("value", rect.type) : d3.select("#edgeType").property("value", "")
-        rect.species != null ? d3.select("#edgeSpecies").property("value", rect.species) : d3.select("#edgeSpecies").property("value", "");
+        rect.lyph.id != null ? d3.select("#edgeID").property("value", rect.lyph.id) : d3.select("#edgeID").property("value", "")
+        rect.lyph.name != null ? d3.select("#edgeDescription").property("value", rect.lyph.name) : d3.select("#edgeDescription").property("value", "");
+        rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "")
+        rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "");
         d3.select("#edgeAnnotation").property("value", "");
         d3.select("#provenance").property("value", "");
         $('#thelist').empty();
-        if(rect.annotation){
-            for (var i = 0; i < rect.annotations.length; i ++){
-                $('#thelist').append('<option value='+  rect.annotations[i].annotation +"|"+ rect.annotations[i].pubmedID.id +'> ' + rect.annotations[i].annotation +" | "+ rect.annotations[i].pubmedID.id  +   "</option");
+        if(rect.lyph.annots){
+            console.log(rect.lyph.annots)
+            for (var i = 0; i < rect.lyph.annots.length; i ++){
+                console.log(rect.lyph.annots[i].obj );
+                console.log(rect.lyph.annots[i].pubmed.id );
+                $('#thelist').append('<option value='+  rect.lyph.annots[i].obj +"|"+ rect.lyph.annots[i].pubmed.id +'> ' + rect.lyph.annots[i].obj +" | "+ rect.lyph.annots[i].pubmed.id +   "</option");
             }
         }
-
-
     }
 
     function updateEdgeParameters(edge){
@@ -895,9 +901,12 @@ var graphEditor = function () {
 
                     //load rectangles
                     for (var j =0; j < response[i].lyphs.length; j++){
-                        var tmpRect = new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].id, "", response[i].lyphs[j].from, response[i].lyphs[j].to, response[i].lyphs[j].location);
+                        console.log(response[i].lyphs[j].lyph);
+                        var tmpRect = new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].lyph, response[i].lyphs[j].location);
                         rectangles.push(tmpRect);
                     }
+
+                    console.log("Loaded Rectangles", rectangles);
 
                     populateRectangleNames(rectangles);
 
@@ -1352,7 +1361,7 @@ var graphEditor = function () {
                 }
 
                 //
-                console.log(response);
+                console.log("Lyphs", response);
 
 
             }
