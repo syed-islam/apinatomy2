@@ -27,24 +27,38 @@
                         <!--<button class="parameterButton" id="graphUpdate">Update</button>-->
                         <!--<button class="parameterButton" id="graphRestore">Restore</button>-->
                         <button class="parameterButton" id="graphDelete">Delete</button>
-                        <button class="parameterButton" id="graphSave">Update</button>
+                        <button class="parameterButton" id="graphSave">Save</button>
                     </div>
                     <br/>
                     <h2>Lyph Definition:</h2>
                     <div>
-                        <label for="rectangleID" class="parameterLabel">Rect Lyph ID:</label>
-                        <input type="text" id="rectangleID" size="200" style="width: 140px;"/>
+                        <select id="lyphList" size="1"  style="width: 300px";>
+                            <option value="1"></option>
+                        </select>
                     </div>
-                    <div>
-                        <label for="rectangleName" class="parameterLabel">Rect Lyph Name:</label>
-                        <input type="text" id="rectangleName" size="200" style="width: 140px;" readonly="true"/>
-                    </div>
+
+
+
+                    <!--<div>-->
+                        <!--<label for="rectangleID" class="parameterLabel">Rect Lyph ID:</label>-->
+                        <!--<input type="text" id="rectangleID" size="200" style="width: 140px;"/>-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="rectangleName" class="parameterLabel">Rect Lyph Name:</label>-->
+                        <!--<input type="text" id="rectangleName" size="200" style="width: 140px;" readonly="true"/>-->
+                    <!--</div>-->
                     <!--<br/>-->
                     <div>
-                        <button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>
-
+                        <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
+                        <button class="parameterButton" id="syncLyph">Sync Lyph</button>
                         <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
                     </div>
+                    <div>
+                        <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
+                        <button class="parameterButton" id="openGraphViewer">open in Lyph Viewer</button>
+                        <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
+                    </div>
+
                     <br><br>
                     <div>
                         <label for="edgeID" class="parameterLabel">ID:</label>

@@ -262,24 +262,55 @@ function LayerRepo(layers){
 
 
 
-//LinkRepo - LyphRepo
-function LinkRepo (links){
-    this.links = links;
+function LyphRepo (lyphs){
+    this.lyphs = lyphs;
+
+
+    this.syncLyphsWithServer = function (onSuccess) {
+        this.lyphs = [];
+
+        console.log("Loading existing lyphs")
+        $.ajax
+        ({
+            context: this,
+
+            url: "http://open-physiology.org:" + serverPort + "/all_lyphs/",
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                console.log(response);
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in getting all lyphs", response)
+                    return;
+                }
+
+                console.log("Lyphs", response);
+                this.lyphs = response;
+                console.log(this.lyphs);
+                onSuccess();
+
+
+            }
+        })
+    }
+
 
 
     this.getIndexByID = function (id){
-        for (var i =0; i < links.length; i++){
-            if (links[i].id == id) return i;
+        //console.log(this.lyphs,id);
+        for (var i =0; i < this.lyphs.length; i++){
+            //console.log(this.lyphs[i].id , id);
+            if (this.lyphs[i].id ===  id)
+                return i;
         }
         return -1;
     }
-
-    this.addAt = function (link, index){
-        links.splice(index, 0, link);
-    }
-
 }
-
 
 //create layer
 function Layer(id, name, thickness, materials, colour) {
