@@ -162,8 +162,8 @@ var graphEditor = function () {
 
         rect.lyph && rect.lyph.id != null ? d3.select("#edgeID").property("value", rect.lyph.id) : d3.select("#edgeID").property("value", "")
         rect.lyph && rect.lyph.name != null ? d3.select("#edgeDescription").property("value", rect.lyph.name) : d3.select("#edgeDescription").property("value", "");
-        rect.lyph && rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "")
-        rect.lyph && rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "");
+        rect.lyph && rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "1")
+        rect.lyph && rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "Human");
         rect.lyph && rect.location != null ? d3.select("#lyphLocation").property("value", rect.location) : d3.select("#lyphLocation").property("value", "");
         d3.select("#edgeAnnotation").property("value", "");
         d3.select("#provenance").property("value", "");
