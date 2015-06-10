@@ -737,6 +737,7 @@ var graphEditor = function () {
                 newGraph.selected_link = newGraph.links[0];
                 newGraph.selected_node = newGraph.nodes[0];
                 newGraph.selected_rectangle = newGraph.rectangles[0];
+                newGraph.saved = true;
                 //console.log(newGraph.rectangles[0]);
 
                 console.log("New Graph:", newGraph);
@@ -1163,6 +1164,7 @@ var graphEditor = function () {
 
                             console.log("Response:", response);
                             selectedGraph.selected_rectangle.lyph = response;
+                            selectedGraph.selected_rectangle.id = response.id;
 
                             //actualEdge.edgeid = response.id;
                             refresh_graph();
