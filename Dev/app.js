@@ -163,6 +163,7 @@ var graphEditor = function () {
         rect.lyph && rect.lyph.name != null ? d3.select("#edgeDescription").property("value", rect.lyph.name) : d3.select("#edgeDescription").property("value", "");
         rect.lyph && rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "")
         rect.lyph && rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "");
+        rect.lyph && rect.location != null ? d3.select("#lyphLocation").property("value", rect.location) : d3.select("#lyphLocation").property("value", "");
         d3.select("#edgeAnnotation").property("value", "");
         d3.select("#provenance").property("value", "");
         $('#thelist').empty();
@@ -243,6 +244,53 @@ var graphEditor = function () {
             d3.select("#graphName").property("value", graph.name);
         }
     }
+
+
+    d3.select("#lyphDelete").on("click", function() {
+        console.log("Lyph Delete");
+        if (selectedGraph.selected_rectangle){
+            console.log("Delete", selectedGraph.selected_rectangle )
+
+
+            //ajax request to delete lyph
+            var URL =
+                "http://open-physiology.org:"+serverPort+"/delete_lyphs/"+
+                "?lyphs="+ encodeURIComponent(selectedGraph.selected_rectangle.lyph.id) ;
+            console.log(URL);
+            $.ajax
+            ({
+                url: URL,
+
+                jsonp: "callback",
+
+                dataType: "jsonp",
+
+
+                success: function (response) {
+                    response;
+
+                    if (response.hasOwnProperty("Error")) {
+                        console.log("Not able to delete lyph:" , response);
+                        return;
+                    }
+
+                    console.log(response);
+
+                    selectedGraph.rectangles.splice(selectedGraph.rectangles.indexOf(selectedGraph.selected_rectangle), 1);
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+
+
+
+                }
+            });
+
+
+        } else if (selectedGraph.selected_link){
+            console.log("Delete", selectedGraph.selected_link )
+        }
+
+
+    })
 
 
     d3.select("#graphClone").on("click", function() {
@@ -665,7 +713,7 @@ var graphEditor = function () {
 
 
 
-
+    //TODO - Thursday. >> Requested SAM for a single API call to support this.
     d3.select("#graphSave").on("click",function(){
         $("#graphSave").css('color','');
         var actualSelectedGraphIndex = graphRepo.getIndexByID(selectedGraph.id);
@@ -1148,12 +1196,12 @@ var graphEditor = function () {
 
                     //load rectangles
                     for (var j =0; j < response[i].lyphs.length; j++){
-                        console.log(response[i].lyphs[j].lyph);
+                        //console.log(response[i].lyphs[j].lyph);
                         var tmpRect = new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].lyph, response[i].lyphs[j].location);
                         rectangles.push(tmpRect);
                     }
 
-                    console.log("Loaded Rectangles", rectangles);
+                    //console.log("Loaded Rectangles", rectangles);
 
                     populateRectangleNames(rectangles);
 
@@ -1190,7 +1238,7 @@ var graphEditor = function () {
                                 false,
                                 function(){
                                     //console.log("in");
-                                    console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
+                                    //console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
                                     var annotations = [];
                                     for (var ai = 0; ai < response[i].nodes[j].exits[k].via.annots.length; ai++){
                                         annotations.push(new Annotations(response[i].nodes[j].exits[k].via.annots[ai].obj, response[i].nodes[j].exits[k].via.annots[ai].pubmed));
@@ -1210,12 +1258,12 @@ var graphEditor = function () {
 
 
                     //console.log("Edges", edges);
-                    newGraph.selected_link = newGraph.links[0];
-                    newGraph.selected_node = newGraph.nodes[0];
-                    newGraph.selected_rectangle = newGraph.rectangles[0];
+                    //newGraph.selected_link = newGraph.links[0];
+                    //newGraph.selected_node = newGraph.nodes[0];
+                    //newGraph.selected_rectangle = newGraph.rectangles[0];
                     //console.log(newGraph.rectangles[0]);
 
-                    console.log("New Graph:", newGraph);
+                    //console.log("New Graph:", newGraph);
 
                     graphRepo.addAt(newGraph,0);
 
@@ -1228,7 +1276,7 @@ var graphEditor = function () {
 
                 }
 
-                console.log(graphRepo);
+                //console.log(graphRepo);
                 //console.log(response);
                 //
                 //graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
@@ -1489,7 +1537,7 @@ var graphEditor = function () {
                     if (data[i].type === "shell"){
 
                         //if (i === 10) continue;
-                        console.log(i, data[i]);
+                        //console.log(i, data[i]);
 
                         //console.log(data[i]);
                         // Create appropriate layers for the lyph

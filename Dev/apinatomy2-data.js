@@ -1823,6 +1823,7 @@ function Graph(id, name, nodes, links, rectangles) {
             if (d.px < 0 ) d.px = 0;
             if (d.py > height ) d.py = height ;
             if (d.py < 0 ) d.py = 0;
+            $('#graphSave').css('color','red');
             restart();
 
         }
@@ -1843,6 +1844,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function rectdragmove(d){
             if (rectangle_draw) return;
+            $('#graphSave').css('color','red');
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
 
@@ -2573,13 +2575,14 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mouseup() {
 
-            console.log($('graphSave'))
-            $('#graphSave').css('color','red');
+
+
 
 
             if (rectangle_draw){
                 rectangle_draw = false;
                 rectangle_draw_started = false;
+                $('#graphSave').css('color','red');
                 $('#userconsole').text("Rectangle draw done.");
 
             }
@@ -2587,6 +2590,7 @@ function Graph(id, name, nodes, links, rectangles) {
             if (resize_rectangle){
                 console.log("Resizing done")
                 resize_rectangle = null;
+                $('#graphSave').css('color','red');
                 restart();
             }
 
