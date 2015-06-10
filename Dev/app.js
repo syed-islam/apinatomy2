@@ -508,23 +508,163 @@ var graphEditor = function () {
 
 
     function cloneGraph(graph){
-        //if (graphRepo.getIndexByID(graphID.value) > -1){
-        //    alert("Cannot create a new graph: another graph with such ID exists!");
-        //    return;
+        //var newGraph = null;
+        //if (graph != null){
+        //    newGraph = graph.clone();
+        //    newGraph.id = graphID.value+"_cloned";
+        //    newGraph.name = graphName.value+"_cloned";
         //}
+        //else newGraph = new Graph(graphID.value, graphName.value, [], [], []);
+        //graphRepo.addAt(newGraph, 0);
+        //graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+        //selectedGraph = newGraph;
+        //syncSelectedGraph();
 
-        var newGraph = null;
-        if (graph != null){
-            newGraph = graph.clone();
-            newGraph.id = graphID.value+"_cloned";
-            newGraph.name = graphName.value+"_cloned";
+        var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
+        for (var i =0; i < selectedGraph.nodes.length ; i++){
+            query += "&node" + (i + 1)+ "="+ encodeURIComponent(selectedGraph.nodes[i].name);
+            query += "&x"+ (i + 1) +"="+ encodeURIComponent(selectedGraph.nodes[i].x);
+            query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
         }
-        else newGraph = new Graph(graphID.value, graphName.value, [], [], []);
-        graphRepo.addAt(newGraph, 0);
-        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
-        selectedGraph = newGraph;
-        syncSelectedGraph();
+
+        console.log(selectedGraph);
+
+        for (var i =0; i < selectedGraph.rectangles.length; i++){
+            query += "&lyph"+ (i + 1) +"="+  (selectedGraph.rectangles[i].lyph ? encodeURIComponent(selectedGraph.rectangles[i].lyph.id) : "null");
+            query += "&lx"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].x)
+            query += "&ly"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].y)
+            query += "&width"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].width)
+            query += "&height"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].height);
+
+        }
+
+        console.log(query);
+
+        // ajax call to save graph view
+        $.ajax
+        ({
+            url:query,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Graph View Save error" , response);
+                    return;
+                }
+
+                console.log(response);
+
+
+
+                var nodes = [];
+                var edges = [];
+                var rectangles = [];
+                var id = null;
+                var newGraph = null;
+
+                //load view meta data
+                id = response.id;
+
+
+                newGraph = new Graph(id, id, nodes, edges, rectangles);
+
+
+
+                //load rectangles
+                for (var j =0; j < response.lyphs.length; j++){
+                    console.log(response.lyphs[j].lyph);
+                    var tmpRect = new Rectangle(response.lyphs[j].id, parseInt(response.lyphs[j].x), parseInt(response.lyphs[j].y),parseInt(response.lyphs[j].width), parseInt(response.lyphs[j].height), response.lyphs[j].lyph, response.lyphs[j].location);
+                    rectangles.push(tmpRect);
+                }
+
+                console.log("Loaded Rectangles", rectangles);
+
+                populateRectangleNames(rectangles);
+
+                //load nodes
+                for (var j =0; j < response.nodes.length; j++){
+                    nodes.push(new Node(response.nodes[j].id, response.nodes[j].id, parseInt(response.nodes[j].x), parseInt(response.nodes[j].y), null, true, response.nodes[j].location, response.nodes[j].loctype));
+                }
+
+
+                //load edges
+                for (var j =0; j < response.nodes.length; j++){
+                    //console.log(response[i].nodes[j].exits.length)
+                    for (var k =0; k < response.nodes[j].exits.length; k++){
+
+                        var newEdge = new Link(
+                            newGraph.nodes[newGraph.getNodeIndexByID(response.nodes[j].id)],
+                            newGraph.nodes[newGraph.getNodeIndexByID(response.nodes[j].exits[k].to)],
+                            (response.nodes[j].exits[k].via.template)? auRepo.auSet[auRepo.getIndexByID(response.nodes[j].exits[k].via.template.id)]: null,
+                            response.nodes[j].exits[k].via.type,
+                            response.nodes[j].exits[k].via.id,
+                            response.nodes[j].exits[k].via.name,
+                            response.nodes[j].exits[k].via.fma,
+                            null,
+                            null,
+                            false,
+                            function(){
+                                //console.log("in");
+                                console.log("Looking", response.nodes[j].exits[k].via.annots.length, response.nodes[j].exits[k].via.annots[0]);
+                                var annotations = [];
+                                for (var ai = 0; ai < response.nodes[j].exits[k].via.annots.length; ai++){
+                                    annotations.push(new Annotations(response.nodes[j].exits[k].via.annots[ai].obj, response.nodes[j].exits[k].via.annots[ai].pubmed));
+                                    //annotations += response[i].nodes[j].exits[k].vai.annots[ai].obj;
+                                }
+                                //console.log("Annnots" , annotations)
+                                return annotations;
+                            }(),
+                            response.nodes[j].exits[k].via.species
+                            //j % 2 ===0 ?true: false
+                        );
+                        edges.push(newEdge);
+                    }
+                }
+
+
+
+
+                //console.log("Edges", edges);
+                newGraph.selected_link = newGraph.links[0];
+                newGraph.selected_node = newGraph.nodes[0];
+                newGraph.selected_rectangle = newGraph.rectangles[0];
+                //console.log(newGraph.rectangles[0]);
+
+                console.log("New Graph:", newGraph);
+
+                graphRepo.addAt(newGraph,0);
+
+
+                selectedGraph = graphRepo.graphs[0];
+                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                updateGraphParameters(selectedGraph);
+
+
+
+
+            console.log(graphRepo);
+        //console.log(response);
+        //
+        //graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
+        //refresh_graph();
+
+            }
+        });
+
+
+
     }
+
+
+
 
     d3.select("#graphSave").on("click",function(){
         $("#graphSave").css('color','');
