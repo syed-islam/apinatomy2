@@ -2841,8 +2841,9 @@ function Graph(id, name, nodes, links, rectangles) {
             }
             else {
                 console.log(smallestContainer, " is the containing rectangle");
-
                 graph.selected_rectangle.location = smallestContainer.id;
+                d3.select('#lyphLocation').property("value", graph.selected_rectangle.location);
+
             }
 
                 //Send ajax call to update the lyph with the location information
@@ -2867,6 +2868,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         }
 
                         console.log(response);
+
                     }
                 });
             //}
