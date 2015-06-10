@@ -2683,6 +2683,7 @@ function Graph(id, name, nodes, links, rectangles) {
             switch (d3.event.keyCode) {
                 case 8: // backspace
                 case 46: // delete
+                    $('#graphSave').css('color','red');
                     if (graph.selected_node) {
                         nodes.splice(nodes.indexOf(graph.selected_node), 1);
                         spliceLinksForNode(graph.selected_node);
