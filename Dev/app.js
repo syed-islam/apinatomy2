@@ -244,8 +244,9 @@ var graphEditor = function () {
 
     function updateGraphParameters(graph){
         if (graph != null){
+            console.log(graph);
             d3.select("#graphID").property("value", graph.id);
-            d3.select("#graphName").property("value", graph.name);
+            d3.select("#graphName").property("value", graph.name? graph.name : "" );
         }
     }
 
@@ -601,9 +602,10 @@ var graphEditor = function () {
 
         //nodes.push(new Node("1", ".", 200, 200, null, true));
 
-        newGraph = new Graph (graphRepo.graphs.length, graphRepo.graphs.length, nodes, edges, rectangles);
+        newGraph = new Graph (graphRepo.graphs.length, "", nodes, edges, rectangles);
         graphRepo.addAt(newGraph, 0);
         selectedGraph = graphRepo.graphs[0];
+        syncSelectedGraph();
         //graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
         refresh_graph();
         console.log(graphRepo);
@@ -673,12 +675,14 @@ var graphEditor = function () {
                 var rectangles = [];
                 var id = null;
                 var newGraph = null;
+                var name = null;
 
                 //load view meta data
                 id = response.id;
+                name  = response.name;
 
 
-                newGraph = new Graph(id, id, nodes, edges, rectangles);
+                newGraph = new Graph(id, name, nodes, edges, rectangles);
 
 
 
@@ -775,15 +779,17 @@ var graphEditor = function () {
     d3.select("#graphSave").on("click",function(){
         $("#graphSave").css('color','');
         var actualSelectedGraphIndex = graphRepo.getIndexByID(selectedGraph.id);
+        graphRepo.graphs[actualSelectedGraphIndex].name = graphName.value;
         //console.log(actualSelectedGraphIndex);
 
         var query = "";
 
         if (selectedGraph.saved != null){
             query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + selectedGraph.id;
+            query += "&name=" + selectedGraph.name;
         } else {
             selectedGraph.saved = true;
-            query = "http://open-physiology.org:"+serverPort+"/makeview/?"
+            query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+selectedGraph.name
         }
 
         //var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
@@ -828,6 +834,7 @@ var graphEditor = function () {
                 console.log(response);
                 graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
                 refresh_graph();
+                syncSelectedGraph();
             }
         });
     })
@@ -1266,12 +1273,14 @@ var graphEditor = function () {
                     var rectangles = [];
                     var id = null;
                     var newGraph = null;
+                    var name = null;
 
                     //load view meta data
                     id = response[i].id;
+                    name = response[i].name;
 
 
-                    newGraph = new Graph(id, id, nodes, edges, rectangles);
+                    newGraph = new Graph(id, name, nodes, edges, rectangles);
                     newGraph.saved = true;
 
 

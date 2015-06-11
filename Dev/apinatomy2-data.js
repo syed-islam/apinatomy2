@@ -1680,7 +1680,7 @@ function GraphRepo(graphs){
             .enter().append("text")
             .attr("x", vp.lengthScale + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
-            .text(function(d){return d.id + " - " + d.name;})
+            .text(function(d){return d.id + " - " + (d.name ?  d.name : "") ;})
 
         svg.attr("height", function(){
             return 10 + (graphRepo.graphs.length * 30);
