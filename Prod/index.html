@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>Lyph Editor 1.0.0</title>
-<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="app2.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 <h1>Graph Editor 1.0.0</h1>
 
@@ -13,7 +14,7 @@
                     <h2>View Parameters:</h2>
                     <div>
                         <label for="graphID" class="parameterLabel">ID:</label>
-                        <input type="text" id="graphID" style="width: 140px;">
+                        <input type="text" id="graphID" style="width: 140px; background-color: lightgray;" readonly="true">
                     </div>
                     <div>
                         <label for="graphName" class="parameterLabel">Name:</label>
@@ -22,32 +23,47 @@
                     <br/>
                     <div>
                         <button class="parameterButton" id="graphNew">New</button>
-                        <button class="parameterButton" id="graphClone" disabled="true">Clone</button>
+                        <button class="parameterButton" id="graphClone">Clone</button>
                         <!--<button class="parameterButton" id="graphClone">Add</button>-->
                         <!--<button class="parameterButton" id="graphUpdate">Update</button>-->
                         <!--<button class="parameterButton" id="graphRestore">Restore</button>-->
-                        <button class="parameterButton" id="graphDelete">Delete</button>
-                        <button class="parameterButton" id="graphSave">Update</button>
+                        <!--<button class="parameterButton" id="graphDelete">Delete</button>-->
+                        <button class="parameterButton" id="graphSave">Save</button>
                     </div>
                     <br/>
                     <h2>Lyph Definition:</h2>
                     <div>
-                        <label for="rectangleID" class="parameterLabel">Rect Lyph ID:</label>
-                        <input type="text" id="rectangleID" size="200" style="width: 140px;"/>
+                        <select id="lyphList" size="1"  style="width: 300px";>
+                            <option value="1"></option>
+                        </select>
                     </div>
-                    <div>
-                        <label for="rectangleName" class="parameterLabel">Rect Lyph Name:</label>
-                        <input type="text" id="rectangleName" size="200" style="width: 140px;" readonly="true"/>
-                    </div>
+
+
+
+                    <!--<div>-->
+                        <!--<label for="rectangleID" class="parameterLabel">Rect Lyph ID:</label>-->
+                        <!--<input type="text" id="rectangleID" size="200" style="width: 140px;"/>-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="rectangleName" class="parameterLabel">Rect Lyph Name:</label>-->
+                        <!--<input type="text" id="rectangleName" size="200" style="width: 140px;" readonly="true"/>-->
+                    <!--</div>-->
                     <!--<br/>-->
                     <div>
-                        <button class="parameterButton" id="searchRectangleLyph">Search Lyph</button>
-                        <button class="parameterButton" id="assignRectangleLyph">Assign Lyph</button>
+                        <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
+                        <button class="parameterButton" id="syncLyph">Sync Lyph</button>
                         <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
                     </div>
                     <div>
+                        <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
+                        <button class="parameterButton" id="openGraphViewer">open in Lyph Viewer</button>
+                        <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
+                    </div>
+
+                    <br><br>
+                    <div>
                         <label for="edgeID" class="parameterLabel">ID:</label>
-                        <input type="text" id="edgeID" size="200" style="width: 140px;" readonly="true" value =""/>
+                        <input type="text" id="edgeID" size="200" style="width: 140px;background-color:lightgray" readonly="true" value =""/>
                     </div>
                     <div>
                         <label for="edgeDescription" class="parameterLabel">Name:</label>
@@ -55,20 +71,30 @@
                     </div>
                     <div>
                         <label for="edgeType" class="parameterLabel">Type:</label>
-                        <input type="text" id="edgeType" size="200" style="width: 140px;" />
+                        <input type="text" id="edgeType" size="200" style="width: 140px; background-color:lightgray" />
+                    </div>
+                    <div>
+                        <label for="lyphFMA" class="parameterLabel">Ont Term:</label>
+                        <input type="text" id="lyphFMA" size="200" style="width: 140px;" />
+                    </div>
+
+
+                    <div>
+                        <label for="lyphLocation" class="parameterLabel" >Location:</label>
+                        <input type="text" id="lyphLocation" size="200"  readonly="true" style="width: 140px; background-color:lightgray" />
                     </div>
                     <div>
                         <label for="auID" class="parameterLabel">Template ID:</label>
                         <datalist id="auSet"></datalist>
-                        <input type="text" id="auID" style="width: 140px;" list="auSet" readonly="true">
+                        <input type="text" id="auID" style="width: 140px;background-color:lightgray" list="auSet" readonly="true">
                     </div>
                     <div>
                         <label for="auName" class="parameterLabel">Template Name:</label>
-                        <input type="text" id="auName" size="200" style="width: 140px;" readonly="true"/>
+                        <input type="text" id="auName" size="200" style="width: 140px;background-color:lightgray" readonly="true"/>
                     </div>
                     <div>
                         <label for="edgeSpecies" class="parameterLabel">Species:</label>
-                        <input type="text" id="edgeSpecies" size="200" style="width: 140px;"/>
+                        <input type="text" id="edgeSpecies" size="200" style="width: 140px;background-color:lightgray"/>
                     </div>
                         <!--<div>-->
                             <!--<label for="annotationType" class="parameterLabel">Annotation Type:</label>-->
@@ -76,11 +102,11 @@
                         <!--</div>-->
                     <div>
                         <label for="edgeAnnotation" class="parameterLabel">Annotation:</label>
-                        <input type="text" id="edgeAnnotation" size="200" style="width: 140px;"/>
+                        <input type="text" id="edgeAnnotation" size="200" style="width: 140px;background-color:lightgray"/>
                     </div>
                     <div>
                         <label for="provenance" class="parameterLabel">Pubmed ID:</label>
-                        <input type="text" id="provenance" size="200" style="width: 140px;"/>
+                        <input type="text" id="provenance" size="200" style="width: 140px;background-color:lightgray"/>
                     </div>
                     Annotations:
                     <div>
@@ -90,10 +116,10 @@
                     </div>
                     <br/>
                     <div>
-                        <button class="parameterButton" id="annotateEdge">Add An.</button>
-                        <button class="parameterButton" id="removeAnnotation">Del An.</button>
-                        <button class="parameterButton" id="auUpdate">Assign T_</button>
-                        <button class="parameterButton" id="auDelete">Delete</button>
+                        <button class="parameterButton" id="annotateEdge">Annotate</button>
+                        <button class="parameterButton" id="removeAnnotation">Remove Annotation</button>
+                        <!--<button class="parameterButton" id="auUpdate">Assign T_</button>-->
+                        <button class="parameterButton" id="lyphDelete">Delete</button>
                         <button class="parameterButton" id="edgeSave">Save</button>
                     </div>
 
@@ -177,14 +203,14 @@
                     <!--</div>-->
                 <!--</div>-->
                 <br>
+                <h2>Views</h2>
                 <div id="graph-pane" class="repo-pane">
-                    <h2>Views</h2>
                     <div class="repo">
                         <div class="graphRepo"></div>
                     </div>
                 </div>
+                <h2>Lyph Template</h2>
                 <div id="au-pane" class="repo-pane">
-                    <h2>Lyph Template</h2>
                     <div class="repo">
                         <div class="auRepo"></div>
                     </div>
@@ -195,15 +221,18 @@
                     <h2>Keys</h2>
                     <div class="repo">
                         <font size ="2">
+                            Press 'r', click->drag to draw tile<br>
+                            Press 'e', to assign selected lyph(box) to container <br>
+                            Press 'backspace', to delete selected from view<br>
+                        <hr>
                         Hold 'd' to drag<br>
                         Press 'i', click to insert node<br>
                         Press 's' to split selected edge<br>
                         Press 'f' to make/unmake node sticky<br>
-                        Press 'r', click->drag to draw rect for selected AU <br>
                         Press 'a', to attach node inside of lyph<br>
                         Press 'b', to attach node on border of lyph<br>
                         Press 'l', to detach node from assigned lyph <br>
-                        Press 'backspace', to delete selected node/link <br>
+
                         </font>
                     </div>
 
@@ -223,6 +252,7 @@
 
 
         </div>
+
         <div id ="instructs" class="console">
 
         </div>
@@ -230,8 +260,10 @@
 </div>
 
 
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script src="jquery.csv-0.71.min.js"></script>
 <script src="apinatomy2-data.js"></script>
 <script src="repositories.js"></script>

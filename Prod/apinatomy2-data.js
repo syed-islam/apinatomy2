@@ -4,7 +4,7 @@
 
 
 debugging = true;
-var serverPort = 5055; // production - 5055, Development - 5056
+var serverPort = 5056; // production - 5055, Development - 5056
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
@@ -258,9 +258,58 @@ function LayerRepo(layers){
         return -1;
     }
 
+}
 
 
 
+function LyphRepo (lyphs){
+    this.lyphs = lyphs;
+
+
+    this.syncLyphsWithServer = function (onSuccess) {
+        this.lyphs = [];
+
+        console.log("Loading existing lyphs")
+        $.ajax
+        ({
+            context: this,
+
+            url: "http://open-physiology.org:" + serverPort + "/all_lyphs/",
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                console.log(response);
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in getting all lyphs", response)
+                    return;
+                }
+
+                console.log("Lyphs", response);
+                this.lyphs = response;
+                console.log(this.lyphs);
+                onSuccess();
+
+
+            }
+        })
+    }
+
+
+
+    this.getIndexByID = function (id){
+        //console.log(this.lyphs,id);
+        for (var i =0; i < this.lyphs.length; i++){
+            //console.log(this.lyphs[i].id , id);
+            if (this.lyphs[i].id ===  id)
+                return i;
+        }
+        return -1;
+    }
 }
 
 //create layer
@@ -274,7 +323,7 @@ function Layer(id, name, thickness, materials, colour) {
     //console.log(this.id, this.name, this.thickness, this.materials, this.colour);
 
 
-    this.create_on_server = function (AU, index){
+    this.create_on_server = function (cb){
         //URL for accessing create layer api
         var url = "http://open-physiology.org:"+ serverPort + "/makelayer/";
 
@@ -290,46 +339,44 @@ function Layer(id, name, thickness, materials, colour) {
         url += "?name="+ this.name;
 
 
+
+
         //function ajax_create_layer () {
         //   this.createLayerOnServer = function createLayerOnServer() {
-        $.ajax
+        return P.resolve($.ajax
         ({
-            context: this,
             url: url,
 
             jsonp: "callback",
 
-            dataType: "jsonp",
+            dataType: "jsonp"
+        })).then(function (response) {
 
-
-            success: function (response) {
-                response;
-
-                if (response.hasOwnProperty("Error")) {
-                    console.log("Layer creation error:", response);
-                    return;
-                }
-
-                console.log("Layer created successfully:", response);
-
-                //console.log("Layer Created", response);
-
-                //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
-                this.id = response.id;
-
-                //TODO bad design. Ajax chaining is unpredictable in this case.
-                // Once the layer is successfuly created we attach it the AU where its meant to go.
-                //console.log(index);
-                AU.addLayerAt(this,index);
-
-
-
-                //TODO bad design - Use of global function. Use callback function instead.
-                rehashaueditor(this);
-                //}
-                ;
+            if (response.hasOwnProperty("Error")) {
+                throw response.Error;
             }
-        });
+
+            console.log("Layer created successfully:", response);
+
+            //console.log("Layer Created", response);
+
+            //layerRepo.layers[layerRepo.containsLayer(response.thickness, materialRepo.materials[materialRepo.getIndexByID(response.mtlid)])].id = response.id;
+            this.id = response.id;
+
+            ////TODO bad design. Ajax chaining is unpredictable in this case.
+            //// Once the layer is successfuly created we attach it the AU where its meant to go.
+            ////console.log(index);
+            //;
+
+
+
+            //TODO bad design - Use of global function. Use callback function instead.
+            //rehashaueditor(this);
+            //}
+
+
+            return response;
+        }.bind(this));
         //}
     }
 
@@ -1540,6 +1587,9 @@ function Annotations(annotation, pubmedID){
     this.pubmedID = pubmedID;
 }
 
+
+
+
 //graph link
 function Link(source, target, au, type, edgeid, description, fma, left, right, highlighted, annotations, species){
     this.source = source;
@@ -1570,16 +1620,13 @@ function Link(source, target, au, type, edgeid, description, fma, left, right, h
     }
 }
 
-function Rectangle(id, x, y, width, height, lyphID, lyphName, from, to, location){
+function Rectangle(id, x, y, width, height, lyph, location){
     this.id = id;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.lyphID = lyphID;
-    this.lyphName = lyphName;
-    this.from = from;
-    this.to = to;
+    this.lyph = lyph;
     this.location = location;
 }
 
@@ -1627,12 +1674,17 @@ function GraphRepo(graphs){
             .attr("x", vp.lengthScale)
             .attr("y", function(d, i){return i * (vp.widthScale + delta);})
             .on("click", onClick);
+
         svg.selectAll("graphRepo")
             .data(graphRepo.graphs)
             .enter().append("text")
             .attr("x", vp.lengthScale + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
-            .text(function(d){return d.id + " - " + d.name;})
+            .text(function(d){return d.id + " - " + (d.name ?  d.name : "") ;})
+
+        svg.attr("height", function(){
+            return 10 + (graphRepo.graphs.length * 30);
+        });
     }
 }
 
@@ -1725,6 +1777,7 @@ function Graph(id, name, nodes, links, rectangles) {
             var rectangle_draw_started = null;
             var rectangle_x =  null;
             var rectangle_y = null;
+            var resize_rectangle = null;
             var drag_button_enabled = false;
 
 
@@ -1806,10 +1859,17 @@ function Graph(id, name, nodes, links, rectangles) {
             if (d.px < 0 ) d.px = 0;
             if (d.py > height ) d.py = height ;
             if (d.py < 0 ) d.py = 0;
+            $('#graphSave').css('color','red');
             restart();
 
         }
 
+
+
+
+        var resizeRectangle= function resizeRectangle(d){
+            resize_rectangle = d;
+        }
 
 
         var customRectdrag = d3.behavior.drag()
@@ -1820,6 +1880,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function rectdragmove(d){
             if (rectangle_draw) return;
+            $('#graphSave').css('color','red');
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
 
@@ -1907,7 +1968,8 @@ function Graph(id, name, nodes, links, rectangles) {
             labels = svg.append('g').attr('class', 'graph').selectAll('text'),
             auIcon = svg.append('g').attr('class','graph').selectAll('rect'),
             boxes = svg.append('g').attr('class', 'graph'),
-            boxlabels = svg.append('g').attr('class', 'graph')
+            boxlabels = svg.append('g').attr('class', 'graph'),
+            boxcorners = svg.append('g').attr('class', 'boxcorners');
             ;
 
 
@@ -2100,30 +2162,20 @@ function Graph(id, name, nodes, links, rectangles) {
             auIcon = svg.append('g').attr('class','graph').selectAll('rect');
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             boxlabels = svg.append('g').attr('class', 'graph');
-
-
-
-            //console.log(graph.selected_link);
-
-
-            //svg.selectAll("path.link").remove();
-            //svg.selectall("").remove();
-            //path = svg.append('g').attr('class', 'graph');
-
+            boxcorners = svg.append('g').attr('class', 'graph').selectAll('g');
 
 
 
             boxes = boxes.data(rectangles);
 
+            //Rendering labels for the boxes
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
-                .text( function (d) { if(d.lyphID) return d.lyphID + " - " + d.lyphName; })
+                .text( function (d) { if(d.lyph && d.lyph.id) return d.lyph.id + " - " + d.lyph.name; return ""})
 
-
-
+            //Rendering the boxes themselves
             boxes = boxes.enter().append('svg:rect');
-
             boxes.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y})
                 .attr('width' ,function (d) {return d.width})
@@ -2136,16 +2188,32 @@ function Graph(id, name, nodes, links, rectangles) {
                 })
                 .call(customRectdrag)
                 .on('mousedown', function (d) {
-                    //console.log("rectangle click");
+                    console.log("rectangle click");
                     graph.selected_rectangle = d;
+                    graph.selected_link = null;
+                    graph.selected_node = null;
 
                     console.log("rectangle clicked", graph.selected_rectangle);
-                    onSelectRectangle(d);
+                    onSelectLink(d);
                     restart();
                 });
 
-
-
+            //Rendering corner boxes for resize
+            boxcorners = boxcorners.data(rectangles);
+            boxcorners = boxcorners.enter().append('svg:rect');
+            boxcorners.attr('x' ,function (d) {return d.x + d.width - 5})
+                .attr('y' ,function (d) {return d.y + d.height - 5})
+                .attr('width' ,function (d) {return 10})
+                .attr('height' ,function (d) {return 10})
+                .attr('class', 'boxcorners')
+                .on('mousedown', function (d) {
+                    console.log("resize click");
+                    graph.selected_link = null;
+                    graph.selected_node = null;
+                    graph.selected_rectangle = d;
+                    resizeRectangle(d);
+                    restart();
+                });
 
 
 
@@ -2206,6 +2274,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         $("#ins").text("Selected node:" + d.id);
                     }
                     graph.selected_link = null;
+                    graph.selected_rectangle = null;
 
                     // reposition drag line
                     drag_line
@@ -2310,6 +2379,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr("y", function(d, i){ return ((i+1) * 5);})
                 //.attr("y", function (d, i) {
                 //    if (i ==0) prev =0; // reset the starting y for layers for each link
+                //    if (i ==0) prev =0; // reset the starting y for layers for each link
                 //    prev += d.thickness * layerHeight; //remember the relative Y coordinate of the current layer
                 //
                 //    return prev - d.thickness * layerHeight;
@@ -2359,51 +2429,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
                     return   tooltip; })
 
-                //.style("stroke", function(d){
-                //            return "red";
-                //})
-                //.style("stroke-width", function(d){
-                //    return 2;
-                //})
-                //.attr("class", "layer")
-
-
-
-            //var au_layers = auIcon.enter().append("g");
-            //
-            //console.log(au_layers);
-            //    au_layers.selectAll(".layer")
-            //    .data(function (d){
-            //        if (d.au) {
-            //            for (var i = 0; i < d.au.layers.length; i++) {
-            //                d.au.layers[i].x = 0;
-            //                //console.log(d.au.layers[i]);
-            //                d.au.layers[i].y = (i + 1) * 10;
-            //            }
-            //            console.log("Updating layers:", d.au.layers);
-            //            return d.au.layers;
-            //        }
-            //        return [];
-            //    }).enter()
-            //    .append('text')
-            //    .attr("x", function(d, i) {d.x;/*return (d.source.y + d.target.y) / 2;*/ })
-            //    .attr("y", function(d, i ) {d.y; })
-            //    .attr("text-anchor", "middle")
-            //    .text(function(d) {return "help" });
-
-
-
-
-
-
-            //
-            //labels = labels.data(links);
-            //
-            //labels.enter().append('text')
-            //    .attr("x", function(d) { return (d.source.y + d.target.y) / 2; })
-            //    .attr("y", function(d) { return (d.source.x + d.target.x) / 2; })
-            //    .attr("text-anchor", "middle")
-            //    .text(function(d) {if (d.au) return d.au.id; });
 
 
             // path (link) group
@@ -2414,12 +2439,9 @@ function Graph(id, name, nodes, links, rectangles) {
             path = path.classed('selected', function (d) {
                 return d === graph.selected_link;
             })
-                //.style('marker-start', function (d) {
-                //    return d.left ? 'url(#start-arrow)' : '';
-                //})
-                //.style('marker-end', function (d) {
-                //    return d.right ? 'url(#end-arrow)' : '';
-                //});
+
+
+
             pathoverlay = pathoverlay.classed('selected', function (d) {
                 return d === graph.selected_link;
             })
@@ -2447,21 +2469,7 @@ function Graph(id, name, nodes, links, rectangles) {
                .style('stroke', function (d) {
                    return d3.rgb(colors(d.type));
                })
-                //.attr('d', function (d) {
-                //    var deltaX = d.target.x - d.source.x,
-                //        deltaY = d.target.y - d.source.y,
-                //        dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-                //        normX = deltaX / dist,
-                //        normY = deltaY / dist,
-                //        sourcePadding = 12,
-                //        targetPadding = 12,
-                //        sourceX = d.source.x + (sourcePadding * normX),
-                //        sourceY = d.source.y + (sourcePadding * normY),
-                //        targetX = d.target.x - (targetPadding * normX),
-                //        targetY = d.target.y - (targetPadding * normY);
-                //    return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
-                //})
-                .on('mousedown', function (d) {
+               .on('mousedown', function (d) {
                     if (d3.event.ctrlKey) return;
 
                     // select link
@@ -2475,6 +2483,7 @@ function Graph(id, name, nodes, links, rectangles) {
                         $("#ins").text("Selected Link: [" + d.source.id + "," + d.target.id + "]");
                     }
                     graph.selected_node = null;
+                   graph.selected_rectangle = null;
                     onSelectLink(d);
                     restart();
                 })
@@ -2492,20 +2501,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 })
             ;
-
-            //path.append('text')
-            //    .attr('x', function (d) {
-            //        return (d.target.x + d.source.x)/2;
-            //    })
-            //    .attr('y', function (d) {
-            //        return (d.target.y + d.source.y)/2;
-            //    })
-            //    .attr('class', 'au')
-            //    .text(function (d) {
-            //        //return "test";
-            //        if (d.au)
-            //            return d.au.id;
-            //    });
 
 
             // remove old links
@@ -2591,6 +2586,19 @@ function Graph(id, name, nodes, links, rectangles) {
             }
 
 
+            if (resize_rectangle){
+
+                var newWidth = (d3.mouse(this)[0] - resize_rectangle.x > 5) ? d3.mouse(this)[0] - resize_rectangle.x : 5 ;
+                var newHeight = (d3.mouse(this)[1] - resize_rectangle.y > 5) ? d3.mouse(this)[1] - resize_rectangle.y : 5 ;
+
+                resize_rectangle.width = newWidth;
+                resize_rectangle.height = newHeight;
+                //console.log("Resizing rectangle", resize_rectangle.width)
+                restart();
+                return;
+            }
+
+
             if (!mousedown_node) return;
 
             if (drag_button_enabled) return;
@@ -2604,15 +2612,23 @@ function Graph(id, name, nodes, links, rectangles) {
         function mouseup() {
 
 
+
+
+
             if (rectangle_draw){
                 rectangle_draw = false;
                 rectangle_draw_started = false;
+                $('#graphSave').css('color','red');
                 $('#userconsole').text("Rectangle draw done.");
 
             }
 
-
-
+            if (resize_rectangle){
+                console.log("Resizing done")
+                resize_rectangle = null;
+                $('#graphSave').css('color','red');
+                restart();
+            }
 
 
 
@@ -2667,11 +2683,17 @@ function Graph(id, name, nodes, links, rectangles) {
             switch (d3.event.keyCode) {
                 case 8: // backspace
                 case 46: // delete
+                    $('#graphSave').css('color','red');
                     if (graph.selected_node) {
                         nodes.splice(nodes.indexOf(graph.selected_node), 1);
                         spliceLinksForNode(graph.selected_node);
                     } else if (graph.selected_link) {
                         links.splice(links.indexOf(graph.selected_link), 1);
+                    } else if (graph.selected_rectangle){
+                        console.log(graph.selected_rectangle);
+                        console.log(rectangles);
+                        rectangles.splice(rectangles.indexOf(graph.selected_rectangle), 1)
+                        console.log(rectangles);
                     }
                     graph.selected_link = null;
                     graph.selected_node = null;
@@ -2815,19 +2837,22 @@ function Graph(id, name, nodes, links, rectangles) {
 
             if (smallestContainer === null) {
                 console.log("No valid container found");
-            } else {
+                graph.selected_rectangle.location = null;
+            }
+            else {
                 console.log(smallestContainer, " is the containing rectangle");
-
                 graph.selected_rectangle.location = smallestContainer.id;
+                d3.select('#lyphLocation').property("value", graph.selected_rectangle.location);
 
+            }
 
                 //Send ajax call to update the lyph with the location information
                 $.ajax
                 ({
                     url:
                     "http://open-physiology.org:"+serverPort+"/editlyph/"+
-                    "?lyph="+ graph.selected_rectangle.lyphID +
-                    "&location=" + smallestContainer.lyphID,
+                    "?lyph="+ graph.selected_rectangle.lyph.id +
+                    "&location=" + graph.selected_rectangle.location,
 
                     jsonp: "callback",
 
@@ -2837,16 +2862,16 @@ function Graph(id, name, nodes, links, rectangles) {
                     success: function (response) {
                         response;
 
-
                         if (response.hasOwnProperty("Error")) {
                             console.log("Lyph Locaiton Assignmnet Error" , response);
                             return;
                         }
 
                         console.log(response);
+
                     }
                 });
-            }
+            //}
         }
 
         function attachNodeToLyph(locationType){
@@ -2881,12 +2906,12 @@ function Graph(id, name, nodes, links, rectangles) {
                     if ((boundingwidth * boundingheight) < boundingRectangleSize){
                         boundingRectangleSize = boundingwidth * boundingheight;
                         boundingRectangleID = rectangles[i].id;
-                        boundingRectangleLyphID = rectangles[i].lyphID;
+                        boundingRectangleLyphID = rectangles[i].lyph.id;
                     }
                 } else {
                     boundingRectangleSize = boundingwidth * boundingheight;
                     boundingRectangleID = rectangles[i].id;
-                    boundingRectangleLyphID = rectangles[i].lyphID;
+                    boundingRectangleLyphID = rectangles[i].lyph.id;
                 }
 
             }
