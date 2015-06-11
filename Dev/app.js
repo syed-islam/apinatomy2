@@ -39,6 +39,7 @@ var graphEditor = function () {
         customfocus('#edgeSpecies');
         customfocus('#provenance')
         customfocus('#graphName');
+        customfocus('#lyphFMA');
 
     }();
 
@@ -166,6 +167,7 @@ var graphEditor = function () {
         rect.lyph && rect.lyph.type != null ? d3.select("#edgeType").property("value", rect.lyph.type) : d3.select("#edgeType").property("value", "1")
         rect.lyph && rect.lyph.species!= null ? d3.select("#edgeSpecies").property("value", rect.lyph.species) : d3.select("#edgeSpecies").property("value", "Human");
         rect.lyph && rect.location != null ? d3.select("#lyphLocation").property("value", rect.location) : d3.select("#lyphLocation").property("value", "");
+        rect.lyph && rect.lyph.fma != null ? d3.select("#lyphFMA").property("value", rect.lyph.fma) : d3.select("#lyphFMA").property("value", "");
         d3.select("#edgeAnnotation").property("value", "");
         d3.select("#provenance").property("value", "");
         $('#thelist').empty();
@@ -987,6 +989,7 @@ var graphEditor = function () {
             var lyphSpecies = $("#edgeSpecies").val().trim();
 
 
+
             console.log("EdgeSave:", edgeType, edgeName, fromNode, toNode, edgeLyphID);
 
             //Update the local data
@@ -1095,6 +1098,7 @@ var graphEditor = function () {
             var edgeName = $("#edgeDescription").val().trim();
             var edgeLyphID = $("#auID").val().trim();
             var lyphSpecies = $("#edgeSpecies").val().trim();
+            var fma =  $("#lyphFMA").val().trim();
 
 
             //check if lyphs already exists
@@ -1125,6 +1129,7 @@ var graphEditor = function () {
                         if ($("#auID").val().trim() != "")
                             URL2 += "&template=" + encodeURIComponent($("#auID").val().trim())
                         URL2 += "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+                        URL2 += "&fma=" +  encodeURIComponent($("#lyphFMA").val().trim());
 
                     } else {
                         console.log("Lyph Exists");
@@ -1137,6 +1142,7 @@ var graphEditor = function () {
                         if ($("#auID").val().trim() != "")
                             URL2 += "&template=" + encodeURIComponent($("#auID").val().trim())
                         URL2 += "&species=" + encodeURIComponent($("#edgeSpecies").val().trim());
+                        URL2 += "&fma=" +  encodeURIComponent($("#lyphFMA").val().trim());
                     }
 
 
@@ -1273,6 +1279,7 @@ var graphEditor = function () {
                     for (var j =0; j < response[i].lyphs.length; j++){
                         //console.log(response[i].lyphs[j].lyph);
                         var tmpRect = new Rectangle(response[i].lyphs[j].id, parseInt(response[i].lyphs[j].x), parseInt(response[i].lyphs[j].y),parseInt(response[i].lyphs[j].width), parseInt(response[i].lyphs[j].height), response[i].lyphs[j].lyph, response[i].lyphs[j].location);
+                        //view tmpRect;
                         rectangles.push(tmpRect);
                     }
 
@@ -1724,6 +1731,7 @@ var graphEditor = function () {
 
 
     $(function() {
+
         $( "#edgeDescription" ).autocomplete({
             source: function( request, response ) {
                 $.ajax({
@@ -1740,38 +1748,32 @@ var graphEditor = function () {
             minLength: 3,
             select: function( event, ui ) {
 
-                //$.ajax
-                //({
-                //    url:
-                //    "http://open-physiology.org:"+ serverPort + "/template/"+
-                //    encodeURIComponent(autocomplete.value),
-                //    jsonp:
-                //        "callback",
-                //    dataType:
-                //        "jsonp",
-                //    success: function( response )
-                //    {
-                //        console.log("Request URL:", this.url);
-                //        var data = response;
-                //
-                //        if ( data.hasOwnProperty( "Error" ) )
-                //        {
-                //            console.log("Error:", data.Error);
-                //            return;
-                //        }
-                //
-                //        console.log("Response:" , data);
-                //        if (materialRepo.getIndexByID(data.id)== -1 ) {
-                //            console.log("Creating new basic material and added to material repo");
-                //            materialRepo.addAt(new Material(data.id, data.name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null,data.ont_term), 0);
-                //            console.log("Selecting the new material")
-                //            onSelectMaterial(materialRepo.materials[0]);
-                //        } else{
-                //            console.log("Basic Material Already Exists");
-                //        }
-                //    }
-                //
-                //});
+
+                $.ajax
+                ({
+                    url:
+                    "http://open-physiology.org:"+ serverPort + "/template/"+
+                    encodeURIComponent(edgeDescription.value),
+                    jsonp:
+                        "callback",
+                    dataType:
+                        "jsonp",
+                    success: function( response )
+                    {
+                        console.log("Request URL:", this.url);
+                        var data = response;
+
+                        if ( data.hasOwnProperty( "Error" ) )
+                        {
+                            console.log("Error:", data.Error);
+                            return;
+                        }
+
+                        console.log("Response:" , data);
+                        d3.select("#lyphFMA").property("value", data.ont_term);
+                    }
+
+                });
 
             },
             open: function() {
