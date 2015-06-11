@@ -264,7 +264,8 @@ var graphEditor = function () {
         lyphToSyncData.name != null ? d3.select("#edgeDescription").property("value", lyphToSyncData.name) : d3.select("#edgeDescription").property("value", "");
         lyphToSyncData.type != null ? d3.select("#edgeType").property("value", lyphToSyncData.type) : d3.select("#edgeType").property("value", "")
         lyphToSyncData.species!= null ? d3.select("#edgeSpecies").property("value", lyphToSyncData.species) : d3.select("#edgeSpecies").property("value", "");
-        lyphToSyncData.location != null ? d3.select("#lyphLocation").property("value", lyphToSyncData.location) : d3.select("#lyphLocation").property("value", "");
+        lyphToSyncData.from.location != null ? d3.select("#lyphLocation").property("value", lyphToSyncData.from.location) : d3.select("#lyphLocation").property("value", "");
+        lyphToSyncData.fma != null ? d3.select("#lyphFMA").property("value", lyphToSyncData.fma) : d3.select("#lyphLocation").property("value", "");
         d3.select("#edgeAnnotation").property("value", "");
         d3.select("#provenance").property("value", "");
         $('#thelist').empty();
