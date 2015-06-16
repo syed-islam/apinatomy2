@@ -971,7 +971,7 @@ var graphEditor = function () {
 
     d3.select('#openGraphViewer').on('click',function(){
         console.log("Opening Viewer at:", graphViewerURL + "?root=" + $('#lyphList').val() );
-        window.open(graphViewerURL + "?root=" + $('#lyphList').val(), '_blank');
+        window.open(graphViewerURL + "?root=" + $('#lyphList').val() +"&port=" + serverPort, '_blank');
     });
 
 
