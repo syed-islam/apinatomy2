@@ -40,7 +40,7 @@ var graphEditor = function () {
         customfocus('#provenance')
         customfocus('#graphName');
         customfocus('#lyphFMA');
-
+        customfocus(('#lyphListBox'));
     }();
 
 

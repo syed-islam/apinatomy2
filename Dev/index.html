@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>Lyph Editor 1.0.0</title>
+<title>Graph Editor</title>
 <link rel="stylesheet" href="app2.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
@@ -32,6 +32,11 @@
                     </div>
                     <br/>
                     <h2>Lyph Definition:</h2>
+
+                    <div>
+                        <label for="lyphListBox" class="parameterLabel">Existing Lyphs:</label>
+                        <input type="text" id="lyphListBox" size="200" style="width: 150px;"  value =""/>
+                    </div>
                     <div>
                         <select id="lyphList" size="1"  style="width: 300px";>
                             <option value="1"></option>
@@ -51,13 +56,16 @@
                     <!--<br/>-->
                     <div>
                         <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
-                        <button class="parameterButton" id="syncLyph">Sync Lyph</button>
+                        <button class="parameterButton" id="syncLyph">Re-use Lyph</button>
                         <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
                     </div>
                     <div>
                         <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
-                        <button class="parameterButton" id="openGraphViewer">open in Lyph Viewer</button>
+                        <button class="parameterButton" id="openGraphViewer">Open in Viewer</button>
                         <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
+                    </div>
+                    <div>
+                        <button class="parameterButton" id="deleteLyph">Delete Lyph</button>
                     </div>
 
                     <br><br>
@@ -74,7 +82,7 @@
                         <input type="text" id="edgeType" size="200" style="width: 140px; background-color:lightgray" />
                     </div>
                     <div>
-                        <label for="lyphFMA" class="parameterLabel">Ont Term:</label>
+                        <label for="lyphFMA" class="parameterLabel">Ont ID:</label>
                         <input type="text" id="lyphFMA" size="200" style="width: 140px;" />
                     </div>
 
