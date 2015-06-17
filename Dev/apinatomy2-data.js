@@ -2050,8 +2050,9 @@ function Graph(id, name, nodes, links, rectangles) {
             auIcon = svg.append('g').attr('class','graph').selectAll('rect'),
             boxes = svg.append('g').attr('class', 'graph'),
             boxlabels = svg.append('g').attr('class', 'graph'),
-            boxcorners = svg.append('g').attr('class', 'boxcorners');
-            ;
+            boxcorners = svg.append('g').attr('class', 'boxcorners'),
+            boxhighlights = svg.append('g').attr('class', 'graph');
+        ;
 
 
             //au_layers = svg.append('g').attr('class','graph').selectAll('.layer');
@@ -2255,6 +2256,7 @@ function Graph(id, name, nodes, links, rectangles) {
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             boxlabels = svg.append('g').attr('class', 'graph');
             boxcorners = svg.append('g').attr('class', 'graph').selectAll('g');
+            boxhighlights = svg.append('g').attr('class', 'graph').selectAll('g');
 
 
 
@@ -2264,7 +2266,36 @@ function Graph(id, name, nodes, links, rectangles) {
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
-                .text( function (d) { if(d.lyph && d.lyph.id) return d.lyph.id + " - " + d.lyph.name; return ""})
+                .text( function (d) { if(d.lyph && d.lyph.id) return d.lyph.id + " - " + d.lyph.name; return ""});
+
+
+
+            ////box highlights
+            //boxhighlights = boxhighlights.data(rectangles);
+            //boxhighlights = boxhighlights.enter().append('svg:rect');
+            //boxhighlights.attr('x' ,function (d) {return d.x})
+            //    .attr('y' ,function (d) {return d.y})
+            //    .attr('width' ,function (d) {return d.width})
+            //    .attr('height' ,function (d) {return d.height})
+            //    .attr('stroke-width', 10)
+            //    .attr('stroke-opacity', 0.3)
+            //    .attr('stroke', function (d) {
+            //        if (graph.selected_rectangle  === d)
+            //            return 'yellow';
+            //    })
+            //    .attr('fill', 'none')
+            //    .on('mousedown', function (d) {
+            //        console.log("rectangle click");
+            //        graph.selected_rectangle = d;
+            //        graph.selected_link = null;
+            //        graph.selected_node = null;
+            //
+            //        console.log("rectangle clicked", graph.selected_rectangle);
+            //        //onSelectLink(d);
+            //        restart();
+            //    });
+
+
 
             //Rendering the boxes themselves
             boxes = boxes.enter().append('svg:rect');
@@ -2273,10 +2304,17 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr('width' ,function (d) {return d.width})
                 .attr('height' ,function (d) {return d.height})
                 .attr('class', 'rectangles')
-                .classed('selected', function(d){
-                    //console.log(d === graph.selected_rectangle)
-                    return d === graph.selected_rectangle;
-                    //return true;
+                .attr('stroke', function (d){
+                    if (!d.location)
+                        return ' lightgray';
+                    if (d.location === findSmallestContainer(d))
+                        return 'green';
+                    else
+                        return 'red';
+                })
+                .attr('stroke-dasharray', function(d){
+                    if (graph.selected_rectangle  === d)
+                        return '10,5';
                 })
                 .call(customRectdrag)
                 .on('mousedown', function (d) {
@@ -2306,6 +2344,11 @@ function Graph(id, name, nodes, links, rectangles) {
                     resizeRectangle(d);
                     restart();
                 });
+
+
+
+
+
 
 
 
@@ -2777,7 +2820,7 @@ function Graph(id, name, nodes, links, rectangles) {
             //TODO figure out the effect of removing the following line?
             //if (!graph.selected_node && !graph.selected_link) return;
             switch (d3.event.keyCode) {
-                case 8: // backspace
+                case 88: // x
                 case 46: // delete
                     $('#graphSave').css('color','red');
                     if (graph.selected_node) {
@@ -2906,8 +2949,55 @@ function Graph(id, name, nodes, links, rectangles) {
             }
         }
 
+
+        function findSmallestContainer(rect){
+            //console.log("Finding smallest container");
+            //console.log(graph.selected_rectangle);
+            var smallestContainer =null;
+            var smallestContainerSize =0;
+
+            for (var i = 0; i < rectangles.length; i++){
+
+                if (rect.id === rectangles[i].id)
+                    continue;
+                //console.log("checking containment against", rectangles[i]);
+
+                if (rect.x >= rectangles[i].x && rect.y >= rectangles[i].y
+                    && rect.width <= rectangles[i].width - (rect.x - rectangles[i].x)
+                    && rect.height <= rectangles[i].height - (rect.y - rectangles[i].y)
+                ){
+                    //console.log(rect, "is contained in", rectangles[i]);
+                    if (smallestContainer == null || rectangles[i].height * rectangles[i].width < smallestContainerSize){
+                        smallestContainer = rectangles[i];
+                        smallestContainerSize = rectangles[i].height * rectangles[i].width;
+                    }
+                }
+            }
+
+            if (smallestContainer === null) {
+                //console.log("No valid container found");
+                return null;
+            }
+            else {
+                //console.log(smallestContainer, " is the containing rectangle");
+                return smallestContainer.id;
+            }
+        }
+
+
+
         function assignRectangleToRectange(){
             console.log("Assigning rectangle to rectangle");
+
+            //console.log(graph.selected_rectangle);
+
+
+            if (!graph.selected_rectangle.lyph){
+                alert("Please save lyph before attempting to assign location" );
+                return;
+            }
+
+
             //console.log(graph.selected_rectangle);
             var smallestContainer =null;
             var smallestContainerSize =0;
@@ -2938,7 +3028,7 @@ function Graph(id, name, nodes, links, rectangles) {
             else {
                 console.log(smallestContainer, " is the containing rectangle");
                 graph.selected_rectangle.location = smallestContainer.id;
-                d3.select('#lyphLocation').property("value", smallestContainer.name);
+                d3.select('#lyphLocation').property("value", smallestContainer.lyph.name);
 
             }
 
@@ -2968,6 +3058,8 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                 });
             //}
+
+            restart();
         }
 
         function attachNodeToLyph(locationType){
@@ -3188,9 +3280,7 @@ function Graph(id, name, nodes, links, rectangles) {
         restart();
     }
 
-    $(document).keydown(function(e){
-        if ( e.keyCode == 8 ) e.preventDefault();
-    });
+
 
 }
 
