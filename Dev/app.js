@@ -254,13 +254,72 @@ var graphEditor = function () {
 
 
 
+    d3.select('#deleteLyph').on('click', function(){
+        console.log("Delete lyph");
+        //ajax request to delete lyph
+        var URL =
+            "http://open-physiology.org:"+serverPort+"/delete_lyphs/"+
+            "?lyphs="+ encodeURIComponent($('#lyphListBox').data(lyphListBox.value)) ;
+        console.log(URL);
+        $.ajax
+        ({
+            url: URL,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Not able to delete lyph:" , response);
+                    return;
+                }
+
+                for (var i =0; i < selectedGraph.rectangles.length; i++){
+                    if (selectedGraph.rectangles[i].lyph && selectedGraph.rectangles[i].lyph.id === $('#lyphListBox').data(lyphListBox.value)){
+                        selectedGraph.rectangles.splice(selectedGraph.getRectangleIndexByID($('#lyphListBox').data(lyphListBox.value)),1);
+                    }
+                }
+
+                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+            }
+        });
+
+
+    })
+
+
     d3.select('#syncLyph').on("click", function(){
+
+        if (!selectedGraph.selected_rectangle){
+            alert("Please select box before attempting re-use" );
+            return;
+        }
+
         console.log("Syncing Lyph Data");
+
         var lyphToSyncData = lyphRepo.lyphs[lyphRepo.getIndexByID($('#lyphListBox').data(lyphListBox.value))];
-        console.log(lyphToSyncData);
+        //console.log(lyphToSyncData);
 
 
-        //return;
+        if (!lyphToSyncData ){
+            alert("You moron! You need to select from the list of lyphs provided" );
+            return;
+        }
+
+
+        console.log(selectedGraph.rectangles);
+        for (var j = 0; j < selectedGraph.rectangles.length; j++){
+            if (selectedGraph.rectangles[j].lyph  && lyphToSyncData.id === selectedGraph.rectangles[j].lyph.id){
+                alert("You moron! The Lyph:"  + lyphToSyncData.name + " already exists in this view!");
+                return;
+            }
+        }
+
+
         lyphToSyncData.id != null ? d3.select("#edgeID").property("value", lyphToSyncData.id) : d3.select("#edgeID").property("value", "")
         lyphToSyncData.name != null ? d3.select("#edgeDescription").property("value", lyphToSyncData.name) : d3.select("#edgeDescription").property("value", "");
         lyphToSyncData.type != null ? d3.select("#edgeType").property("value", lyphToSyncData.type) : d3.select("#edgeType").property("value", "")
@@ -991,7 +1050,7 @@ var graphEditor = function () {
                     for (var i =0; i < response.length; i++){
                         if ($("#edgeDescription").val().trim() === response[i].name && $("#edgeID").val().trim() != response[i].id){
                             //console.log(response[i].id , response[i].name, " already exists");
-                            alert("You moron. Lyph:"  + response[i].name + " already exists!");
+                            alert("You moron. Lyph:"  + response[i].name + " already exists in the database!");
                             return;
                         }
                     }

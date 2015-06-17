@@ -1746,12 +1746,84 @@ function Graph(id, name, nodes, links, rectangles) {
     }
 
     this.getRectangleIndexByID = function (id){
-        console.log(id);
+        //console.log(id);
         for (var i =0; i < rectangles.length; i++){
             if (rectangles[i].id === id)
                 return i;
         }
         return -1;
+    }
+
+
+    this.syncGraphLyphWithServer = function(rectangleToUpdate){
+        console.log(rectangleToUpdate);
+    }
+
+
+
+    this.saveGraphToServer = function (){
+
+        //var query = "";
+        //
+        //if (this.saved != null){
+        //    query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + this.id;
+        //    query += "&name=" + this.name;
+        //} else {
+        //    selectedGraph.saved = true;
+        //    query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+this.name;
+        //}
+        //
+        ////var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
+        //for (var i =0; i < this.nodes.length ; i++){
+        //    query += "&node" + (i + 1)+ "="+ encodeURIComponent(this.nodes[i].name);
+        //    query += "&x"+ (i + 1) +"="+ encodeURIComponent(this.nodes[i].x);
+        //    query += "&y"+ (i + 1) +"="+encodeURIComponent(this.nodes[i].y);
+        //}
+        //
+        //console.log(this);
+        //
+        //for (var i =0; i < this.rectangles.length; i++){
+        //    query += "&lyph"+ (i + 1) +"="+  (this.rectangles[i].lyph ? encodeURIComponent(this.rectangles[i].lyph.id) : "null");
+        //    query += "&lx"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].x)
+        //    query += "&ly"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].y)
+        //    query += "&width"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].width)
+        //    query += "&height"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].height);
+        //
+        //}
+        //
+        //console.log(query);
+        //
+        //// ajax call to save graph view
+        //$.ajax
+        //({
+        //    context: this,
+        //
+        //    url:query,
+        //
+        //    jsonp: "callback",
+        //
+        //    dataType: "jsonp",
+        //
+        //
+        //    success: function (response) {
+        //        response;
+        //
+        //
+        //        if (response.hasOwnProperty("Error")) {
+        //            console.log("Graph View Save error" , response);
+        //            return;
+        //        }
+        //
+        //        console.log(response);
+        //        this.id = response.id;
+        //
+        //
+        //
+        //
+        //
+        //    }
+        //});
+
     }
 
 
@@ -1886,6 +1958,10 @@ function Graph(id, name, nodes, links, rectangles) {
         function rectdragmove(d){
             if (rectangle_draw) return;
             $('#graphSave').css('color','red');
+
+            graph.syncGraphLyphWithServer(graph.selected_rectangle);
+
+
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
 
@@ -1909,7 +1985,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             //move all contained rectangles.
             for (var j =0; j < rectangles.length; j++){
-                console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
+                //console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
                 if (isContainedIn(d,rectangles[j])){
                     console.log("true", rectangles[j]);
                     rectangles[j].x = rectangles[j].x + (d3.event.x - offset[0] - d.x);
@@ -2159,6 +2235,17 @@ function Graph(id, name, nodes, links, rectangles) {
 
         // update graph (called when needed)
         var restart = function restart() {
+
+
+            //graph.saveGraphToServer();
+
+
+
+
+
+
+
+
             svg.selectAll('g.graph').remove();
             boxes = svg.append('g').attr('class', 'graph').selectAll('rect');
             pathoverlay = svg.append('g').attr('class', 'graph').selectAll('path');
@@ -2618,17 +2705,21 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-
+            //graph.saveGraphToServer();
 
             if (rectangle_draw){
+                graph.syncGraphLyphWithServer(graph.selected_rectangle);
                 rectangle_draw = false;
                 rectangle_draw_started = false;
                 $('#graphSave').css('color','red');
                 $('#userconsole').text("Rectangle draw done.");
 
+
+
             }
 
             if (resize_rectangle){
+                graph.syncGraphLyphWithServer(graph.selected_rectangle);
                 console.log("Resizing done")
                 resize_rectangle = null;
                 $('#graphSave').css('color','red');
@@ -2847,7 +2938,7 @@ function Graph(id, name, nodes, links, rectangles) {
             else {
                 console.log(smallestContainer, " is the containing rectangle");
                 graph.selected_rectangle.location = smallestContainer.id;
-                d3.select('#lyphLocation').property("value", graph.selected_rectangle.location);
+                d3.select('#lyphLocation').property("value", smallestContainer.name);
 
             }
 
@@ -3096,6 +3187,10 @@ function Graph(id, name, nodes, links, rectangles) {
             .on('keyup', keyup);
         restart();
     }
+
+    $(document).keydown(function(e){
+        if ( e.keyCode == 8 ) e.preventDefault();
+    });
 
 }
 
