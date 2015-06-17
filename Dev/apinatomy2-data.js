@@ -282,16 +282,16 @@ function LyphRepo (lyphs){
 
 
             success: function (response) {
-                console.log(response);
+                //console.log(response);
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Error in getting all lyphs", response)
                     return;
                 }
 
-                console.log("Lyphs", response);
+                //console.log("Lyphs", response);
                 this.lyphs = response;
-                console.log(this.lyphs);
+                //console.log(this.lyphs);
                 onSuccess();
 
 
@@ -310,6 +310,11 @@ function LyphRepo (lyphs){
         }
         return -1;
     }
+
+
+
+
+
 }
 
 //create layer

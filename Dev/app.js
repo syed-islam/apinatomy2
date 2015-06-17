@@ -254,12 +254,11 @@ var graphEditor = function () {
 
     d3.select('#syncLyph').on("click", function(){
         console.log("Syncing Lyph Data");
-        //console.log(lyphRepo.getIndexByID($('#lyphList').val()));
-        var lyphToSyncData =lyphRepo.lyphs[lyphRepo.getIndexByID($('#lyphList').val())];
+        var lyphToSyncData = lyphRepo.lyphs[lyphRepo.getIndexByID($('#lyphListBox').data(lyphListBox.value))];
         console.log(lyphToSyncData);
 
 
-
+        //return;
         lyphToSyncData.id != null ? d3.select("#edgeID").property("value", lyphToSyncData.id) : d3.select("#edgeID").property("value", "")
         lyphToSyncData.name != null ? d3.select("#edgeDescription").property("value", lyphToSyncData.name) : d3.select("#edgeDescription").property("value", "");
         lyphToSyncData.type != null ? d3.select("#edgeType").property("value", lyphToSyncData.type) : d3.select("#edgeType").property("value", "")
@@ -277,30 +276,6 @@ var graphEditor = function () {
                 $('#thelist').append('<option value='+  lyphToSyncData.annots[i].obj +"|"+ lyphToSyncData.annots[i].pubmed.id +'> ' + lyphToSyncData.annots[i].obj +" | "+ lyphToSyncData.annots[i].pubmed.id +   "</option");
             }
         }
-
-
-
-
-
-        //console.log("Updating edge parameter:" , edge);
-        //
-        //edge.edgeid != null ? d3.select("#edgeID").property("value", edge.edgeid) : d3.select("#edgeID").property("value", "")
-        //edge.type != null ? d3.select("#edgeType").property("value", edge.type) : d3.select("#edgeType").property("value", "")
-        //edge.description != null ? d3.select("#edgeDescription").property("value", edge.description) : d3.select("#edgeDescription").property("value", "");
-        ////edge.annotations != null ? d3.select("#edgeAnnotation").property("value", edge.annotations) :d3.select("#edgeAnnotation").property("value", "");
-        //d3.select("#edgeAnnotation").property("value", "");
-        //d3.select("#provenance").property("value", "");
-        //edge.species != null ? d3.select("#edgeSpecies").property("value", edge.species) : d3.select("#edgeSpecies").property("value", "");
-        //$('#thelist').empty();
-        //if(edge.annotation){
-        //    for (var i = 0; i < edge.annotations.length; i ++){
-        //        //console.log(edge.annotations[i].annotation, edge.annotations[i].pubmedID.id);
-        //        $('#thelist').append('<option value='+  edge.annotations[i].annotation +"|"+ edge.annotations[i].pubmedID.id +'> ' + edge.annotations[i].annotation +" | "+ edge.annotations[i].pubmedID.id  +   "</option");
-        //    }
-        //}
-
-
-
     });
 
 
@@ -338,8 +313,6 @@ var graphEditor = function () {
                     selectedGraph.rectangles.splice(selectedGraph.rectangles.indexOf(selectedGraph.selected_rectangle), 1);
                     selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
                     load_all_lyphs();
-
-
                 }
             });
 
@@ -971,7 +944,7 @@ var graphEditor = function () {
 
     d3.select('#openGraphViewer').on('click',function(){
         console.log("Opening Viewer at:", graphViewerURL + "?root=" + $('#lyphList').val() );
-        window.open(graphViewerURL + "?root=" + $('#lyphList').val() +"&port=" + serverPort, '_blank');
+        window.open(graphViewerURL + "?root=" + $('#lyphListBox').data(lyphListBox.value) +"&port=" + serverPort, '_blank');
     });
 
 
@@ -1404,8 +1377,8 @@ var graphEditor = function () {
                         //console.log(response);
 
                         if (response.hasOwnProperty("Error")) {
-                            console.log("Lyph not found", response);
-                            $('#userconsole').text(response.Error);
+                            //console.log("Lyph not found", response);
+                            //$('#userconsole').text(response.Error);
                             return;
                         }
 
@@ -1719,7 +1692,7 @@ var graphEditor = function () {
 
 
     refresh_graph = function refresh_graph(){
-        load_all_lyphs();
+        //load_all_lyphs();
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
 
@@ -1735,7 +1708,7 @@ var graphEditor = function () {
         console.log("Syncing Lyph List with Server");
         $('#lyphList').empty();
         for (var i =0 ; i < lyphRepo.lyphs.length; i++){
-            $('#lyphList').append('<option value=' + lyphRepo.lyphs[i].id + '> ' + lyphRepo.lyphs[i].id  + " - " +lyphRepo.lyphs[i].name + "</option")
+            $('#lyphList').append('<option value=' + lyphRepo.lyphs[i].id + '> ' +lyphRepo.lyphs[i].name + "</option")
         }
     }
 
@@ -1751,6 +1724,7 @@ var graphEditor = function () {
                         q: request.term
                     },
                     success: function( data ) {
+                        console.log(data);
                         response( data.Results);
                     }
                 });
@@ -1784,6 +1758,59 @@ var graphEditor = function () {
                     }
 
                 });
+
+            },
+            open: function() {
+                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+            },
+            close: function() {
+                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+            }
+        });
+    });
+
+
+
+    $(function() {
+
+        $( "#lyphListBox" ).autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    url: "http://open-physiology.org:5056/lyphs_by_prefix/?prefix=" + request.term,
+                    dataType: "jsonp",
+                    data: {
+                        q: request.term
+                    },
+                    success: function( data ) {
+                        $('#lyphListBox').data("", "-1");
+
+                        console.log(data);
+                        //console.log(lyphRepo.lyphs);
+                        var returnedLyphs = [];
+
+                        for (var i =0; i < data.length; i ++) {
+                            returnedLyphs.push({label:data[i].name, id:data[i].id});
+
+                            var indexAtRepo = lyphRepo.getIndexByID(data[i].id);
+                            if (indexAtRepo > -1){
+                                lyphRepo.lyphs[indexAtRepo] = data[i];
+                            } else {
+                                lyphRepo.lyphs.push(data[i]);
+                            }
+                        }
+
+                        //console.log(lyphRepo.lyphs);
+                        response(returnedLyphs);
+                    }
+                });
+            },
+            minLength: 0,
+            select: function( event, ui ) {
+                console.log(ui.item.id);
+
+                $('#lyphListBox').data(ui.item.value, ui.item.id);
+                console.log($('#lyphListBox').data(lyphListBox.value));
+
 
             },
             open: function() {
