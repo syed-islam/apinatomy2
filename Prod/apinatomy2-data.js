@@ -4,7 +4,7 @@
 
 
 debugging = true;
-var serverPort = 5056; // production - 5055, Development - 5056
+var serverPort = 5055; // production - 5055, Development - 5056
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
@@ -1877,7 +1877,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
 
-        console.log(this);
+        //console.log("caller is " + arguments.callee.caller.toString());
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius = 8;

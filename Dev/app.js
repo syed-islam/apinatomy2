@@ -101,8 +101,10 @@ var graphEditor = function () {
 
             //selectedGraphNode = this;
             selectedGraph = d;
-            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph,selectedGraph);
-            onSelectLink(selectedGraph.rectangles[0]);
+            onSelectLink(selectedGraph.rectangles[selectedGraph.rectangles.length -1]);
+            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
+
+            console.log(selectedGraph.rectangles[0])
             syncSelectedGraph();
         //}
     }
@@ -141,6 +143,7 @@ var graphEditor = function () {
     }
 
     var onSelectLink = function(d){
+        console.log(d);
 
         if (d instanceof Link){
             //Update link parameters
