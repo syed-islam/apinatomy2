@@ -4,7 +4,7 @@
 
 
 debugging = true;
-var serverPort = 5055; // production - 5055, Development - 5056
+var serverPort = 5056; // production - 5055, Development - 5056
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
@@ -1776,79 +1776,144 @@ function Graph(id, name, nodes, links, rectangles) {
     }
 
 
+    this.reloadGraphFromServer = function (callBackAfterSuccess){
 
-    this.saveGraphToServer = function (){
+        $.ajax
+        ({
+            url:"http://open-physiology.org:"+serverPort+"/lyphview/"+this.id,
 
-        //var query = "";
-        //
-        //if (this.saved != null){
-        //    query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + this.id;
-        //    query += "&name=" + this.name;
-        //} else {
-        //    selectedGraph.saved = true;
-        //    query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+this.name;
-        //}
-        //
-        ////var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
-        //for (var i =0; i < this.nodes.length ; i++){
-        //    query += "&node" + (i + 1)+ "="+ encodeURIComponent(this.nodes[i].name);
-        //    query += "&x"+ (i + 1) +"="+ encodeURIComponent(this.nodes[i].x);
-        //    query += "&y"+ (i + 1) +"="+encodeURIComponent(this.nodes[i].y);
-        //}
-        //
-        //console.log(this);
-        //
-        //for (var i =0; i < this.rectangles.length; i++){
-        //    query += "&lyph"+ (i + 1) +"="+  (this.rectangles[i].lyph ? encodeURIComponent(this.rectangles[i].lyph.id) : "null");
-        //    query += "&lx"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].x)
-        //    query += "&ly"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].y)
-        //    query += "&width"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].width)
-        //    query += "&height"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].height);
-        //
-        //}
-        //
-        //console.log(query);
-        //
-        //// ajax call to save graph view
-        //$.ajax
-        //({
-        //    context: this,
-        //
-        //    url:query,
-        //
-        //    jsonp: "callback",
-        //
-        //    dataType: "jsonp",
-        //
-        //
-        //    success: function (response) {
-        //        response;
-        //
-        //
-        //        if (response.hasOwnProperty("Error")) {
-        //            console.log("Graph View Save error" , response);
-        //            return;
-        //        }
-        //
-        //        console.log(response);
-        //        this.id = response.id;
-        //
-        //
-        //
-        //
-        //
-        //    }
-        //});
+            jsonp: "callback",
 
-    }
+            dataType: "jsonp",
 
 
-    //
-    //if (rectangles === undefined)
-    //    rectangles = [];
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Node creation error:" , response);
+                    return;
+                }
+
+                //console.log(url)
+                console.log("Response:" , response);
+
+                    this.nodes = [];
+                    this.edges = [];
+                    this.rectangles = [];
+                    this.id = null;
+                    this.name = null;
+
+                    this.id = response.id;
+                    this.name = response.name;
+                    this.saved = true;
+
+                    //load rectangles
+                    for (var j =0; j < response.lyphs.length; j++){
+                        var tmpRect = new Rectangle(response.lyphs[j].id, parseInt(response.lyphs[j].x), parseInt(response.lyphs[j].y),parseInt(response.lyphs[j].width), parseInt(response.lyphs[j].height), response.lyphs[j].lyph, response.lyphs[j].location);
+                        this.rectangles.push(tmpRect);
+                    }
+
+
+
+
+                //
+                //    populateRectangleNames(rectangles);
+                //
+                //    //load nodes
+                //    for (var j =0; j < response[i].nodes.length; j++){
+                //        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id, parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, response[i].nodes[j].location, response[i].nodes[j].loctype));
+                //    }
+                //
+                //
+                //    //load edges
+                //    for (var j =0; j < response[i].nodes.length; j++){
+                //        //console.log(response[i].nodes[j].exits.length)
+                //        for (var k =0; k < response[i].nodes[j].exits.length; k++){
+                //            //console.log(response[i].nodes[j].id);
+                //            //console.log("source", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)]);
+                //            //console.log("target", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)]);
+                //            //console.log("au", (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph)] : null);
+                //            //console.log("type", response[i].nodes[j].exits[k].via.type );
+                //            //console.log("description", response[i].nodes[j].exits[k].via.name );
+                //            //console.log("fma",response[i].nodes[j].exits[k].via.fma );
+                //
+                //
+                //
+                //            var newEdge = new Link(
+                //                newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)],
+                //                newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)],
+                //                (response[i].nodes[j].exits[k].via.template)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.template.id)]: null,
+                //                response[i].nodes[j].exits[k].via.type,
+                //                response[i].nodes[j].exits[k].via.id,
+                //                response[i].nodes[j].exits[k].via.name,
+                //                response[i].nodes[j].exits[k].via.fma,
+                //                null,
+                //                null,
+                //                false,
+                //                function(){
+                //                    //console.log("in");
+                //                    //console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
+                //                    var annotations = [];
+                //                    for (var ai = 0; ai < response[i].nodes[j].exits[k].via.annots.length; ai++){
+                //                        annotations.push(new Annotations(response[i].nodes[j].exits[k].via.annots[ai].obj, response[i].nodes[j].exits[k].via.annots[ai].pubmed));
+                //                        //annotations += response[i].nodes[j].exits[k].vai.annots[ai].obj;
+                //                    }
+                //                    //console.log("Annnots" , annotations)
+                //                    return annotations;
+                //                }(),
+                //                response[i].nodes[j].exits[k].via.species
+                //                //j % 2 ===0 ?true: false
+                //            );
+                //            edges.push(newEdge);
+                //        }
+                //    }
+                //
+                //
+                //
+                //
+                //    //console.log("Edges", edges);
+                //    //newGraph.selected_link = newGraph.links[0];
+                //    //newGraph.selected_node = newGraph.nodes[0];
+                //    //newGraph.selected_rectangle = newGraph.rectangles[0];
+                //    //console.log(newGraph.rectangles[0]);
+                //
+                //    //console.log("New Graph:", newGraph);
+                //
+                //    graphRepo.addAt(newGraph,0);
+                //
+                //
+                //    selectedGraph = graphRepo.graphs[0];
+                //    selectedGraph.selected_rectangle = selectedGraph.rectangles[selectedGraph.rectangles.length -1];
+                //    onSelectLink(selectedGraph.selected_rectangle )
+                //    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                //    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
+                //    updateGraphParameters(selectedGraph);
+                //
+                //
+                //}
+                //
+                ////console.log(graphRepo);
+                ////console.log(response);
+                ////
+                ////graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
+                ////refresh_graph();
+            }
+        });
+
+
+
+
+
+
+    };
 
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
+        //asking for a reload of the data
+        //this.reloadGraphFromServer();
+
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius = 8;

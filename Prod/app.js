@@ -1884,7 +1884,7 @@ var graphEditor = function () {
         $( "#lyphListBox" ).autocomplete({
             source: function( request, response ) {
                 $.ajax({
-                    url: "http://open-physiology.org:5056/lyphs_by_prefix/?prefix=" + request.term,
+                    url: "http://open-physiology.org:"+ serverPort +"/lyphs_by_prefix/?prefix=" + request.term,
                     dataType: "jsonp",
                     data: {
                         q: request.term
