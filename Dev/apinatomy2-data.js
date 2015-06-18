@@ -1772,7 +1772,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
     this.syncGraphLyphWithServer = function(rectangleToUpdate){
-        console.log(rectangleToUpdate);
+        //console.log(rectangleToUpdate);
     }
 
 
@@ -1877,6 +1877,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
 
+        //console.log(this);
         //console.log("caller is " + arguments.callee.caller.toString());
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
@@ -2032,7 +2033,7 @@ function Graph(id, name, nodes, links, rectangles) {
             for (var j =0; j < rectangles.length; j++){
                 //console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
                 if (isContainedIn(d,rectangles[j])){
-                    console.log("true", rectangles[j]);
+                    //console.log("true", rectangles[j]);
                     rectangles[j].x = rectangles[j].x + (d3.event.x - offset[0] - d.x);
                     rectangles[j].y = rectangles[j].y + (d3.event.y - offset[1] - d.y);
 
@@ -2688,7 +2689,7 @@ function Graph(id, name, nodes, links, rectangles) {
             // because :active only works in WebKit?
             svg.classed('active', true);
 
-            console.log("5", rectangle_draw);
+            //console.log("5", rectangle_draw);
 
             if (d3.event.keyCode == 68 || mousedown_node || mousedown_link) return;
 

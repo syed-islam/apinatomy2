@@ -1426,7 +1426,8 @@ var graphEditor = function () {
 
                     //console.log("Loaded Rectangles", rectangles);
 
-                    populateRectangleNames(rectangles);
+                    if (response.length -1 === i)
+                        populateRectangleNames(rectangles);
 
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
@@ -1489,17 +1490,24 @@ var graphEditor = function () {
                     //console.log("New Graph:", newGraph);
 
                     graphRepo.addAt(newGraph,0);
+                    //newGraph.selected_rectangle = newGraph.rectangles[newGraph.rectangles -1];
 
 
                     selectedGraph = graphRepo.graphs[0];
                     selectedGraph.selected_rectangle = selectedGraph.rectangles[selectedGraph.rectangles.length -1];
                     onSelectLink(selectedGraph.selected_rectangle )
-                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
-                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
-                    updateGraphParameters(selectedGraph);
-
 
                 }
+
+
+                //selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
+                updateGraphParameters(selectedGraph);
+
+
+
+
+
 
                 //console.log(graphRepo);
                 //console.log(response);
