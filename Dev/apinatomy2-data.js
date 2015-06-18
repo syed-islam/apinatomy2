@@ -1662,7 +1662,7 @@ function GraphRepo(graphs){
         graphs.splice(index, 1, graph);
     }
 
-    this.draw = function(svg, vp, onClick){
+    this.draw = function(svg, vp, onClick, selectedGraph){
         var graphRepo = this;
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
@@ -1671,14 +1671,30 @@ function GraphRepo(graphs){
         svg.selectAll("graphRepo")
             .data(graphRepo.graphs)
             .enter().append("rect")
-            .style("fill", "white")
+            .style("fill", function(d){
+                if (d === selectedGraph){
+                    return "yellow"
+                }
+                return "white"
+
+            })
             .style("stroke-width", 0.5)
-            .style("stroke", "black")
+            .style("stroke", function(d){
+                if (d === selectedGraph)
+                    return "red";
+                return "black"
+            })
             .attr("width", vp.width - vp.lengthScale)
             .attr("height", vp.widthScale)
             .attr("x", vp.lengthScale)
             .attr("y", function(d, i){return i * (vp.widthScale + delta);})
-            .on("click", onClick);
+            .on("click", function(d){
+                onClick(d);
+            });
+
+
+        //d3.select(this).style("stroke", "red");
+        //d3.select(selectedGraphNode).style("stroke", "black");
 
         svg.selectAll("graphRepo")
             .data(graphRepo.graphs)
@@ -2270,30 +2286,21 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-            ////box highlights
+            //////box highlights
             //boxhighlights = boxhighlights.data(rectangles);
             //boxhighlights = boxhighlights.enter().append('svg:rect');
             //boxhighlights.attr('x' ,function (d) {return d.x})
             //    .attr('y' ,function (d) {return d.y})
             //    .attr('width' ,function (d) {return d.width})
             //    .attr('height' ,function (d) {return d.height})
-            //    .attr('stroke-width', 10)
-            //    .attr('stroke-opacity', 0.3)
+            //    .attr('stroke-width', 20)
+            //    .attr('stroke-opacity', 1)
             //    .attr('stroke', function (d) {
             //        if (graph.selected_rectangle  === d)
             //            return 'yellow';
+            //        return false
             //    })
             //    .attr('fill', 'none')
-            //    .on('mousedown', function (d) {
-            //        console.log("rectangle click");
-            //        graph.selected_rectangle = d;
-            //        graph.selected_link = null;
-            //        graph.selected_node = null;
-            //
-            //        console.log("rectangle clicked", graph.selected_rectangle);
-            //        //onSelectLink(d);
-            //        restart();
-            //    });
 
 
 
@@ -2305,6 +2312,9 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr('height' ,function (d) {return d.height})
                 .attr('class', 'rectangles')
                 .attr('stroke', function (d){
+
+                    //if (d === graph.selected_rectangle)
+                    //    return 'blue';
                     if (!d.location)
                         return ' lightgray';
                     if (d.location === findSmallestContainer(d))
@@ -2314,7 +2324,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 })
                 .attr('stroke-dasharray', function(d){
                     if (graph.selected_rectangle  === d)
-                        return '10,5';
+                        return '10,6';
                 })
                 .call(customRectdrag)
                 .on('mousedown', function (d) {
@@ -2655,10 +2665,13 @@ function Graph(id, name, nodes, links, rectangles) {
             // because :active only works in WebKit?
             svg.classed('active', true);
 
+            console.log("5", rectangle_draw);
+
             if (d3.event.keyCode == 68 || mousedown_node || mousedown_link) return;
 
 
             if (rectangle_draw) {
+                console.log("2");
                 rectangle_draw_started = true;
 
                 rectangle_x = d3.mouse(this)[0];
@@ -2713,6 +2726,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mousemove() {
             if (rectangle_draw && rectangle_draw_started){
+                console.log("3");
                 rectangles[rectangles.length-1].width = d3.mouse(this)[0] - rectangles[rectangles.length-1].x;
                 rectangles[rectangles.length-1].height = d3.mouse(this)[1] - rectangles[rectangles.length-1].y;
                 //console.log(rectangles[rectangles.length-1]);
@@ -2746,18 +2760,20 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mouseup() {
 
-
-
             //graph.saveGraphToServer();
 
             if (rectangle_draw){
+                console.log("4");
+                console.log(rectangles);
+                graph.selected_rectangle = rectangles[rectangles.length-1];
+
+                onSelectLink(graph.selected_rectangle);
                 graph.syncGraphLyphWithServer(graph.selected_rectangle);
+
                 rectangle_draw = false;
                 rectangle_draw_started = false;
                 $('#graphSave').css('color','red');
                 $('#userconsole').text("Rectangle draw done.");
-
-
 
             }
 
@@ -2783,6 +2799,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
             // clear mouse event vars
             resetMouseVars();
+
+            restart();
         }
 
         function spliceLinksForNode(node) {
@@ -2920,6 +2938,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 case 82: // R - Rectangle
                     $('#userconsole').text("Rectangle draw enable, click and move mouse right, bottom to draw.");
                     rectangle_draw = true;
+                    console.log("1", rectangle_draw);
                     break;
                 case 73: // I - insert node
                     insert_node = true;

@@ -97,13 +97,14 @@ var graphEditor = function () {
     }
 
     var onSelectGraph = function(d){
-        if (this != selectedGraphNode){
-            d3.select(this).style("stroke", "red");
-            d3.select(selectedGraphNode).style("stroke", "black");
-            selectedGraphNode = this;
+        //if (this != selectedGraphNode){
+
+            //selectedGraphNode = this;
             selectedGraph = d;
+            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph,selectedGraph);
+            onSelectLink(selectedGraph.rectangles[0]);
             syncSelectedGraph();
-        }
+        //}
     }
 
 
@@ -789,7 +790,7 @@ var graphEditor = function () {
 
                 selectedGraph = graphRepo.graphs[0];
                 selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
-                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph,selectedGraph);
                 updateGraphParameters(selectedGraph);
 
 
@@ -1439,8 +1440,10 @@ var graphEditor = function () {
 
 
                     selectedGraph = graphRepo.graphs[0];
+                    selectedGraph.selected_rectangle = selectedGraph.rectangles[selectedGraph.rectangles.length -1];
+                    onSelectLink(selectedGraph.selected_rectangle )
                     selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
-                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
                     updateGraphParameters(selectedGraph);
 
 
@@ -1613,7 +1616,7 @@ var graphEditor = function () {
                 graphRepo.addAt(graphAjax,0);
                 selectedGraph = graphRepo.graphs[0];
                 selectedGraph.draw(svg, onSelectNode,onSelectLink,onSelectRectangle);
-                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph,selectedGraph);
                 updateGraphParameters(selectedGraph);
 
 
@@ -1799,7 +1802,7 @@ var graphEditor = function () {
     refresh_graph = function refresh_graph(){
         //load_all_lyphs();
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
-        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph);
+        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
 
     }
 
