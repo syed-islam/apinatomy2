@@ -247,7 +247,7 @@ var graphEditor = function () {
 
     function updateGraphParameters(graph){
         if (graph != null){
-            console.log(graph);
+            //console.log(graph);
             d3.select("#graphID").property("value", graph.id);
             d3.select("#graphName").property("value", graph.name? graph.name : "" );
         }
@@ -640,7 +640,7 @@ var graphEditor = function () {
 
         //nodes.push(new Node("1", ".", 200, 200, null, true));
 
-        newGraph = new Graph (graphRepo.graphs.length, "", nodes, edges, rectangles);
+        newGraph = new Graph ("", "", nodes, edges, rectangles);
         graphRepo.addAt(newGraph, 0);
         selectedGraph = graphRepo.graphs[0];
         syncSelectedGraph();
@@ -892,6 +892,7 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
+        //selectedGraph.reloadGraphFromServer();
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         updateGraphParameters(selectedGraph);
     }

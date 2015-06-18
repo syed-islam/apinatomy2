@@ -1778,17 +1778,19 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.reloadGraphFromServer = function (callBackAfterSuccess){
 
+        console.log(this);
+
         $.ajax
         ({
+            context: this,
+
             url:"http://open-physiology.org:"+serverPort+"/lyphview/"+this.id,
 
             jsonp: "callback",
 
             dataType: "jsonp",
 
-
             success: function (response) {
-                response;
 
 
                 if (response.hasOwnProperty("Error")) {
