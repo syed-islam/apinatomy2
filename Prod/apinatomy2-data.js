@@ -4,7 +4,7 @@
 
 
 debugging = true;
-var serverPort = 5056; // production - 5055, Development - 5056
+var serverPort = 5055; // production - 5055, Development - 5056
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
@@ -1778,11 +1778,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.reloadGraphFromServer = function (callBackAfterSuccess){
 
-        console.log(this);
-
         $.ajax
         ({
-            context: this,
+            context:this,
 
             url:"http://open-physiology.org:"+serverPort+"/lyphview/"+this.id,
 
@@ -1790,7 +1788,9 @@ function Graph(id, name, nodes, links, rectangles) {
 
             dataType: "jsonp",
 
+
             success: function (response) {
+                response;
 
 
                 if (response.hasOwnProperty("Error")) {
@@ -1817,90 +1817,53 @@ function Graph(id, name, nodes, links, rectangles) {
                         this.rectangles.push(tmpRect);
                     }
 
+                    populateRectangleNames(this.rectangles);
 
 
+                    //load nodes
+                    for (var j =0; j < response.nodes.length; j++){
+                        this.nodes.push(new Node(response.nodes[j].id, response.nodes[j].id, parseInt(response.nodes[j].x), parseInt(response.nodes[j].y), null, true, response.nodes[j].location, response.nodes[j].loctype));
+                    }
 
-                //
-                //    populateRectangleNames(rectangles);
-                //
-                //    //load nodes
-                //    for (var j =0; j < response[i].nodes.length; j++){
-                //        nodes.push(new Node(response[i].nodes[j].id, response[i].nodes[j].id, parseInt(response[i].nodes[j].x), parseInt(response[i].nodes[j].y), null, true, response[i].nodes[j].location, response[i].nodes[j].loctype));
-                //    }
-                //
-                //
-                //    //load edges
-                //    for (var j =0; j < response[i].nodes.length; j++){
-                //        //console.log(response[i].nodes[j].exits.length)
-                //        for (var k =0; k < response[i].nodes[j].exits.length; k++){
-                //            //console.log(response[i].nodes[j].id);
-                //            //console.log("source", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)]);
-                //            //console.log("target", newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)]);
-                //            //console.log("au", (response[i].nodes[j].exits[k].via.lyph)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.lyph)] : null);
-                //            //console.log("type", response[i].nodes[j].exits[k].via.type );
-                //            //console.log("description", response[i].nodes[j].exits[k].via.name );
-                //            //console.log("fma",response[i].nodes[j].exits[k].via.fma );
-                //
-                //
-                //
-                //            var newEdge = new Link(
-                //                newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].id)],
-                //                newGraph.nodes[newGraph.getNodeIndexByID(response[i].nodes[j].exits[k].to)],
-                //                (response[i].nodes[j].exits[k].via.template)? auRepo.auSet[auRepo.getIndexByID(response[i].nodes[j].exits[k].via.template.id)]: null,
-                //                response[i].nodes[j].exits[k].via.type,
-                //                response[i].nodes[j].exits[k].via.id,
-                //                response[i].nodes[j].exits[k].via.name,
-                //                response[i].nodes[j].exits[k].via.fma,
-                //                null,
-                //                null,
-                //                false,
-                //                function(){
-                //                    //console.log("in");
-                //                    //console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
-                //                    var annotations = [];
-                //                    for (var ai = 0; ai < response[i].nodes[j].exits[k].via.annots.length; ai++){
-                //                        annotations.push(new Annotations(response[i].nodes[j].exits[k].via.annots[ai].obj, response[i].nodes[j].exits[k].via.annots[ai].pubmed));
-                //                        //annotations += response[i].nodes[j].exits[k].vai.annots[ai].obj;
-                //                    }
-                //                    //console.log("Annnots" , annotations)
-                //                    return annotations;
-                //                }(),
-                //                response[i].nodes[j].exits[k].via.species
-                //                //j % 2 ===0 ?true: false
-                //            );
-                //            edges.push(newEdge);
-                //        }
-                //    }
-                //
-                //
-                //
-                //
-                //    //console.log("Edges", edges);
-                //    //newGraph.selected_link = newGraph.links[0];
-                //    //newGraph.selected_node = newGraph.nodes[0];
-                //    //newGraph.selected_rectangle = newGraph.rectangles[0];
-                //    //console.log(newGraph.rectangles[0]);
-                //
-                //    //console.log("New Graph:", newGraph);
-                //
-                //    graphRepo.addAt(newGraph,0);
-                //
-                //
-                //    selectedGraph = graphRepo.graphs[0];
-                //    selectedGraph.selected_rectangle = selectedGraph.rectangles[selectedGraph.rectangles.length -1];
-                //    onSelectLink(selectedGraph.selected_rectangle )
-                //    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
-                //    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
-                //    updateGraphParameters(selectedGraph);
-                //
-                //
-                //}
-                //
-                ////console.log(graphRepo);
-                ////console.log(response);
-                ////
-                ////graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
-                ////refresh_graph();
+
+                    //load edges
+                    for (var j =0; j < response.nodes.length; j++){
+                        //console.log(response[i].nodes[j].exits.length)
+                        for (var k =0; k < response.nodes[j].exits.length; k++){
+
+
+                            var newEdge = new Link(
+                                newGraph.nodes[newGraph.getNodeIndexByID(response.nodes[j].id)],
+                                newGraph.nodes[newGraph.getNodeIndexByID(response.nodes[j].exits[k].to)],
+                                (response.nodes[j].exits[k].via.template)? auRepo.auSet[auRepo.getIndexByID(response.nodes[j].exits[k].via.template.id)]: null,
+                                response.nodes[j].exits[k].via.type,
+                                response.nodes[j].exits[k].via.id,
+                                response.nodes[j].exits[k].via.name,
+                                response.nodes[j].exits[k].via.fma,
+                                null,
+                                null,
+                                false,
+                                function(){
+                                    //console.log("in");
+                                    //console.log("Looking", response[i].nodes[j].exits[k].via.annots.length, response[i].nodes[j].exits[k].via.annots[0]);
+                                    var annotations = [];
+                                    for (var ai = 0; ai < response.nodes[j].exits[k].via.annots.length; ai++){
+                                        annotations.push(new Annotations(response.nodes[j].exits[k].via.annots[ai].obj, response.nodes[j].exits[k].via.annots[ai].pubmed));
+                                        //annotations += response[i].nodes[j].exits[k].vai.annots[ai].obj;
+                                    }
+                                    //console.log("Annnots" , annotations)
+                                    return annotations;
+                                }(),
+                                response.nodes[j].exits[k].via.species
+                                //j % 2 ===0 ?true: false
+                            );
+                            this.edges.push(newEdge);
+                        }
+                    }
+
+                console.log(this);
+                if (callBackAfterSuccess)
+                    callBackAfterSuccess();
             }
         });
 
@@ -1913,9 +1876,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
-        //asking for a reload of the data
-        //this.reloadGraphFromServer();
 
+        console.log(this);
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius = 8;
@@ -2322,12 +2284,6 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
             //graph.saveGraphToServer();
-
-
-
-
-
-
 
 
             svg.selectAll('g.graph').remove();
@@ -3363,6 +3319,10 @@ function Graph(id, name, nodes, links, rectangles) {
         d3.select(window)
             .on('keydown', keydown)
             .on('keyup', keyup);
+
+        //asking for a reload of the data
+        //console.log(restart);
+
         restart();
     }
 

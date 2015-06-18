@@ -247,7 +247,7 @@ var graphEditor = function () {
 
     function updateGraphParameters(graph){
         if (graph != null){
-            console.log(graph);
+            //console.log(graph);
             d3.select("#graphID").property("value", graph.id);
             d3.select("#graphName").property("value", graph.name? graph.name : "" );
         }
@@ -307,7 +307,7 @@ var graphEditor = function () {
 
 
         if (!lyphToSyncData ){
-            alert("You moron! You need to select from the list of lyphs provided" );
+            alert("You need to select from the list of lyphs provided" );
             return;
         }
 
@@ -315,7 +315,7 @@ var graphEditor = function () {
         console.log(selectedGraph.rectangles);
         for (var j = 0; j < selectedGraph.rectangles.length; j++){
             if (selectedGraph.rectangles[j].lyph  && lyphToSyncData.id === selectedGraph.rectangles[j].lyph.id){
-                alert("You moron! The Lyph:"  + lyphToSyncData.name + " already exists in this view!");
+                alert("The Lyph:"  + lyphToSyncData.name + " already exists in this view!");
                 return;
             }
         }
@@ -338,6 +338,8 @@ var graphEditor = function () {
                 $('#thelist').append('<option value='+  lyphToSyncData.annots[i].obj +"|"+ lyphToSyncData.annots[i].pubmed.id +'> ' + lyphToSyncData.annots[i].obj +" | "+ lyphToSyncData.annots[i].pubmed.id +   "</option");
             }
         }
+
+        saveLyph();
     });
 
 
@@ -638,7 +640,7 @@ var graphEditor = function () {
 
         //nodes.push(new Node("1", ".", 200, 200, null, true));
 
-        newGraph = new Graph (graphRepo.graphs.length, "", nodes, edges, rectangles);
+        newGraph = new Graph ("", "", nodes, edges, rectangles);
         graphRepo.addAt(newGraph, 0);
         selectedGraph = graphRepo.graphs[0];
         syncSelectedGraph();
@@ -890,6 +892,7 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
+        //selectedGraph.reloadGraphFromServer();
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         updateGraphParameters(selectedGraph);
     }
@@ -1022,43 +1025,53 @@ var graphEditor = function () {
 
 
         d3.select("#edgeSave").on("click", function() {
-            $('#graphSave').css('color','red');
-
-            //Perform validation  to ensure that the lyph name doesn't already exist.
-
-            var url =  "http://open-physiology.org:5056/lyphs_by_prefix/?prefix="+$("#edgeDescription").val().trim();
-
-            $.ajax
-            ({
-                url: url,
-
-                jsonp: "callback",
-
-                dataType: "jsonp",
+            saveLyph();
+    });
 
 
-                success: function (response) {
-                    response;
+    function saveLyph(){
+        $('#graphSave').css('color','red');
+
+        //Perform validation  to ensure that the lyph name doesn't already exist.
+
+        var url =  "http://open-physiology.org:5056/lyphs_by_prefix/?prefix="+$("#edgeDescription").val().trim();
+
+        $.ajax
+        ({
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
 
 
-                    if (response.hasOwnProperty("Error")) {
-                        console.log("Error in obtaining a list of lyphs:", response);
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in obtaining a list of lyphs:", response);
+                    return;
+                }
+
+
+                console.log(response);
+                for (var i =0; i < response.length; i++){
+                    if ($("#edgeDescription").val().trim() === response[i].name && $("#edgeID").val().trim() != response[i].id){
+                        //console.log(response[i].id , response[i].name, " already exists");
+                        alert("Lyph:"  + response[i].name + " already exists in the database!");
                         return;
                     }
-
-
-                    console.log(response);
-                    for (var i =0; i < response.length; i++){
-                        if ($("#edgeDescription").val().trim() === response[i].name && $("#edgeID").val().trim() != response[i].id){
-                            //console.log(response[i].id , response[i].name, " already exists");
-                            alert("You moron. Lyph:"  + response[i].name + " already exists in the database!");
-                            return;
-                        }
-                    }
-                    saveLyphData();
                 }
-            });
-    });
+                saveLyphData();
+            }
+        });
+    }
+
+
+
+
+
 
     function saveLyphData() {
 

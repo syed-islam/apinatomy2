@@ -307,7 +307,7 @@ var graphEditor = function () {
 
 
         if (!lyphToSyncData ){
-            alert("You moron! You need to select from the list of lyphs provided" );
+            alert("You need to select from the list of lyphs provided" );
             return;
         }
 
@@ -315,7 +315,7 @@ var graphEditor = function () {
         console.log(selectedGraph.rectangles);
         for (var j = 0; j < selectedGraph.rectangles.length; j++){
             if (selectedGraph.rectangles[j].lyph  && lyphToSyncData.id === selectedGraph.rectangles[j].lyph.id){
-                alert("You moron! The Lyph:"  + lyphToSyncData.name + " already exists in this view!");
+                alert("The Lyph:"  + lyphToSyncData.name + " already exists in this view!");
                 return;
             }
         }
@@ -1059,7 +1059,7 @@ var graphEditor = function () {
                 for (var i =0; i < response.length; i++){
                     if ($("#edgeDescription").val().trim() === response[i].name && $("#edgeID").val().trim() != response[i].id){
                         //console.log(response[i].id , response[i].name, " already exists");
-                        alert("You moron. Lyph:"  + response[i].name + " already exists in the database!");
+                        alert("Lyph:"  + response[i].name + " already exists in the database!");
                         return;
                     }
                 }
