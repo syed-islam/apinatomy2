@@ -1951,8 +1951,14 @@ var graphEditor = function () {
 
         $( "#lyphListBox" ).autocomplete({
             source: function( request, response ) {
+                var serachPrefix = "";
+                console.log(request.term.split(" - ")[1]);
+                if (request.term.indexOf(" - ") > -1)
+                    serachPrefix  =request.term.split(" - ")[1];
+                else
+                    serachPrefix  = request.term
                 $.ajax({
-                    url: "http://open-physiology.org:"+ serverPort +"/lyphs_by_prefix/?prefix=" + request.term,
+                    url: "http://open-physiology.org:"+ serverPort +"/lyphs_by_prefix/?prefix=" + serachPrefix ,
                     dataType: "jsonp",
                     data: {
                         q: request.term
@@ -1965,7 +1971,8 @@ var graphEditor = function () {
                         var returnedLyphs = [];
 
                         for (var i =0; i < data.length; i ++) {
-                            returnedLyphs.push({label:data[i].name, id:data[i].id});
+                            var combinedlabel =data[i].id + " - " + data[i].name;
+                            returnedLyphs.push({label:combinedlabel, id:data[i].id});
 
                             var indexAtRepo = lyphRepo.getIndexByID(data[i].id);
                             if (indexAtRepo > -1){
