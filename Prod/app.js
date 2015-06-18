@@ -101,11 +101,10 @@ var graphEditor = function () {
 
             //selectedGraphNode = this;
             selectedGraph = d;
-            onSelectLink(selectedGraph.rectangles[selectedGraph.rectangles.length -1]);
-            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
 
-            console.log(selectedGraph.rectangles[0])
-            syncSelectedGraph();
+            selectedGraph.reloadGraphFromServer(syncSelectedGraph);
+
+                //syncSelectedGraph();
         //}
     }
 
@@ -931,7 +930,16 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
-        //selectedGraph.reloadGraphFromServer();
+
+        console.log(selectedGraph);
+        selectedGraph.selected_rectangle =  selectedGraph.rectangles[selectedGraph.rectangles.length -1];
+        onSelectLink(selectedGraph.rectangles[selectedGraph.rectangles.length -1]);
+        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
+
+        console.log(selectedGraph.rectangles[0])
+
+
+        console.log(selectedGraph);
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         updateGraphParameters(selectedGraph);
     }
@@ -1426,7 +1434,8 @@ var graphEditor = function () {
 
                     //console.log("Loaded Rectangles", rectangles);
 
-                    populateRectangleNames(rectangles);
+                    if (response.length -1 === i)
+                        populateRectangleNames(rectangles);
 
                     //load nodes
                     for (var j =0; j < response[i].nodes.length; j++){
@@ -1489,17 +1498,24 @@ var graphEditor = function () {
                     //console.log("New Graph:", newGraph);
 
                     graphRepo.addAt(newGraph,0);
+                    //newGraph.selected_rectangle = newGraph.rectangles[newGraph.rectangles -1];
 
 
                     selectedGraph = graphRepo.graphs[0];
                     selectedGraph.selected_rectangle = selectedGraph.rectangles[selectedGraph.rectangles.length -1];
                     onSelectLink(selectedGraph.selected_rectangle )
-                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
-                    graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
-                    updateGraphParameters(selectedGraph);
-
 
                 }
+
+
+                //selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
+                updateGraphParameters(selectedGraph);
+
+
+
+
+
 
                 //console.log(graphRepo);
                 //console.log(response);

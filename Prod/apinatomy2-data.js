@@ -1772,8 +1772,67 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
     this.syncGraphLyphWithServer = function(rectangleToUpdate){
+        return;
         console.log(rectangleToUpdate);
+        $.ajax
+        ({
+            context:this,
+
+            url:"http://open-physiology.org:"+serverPort+"/lyphs_from_view/?view="+ this.id +"&lyphs=" +rectangleToUpdate.id,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Lyph cannot be removed from view:" , response);
+                    return;
+                }
+                console.log(response);
+
+
+                var url = "http://open-physiology.org:"+serverPort+"/lyphs_to_view/?view="+ this.id +"&lyphs=" +rectangleToUpdate.id + "&lx1=" + parseInt(rectangleToUpdate.id.x) + "&ly1=" + parseInt(rectangleToUpdate.id.y) + + "&height1=" + parseInt(rectangleToUpdate.id.height) + "&width1=" + parseInt(rectangleToUpdate.id.width) ;
+                console.log(url);
+
+                $.ajax
+                ({
+                    context:this,
+
+                    url:url,
+
+                    jsonp: "callback",
+
+                    dataType: "jsonp",
+
+
+                    success: function (response) {
+                        response;
+
+
+                        if (response.hasOwnProperty("Error")) {
+                            console.log("Lyph cannot be removed from view:" , response);
+                            return;
+                        }
+
+                        console.log(response);
+
+
+
+
+                    }
+                });
+
+            }
+        });
     }
+
+
+
 
 
     this.reloadGraphFromServer = function (callBackAfterSuccess){
@@ -1862,6 +1921,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
 
                 console.log(this);
+
                 if (callBackAfterSuccess)
                     callBackAfterSuccess();
             }
@@ -1877,6 +1937,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
 
+        console.log(this);
         //console.log("caller is " + arguments.callee.caller.toString());
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
@@ -2004,7 +2065,7 @@ function Graph(id, name, nodes, links, rectangles) {
             if (rectangle_draw) return;
             $('#graphSave').css('color','red');
 
-            graph.syncGraphLyphWithServer(graph.selected_rectangle);
+            //graph.syncGraphLyphWithServer(graph.selected_rectangle);
 
 
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
@@ -2032,7 +2093,7 @@ function Graph(id, name, nodes, links, rectangles) {
             for (var j =0; j < rectangles.length; j++){
                 //console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
                 if (isContainedIn(d,rectangles[j])){
-                    console.log("true", rectangles[j]);
+                    //console.log("true", rectangles[j]);
                     rectangles[j].x = rectangles[j].x + (d3.event.x - offset[0] - d.x);
                     rectangles[j].y = rectangles[j].y + (d3.event.y - offset[1] - d.y);
 
@@ -2059,7 +2120,11 @@ function Graph(id, name, nodes, links, rectangles) {
 
             //d.y = d3.event.y;
             //console.log(d3.event.dx, d3.event.dy, d3.event.x, d3.event.y);
+
+
             restart();
+
+
         }
 
 
@@ -2282,6 +2347,8 @@ function Graph(id, name, nodes, links, rectangles) {
         // update graph (called when needed)
         var restart = function restart() {
 
+
+            rectangles = graph.rectangles;
 
             //graph.saveGraphToServer();
 
@@ -2688,7 +2755,7 @@ function Graph(id, name, nodes, links, rectangles) {
             // because :active only works in WebKit?
             svg.classed('active', true);
 
-            console.log("5", rectangle_draw);
+            //console.log("5", rectangle_draw);
 
             if (d3.event.keyCode == 68 || mousedown_node || mousedown_link) return;
 
@@ -2783,7 +2850,12 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mouseup() {
 
-            //graph.saveGraphToServer();
+
+            //graph.reloadGraphFromServer(restart);
+            console.log(graph.selected_rectangle);
+            graph.syncGraphLyphWithServer(graph.selected_rectangle)
+
+
 
             if (rectangle_draw){
                 console.log("4");
@@ -2791,7 +2863,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 graph.selected_rectangle = rectangles[rectangles.length-1];
 
                 onSelectLink(graph.selected_rectangle);
-                graph.syncGraphLyphWithServer(graph.selected_rectangle);
+                //graph.syncGraphLyphWithServer(graph.selected_rectangle);
 
                 rectangle_draw = false;
                 rectangle_draw_started = false;
