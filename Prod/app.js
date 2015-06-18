@@ -433,6 +433,42 @@ var graphEditor = function () {
     })
 
 
+
+    d3.select('#graphDelete').on('click', function (){
+
+        //send ajax request
+        $.ajax
+        ({
+            context: this,
+            url:
+            "http://open-physiology.org:"+serverPort+"/delete_views/?views=" +
+            selectedGraph.id ,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+
+            success: function (response) {
+                console.log(response)   ;
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Unable to delete view" , response);
+                    return;
+                }
+
+                graphRepo.graphs.splice(graphRepo.getIndexByID(selectedGraph.id),1);
+                selectedGraph = graphRepo.graphs[0];
+                onSelectGraph(selectedGraph);
+
+            }
+        });
+
+
+
+
+    })
+
     d3.select('#removeAnnotation').on('click', function (){
 
         //TODO - currently causes a server crash.

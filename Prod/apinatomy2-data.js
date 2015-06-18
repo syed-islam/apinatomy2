@@ -4,7 +4,7 @@
 
 
 debugging = true;
-var serverPort = 5055; // production - 5055, Development - 5056
+var serverPort = 5056; // production - 5055, Development - 5056
 /////////////////////////////////////////////
 //Data structures
 /////////////////////////////////////////////
