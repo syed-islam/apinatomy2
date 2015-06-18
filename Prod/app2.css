@@ -238,18 +238,24 @@ text.id {
 
 .rectangles {
     fill: none;
-    stroke: blue;
+    /*stroke: gray;*/
     stroke-width: 4px;
-    stroke-opacity: 0.6;
+    /*stroke-opacity: 0.6;*/
     cursor: move;
 }
 
 .rectangles.selected{
-    stroke-dasharray: 10,2;
+    stroke-dasharray: 10,5;
+    stroke: blue;
+}
+
+.rectangles.properContainment{
+    /*stroke-dasharray: 10,5;*/
+    stroke: green;
 }
 
 .boxcorners {
-    fill: blue;
+    fill: gray;
     stroke: blue;
     stroke-width: 2px;
     fill-opacity: 0.5;

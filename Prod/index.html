@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>Lyph Editor 1.0.0</title>
+<title>Graph Editor</title>
 <link rel="stylesheet" href="app2.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-<h1>Graph Editor 1.0.1</h1>
+<h1>Graph Editor 1.1.0</h1>
 
 <div id="page-container">
     <section id="app">
@@ -32,11 +32,16 @@
                     </div>
                     <br/>
                     <h2>Lyph Definition:</h2>
+
                     <div>
-                        <select id="lyphList" size="1"  style="width: 300px";>
-                            <option value="1"></option>
-                        </select>
+                        <label for="lyphListBox" class="parameterLabel">Existing Lyphs:</label>
+                        <input type="text" id="lyphListBox" size="200" style="width: 150px;"  value =""/>
                     </div>
+                    <!--<div>-->
+                        <!--<select id="lyphList" size="1"  style="width: 300px";>-->
+                            <!--<option value="1"></option>-->
+                        <!--</select>-->
+                    <!--</div>-->
 
 
 
@@ -51,13 +56,16 @@
                     <!--<br/>-->
                     <div>
                         <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
-                        <button class="parameterButton" id="syncLyph">Sync Lyph</button>
+                        <button class="parameterButton" id="syncLyph">Re-use</button>
                         <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
                     </div>
                     <div>
                         <!--<button class="parameterButton" id="searchRectangleLyph">Sync Lyph</button>-->
-                        <button class="parameterButton" id="openGraphViewer">open in Lyph Viewer</button>
+                        <button class="parameterButton" id="openGraphViewer">Open in Viewer</button>
                         <!--<button class="parameterButton" id="assignEdgeLyph">Assign Lyph E_</button>-->
+                    </div>
+                    <div>
+                        <button class="parameterButton" id="deleteLyph">Delete</button>
                     </div>
 
                     <br><br>
@@ -74,7 +82,7 @@
                         <input type="text" id="edgeType" size="200" style="width: 140px; background-color:lightgray" />
                     </div>
                     <div>
-                        <label for="lyphFMA" class="parameterLabel">Ont Term:</label>
+                        <label for="lyphFMA" class="parameterLabel">Ont ID:</label>
                         <input type="text" id="lyphFMA" size="200" style="width: 140px;" />
                     </div>
 
@@ -119,7 +127,7 @@
                         <button class="parameterButton" id="annotateEdge">Annotate</button>
                         <button class="parameterButton" id="removeAnnotation">Remove Annotation</button>
                         <!--<button class="parameterButton" id="auUpdate">Assign T_</button>-->
-                        <button class="parameterButton" id="lyphDelete">Delete</button>
+                        <!--<button class="parameterButton" id="lyphDelete">Delete</button>-->
                         <button class="parameterButton" id="edgeSave">Save</button>
                     </div>
 
@@ -223,7 +231,7 @@
                         <font size ="2">
                             Press 'r', click->drag to draw tile<br>
                             Press 'e', to assign selected lyph(box) to container <br>
-                            Press 'backspace', to delete selected from view<br>
+                            Press 'x', to delete selected from view<br>
                         <hr>
                         Hold 'd' to drag<br>
                         Press 'i', click to insert node<br>

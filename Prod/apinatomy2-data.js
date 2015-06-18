@@ -282,16 +282,16 @@ function LyphRepo (lyphs){
 
 
             success: function (response) {
-                console.log(response);
+                //console.log(response);
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Error in getting all lyphs", response)
                     return;
                 }
 
-                console.log("Lyphs", response);
+                //console.log("Lyphs", response);
                 this.lyphs = response;
-                console.log(this.lyphs);
+                //console.log(this.lyphs);
                 onSuccess();
 
 
@@ -310,6 +310,11 @@ function LyphRepo (lyphs){
         }
         return -1;
     }
+
+
+
+
+
 }
 
 //create layer
@@ -1657,7 +1662,7 @@ function GraphRepo(graphs){
         graphs.splice(index, 1, graph);
     }
 
-    this.draw = function(svg, vp, onClick){
+    this.draw = function(svg, vp, onClick, selectedGraph){
         var graphRepo = this;
         svg.selectAll('rect').remove();
         svg.selectAll('text').remove();
@@ -1666,14 +1671,30 @@ function GraphRepo(graphs){
         svg.selectAll("graphRepo")
             .data(graphRepo.graphs)
             .enter().append("rect")
-            .style("fill", "white")
+            .style("fill", function(d){
+                if (d === selectedGraph){
+                    return "yellow"
+                }
+                return "white"
+
+            })
             .style("stroke-width", 0.5)
-            .style("stroke", "black")
+            .style("stroke", function(d){
+                if (d === selectedGraph)
+                    return "red";
+                return "black"
+            })
             .attr("width", vp.width - vp.lengthScale)
             .attr("height", vp.widthScale)
             .attr("x", vp.lengthScale)
             .attr("y", function(d, i){return i * (vp.widthScale + delta);})
-            .on("click", onClick);
+            .on("click", function(d){
+                onClick(d);
+            });
+
+
+        //d3.select(this).style("stroke", "red");
+        //d3.select(selectedGraphNode).style("stroke", "black");
 
         svg.selectAll("graphRepo")
             .data(graphRepo.graphs)
@@ -1741,12 +1762,84 @@ function Graph(id, name, nodes, links, rectangles) {
     }
 
     this.getRectangleIndexByID = function (id){
-        console.log(id);
+        //console.log(id);
         for (var i =0; i < rectangles.length; i++){
             if (rectangles[i].id === id)
                 return i;
         }
         return -1;
+    }
+
+
+    this.syncGraphLyphWithServer = function(rectangleToUpdate){
+        console.log(rectangleToUpdate);
+    }
+
+
+
+    this.saveGraphToServer = function (){
+
+        //var query = "";
+        //
+        //if (this.saved != null){
+        //    query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + this.id;
+        //    query += "&name=" + this.name;
+        //} else {
+        //    selectedGraph.saved = true;
+        //    query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+this.name;
+        //}
+        //
+        ////var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
+        //for (var i =0; i < this.nodes.length ; i++){
+        //    query += "&node" + (i + 1)+ "="+ encodeURIComponent(this.nodes[i].name);
+        //    query += "&x"+ (i + 1) +"="+ encodeURIComponent(this.nodes[i].x);
+        //    query += "&y"+ (i + 1) +"="+encodeURIComponent(this.nodes[i].y);
+        //}
+        //
+        //console.log(this);
+        //
+        //for (var i =0; i < this.rectangles.length; i++){
+        //    query += "&lyph"+ (i + 1) +"="+  (this.rectangles[i].lyph ? encodeURIComponent(this.rectangles[i].lyph.id) : "null");
+        //    query += "&lx"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].x)
+        //    query += "&ly"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].y)
+        //    query += "&width"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].width)
+        //    query += "&height"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].height);
+        //
+        //}
+        //
+        //console.log(query);
+        //
+        //// ajax call to save graph view
+        //$.ajax
+        //({
+        //    context: this,
+        //
+        //    url:query,
+        //
+        //    jsonp: "callback",
+        //
+        //    dataType: "jsonp",
+        //
+        //
+        //    success: function (response) {
+        //        response;
+        //
+        //
+        //        if (response.hasOwnProperty("Error")) {
+        //            console.log("Graph View Save error" , response);
+        //            return;
+        //        }
+        //
+        //        console.log(response);
+        //        this.id = response.id;
+        //
+        //
+        //
+        //
+        //
+        //    }
+        //});
+
     }
 
 
@@ -1881,6 +1974,10 @@ function Graph(id, name, nodes, links, rectangles) {
         function rectdragmove(d){
             if (rectangle_draw) return;
             $('#graphSave').css('color','red');
+
+            graph.syncGraphLyphWithServer(graph.selected_rectangle);
+
+
             if (!offset) offset = [d3.event.x - d.x, d3.event.y - d.y ];
             //console.log(d3.event.x, offset);
 
@@ -1904,7 +2001,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
             //move all contained rectangles.
             for (var j =0; j < rectangles.length; j++){
-                console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
+                //console.log("contained test", rectangles[j], isContainedIn(d, rectangles[j]));
                 if (isContainedIn(d,rectangles[j])){
                     console.log("true", rectangles[j]);
                     rectangles[j].x = rectangles[j].x + (d3.event.x - offset[0] - d.x);
@@ -1969,8 +2066,9 @@ function Graph(id, name, nodes, links, rectangles) {
             auIcon = svg.append('g').attr('class','graph').selectAll('rect'),
             boxes = svg.append('g').attr('class', 'graph'),
             boxlabels = svg.append('g').attr('class', 'graph'),
-            boxcorners = svg.append('g').attr('class', 'boxcorners');
-            ;
+            boxcorners = svg.append('g').attr('class', 'boxcorners'),
+            boxhighlights = svg.append('g').attr('class', 'graph');
+        ;
 
 
             //au_layers = svg.append('g').attr('class','graph').selectAll('.layer');
@@ -2154,6 +2252,17 @@ function Graph(id, name, nodes, links, rectangles) {
 
         // update graph (called when needed)
         var restart = function restart() {
+
+
+            //graph.saveGraphToServer();
+
+
+
+
+
+
+
+
             svg.selectAll('g.graph').remove();
             boxes = svg.append('g').attr('class', 'graph').selectAll('rect');
             pathoverlay = svg.append('g').attr('class', 'graph').selectAll('path');
@@ -2163,6 +2272,7 @@ function Graph(id, name, nodes, links, rectangles) {
             circle = svg.append('g').attr('class', 'graph').selectAll('g');
             boxlabels = svg.append('g').attr('class', 'graph');
             boxcorners = svg.append('g').attr('class', 'graph').selectAll('g');
+            boxhighlights = svg.append('g').attr('class', 'graph').selectAll('g');
 
 
 
@@ -2172,7 +2282,27 @@ function Graph(id, name, nodes, links, rectangles) {
             boxlabels = boxes.enter().append('svg:text');
             boxlabels.attr('x' ,function (d) {return d.x})
                 .attr('y' ,function (d) {return d.y-5 })
-                .text( function (d) { if(d.lyph && d.lyph.id) return d.lyph.id + " - " + d.lyph.name; return ""})
+                .text( function (d) { if(d.lyph && d.lyph.id) return d.lyph.id + " - " + d.lyph.name; return ""});
+
+
+
+            //////box highlights
+            //boxhighlights = boxhighlights.data(rectangles);
+            //boxhighlights = boxhighlights.enter().append('svg:rect');
+            //boxhighlights.attr('x' ,function (d) {return d.x})
+            //    .attr('y' ,function (d) {return d.y})
+            //    .attr('width' ,function (d) {return d.width})
+            //    .attr('height' ,function (d) {return d.height})
+            //    .attr('stroke-width', 20)
+            //    .attr('stroke-opacity', 1)
+            //    .attr('stroke', function (d) {
+            //        if (graph.selected_rectangle  === d)
+            //            return 'yellow';
+            //        return false
+            //    })
+            //    .attr('fill', 'none')
+
+
 
             //Rendering the boxes themselves
             boxes = boxes.enter().append('svg:rect');
@@ -2181,10 +2311,20 @@ function Graph(id, name, nodes, links, rectangles) {
                 .attr('width' ,function (d) {return d.width})
                 .attr('height' ,function (d) {return d.height})
                 .attr('class', 'rectangles')
-                .classed('selected', function(d){
-                    //console.log(d === graph.selected_rectangle)
-                    return d === graph.selected_rectangle;
-                    //return true;
+                .attr('stroke', function (d){
+
+                    //if (d === graph.selected_rectangle)
+                    //    return 'blue';
+                    if (!d.location)
+                        return ' lightgray';
+                    if (d.location === findSmallestContainer(d))
+                        return 'green';
+                    else
+                        return 'red';
+                })
+                .attr('stroke-dasharray', function(d){
+                    if (graph.selected_rectangle  === d)
+                        return '10,6';
                 })
                 .call(customRectdrag)
                 .on('mousedown', function (d) {
@@ -2214,6 +2354,11 @@ function Graph(id, name, nodes, links, rectangles) {
                     resizeRectangle(d);
                     restart();
                 });
+
+
+
+
+
 
 
 
@@ -2520,10 +2665,13 @@ function Graph(id, name, nodes, links, rectangles) {
             // because :active only works in WebKit?
             svg.classed('active', true);
 
+            console.log("5", rectangle_draw);
+
             if (d3.event.keyCode == 68 || mousedown_node || mousedown_link) return;
 
 
             if (rectangle_draw) {
+                console.log("2");
                 rectangle_draw_started = true;
 
                 rectangle_x = d3.mouse(this)[0];
@@ -2578,6 +2726,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mousemove() {
             if (rectangle_draw && rectangle_draw_started){
+                console.log("3");
                 rectangles[rectangles.length-1].width = d3.mouse(this)[0] - rectangles[rectangles.length-1].x;
                 rectangles[rectangles.length-1].height = d3.mouse(this)[1] - rectangles[rectangles.length-1].y;
                 //console.log(rectangles[rectangles.length-1]);
@@ -2611,11 +2760,16 @@ function Graph(id, name, nodes, links, rectangles) {
 
         function mouseup() {
 
-
-
-
+            //graph.saveGraphToServer();
 
             if (rectangle_draw){
+                console.log("4");
+                console.log(rectangles);
+                graph.selected_rectangle = rectangles[rectangles.length-1];
+
+                onSelectLink(graph.selected_rectangle);
+                graph.syncGraphLyphWithServer(graph.selected_rectangle);
+
                 rectangle_draw = false;
                 rectangle_draw_started = false;
                 $('#graphSave').css('color','red');
@@ -2624,6 +2778,7 @@ function Graph(id, name, nodes, links, rectangles) {
             }
 
             if (resize_rectangle){
+                graph.syncGraphLyphWithServer(graph.selected_rectangle);
                 console.log("Resizing done")
                 resize_rectangle = null;
                 $('#graphSave').css('color','red');
@@ -2644,6 +2799,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
             // clear mouse event vars
             resetMouseVars();
+
+            restart();
         }
 
         function spliceLinksForNode(node) {
@@ -2681,7 +2838,7 @@ function Graph(id, name, nodes, links, rectangles) {
             //TODO figure out the effect of removing the following line?
             //if (!graph.selected_node && !graph.selected_link) return;
             switch (d3.event.keyCode) {
-                case 8: // backspace
+                case 88: // x
                 case 46: // delete
                     $('#graphSave').css('color','red');
                     if (graph.selected_node) {
@@ -2781,6 +2938,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 case 82: // R - Rectangle
                     $('#userconsole').text("Rectangle draw enable, click and move mouse right, bottom to draw.");
                     rectangle_draw = true;
+                    console.log("1", rectangle_draw);
                     break;
                 case 73: // I - insert node
                     insert_node = true;
@@ -2810,8 +2968,55 @@ function Graph(id, name, nodes, links, rectangles) {
             }
         }
 
+
+        function findSmallestContainer(rect){
+            //console.log("Finding smallest container");
+            //console.log(graph.selected_rectangle);
+            var smallestContainer =null;
+            var smallestContainerSize =0;
+
+            for (var i = 0; i < rectangles.length; i++){
+
+                if (rect.id === rectangles[i].id)
+                    continue;
+                //console.log("checking containment against", rectangles[i]);
+
+                if (rect.x >= rectangles[i].x && rect.y >= rectangles[i].y
+                    && rect.width <= rectangles[i].width - (rect.x - rectangles[i].x)
+                    && rect.height <= rectangles[i].height - (rect.y - rectangles[i].y)
+                ){
+                    //console.log(rect, "is contained in", rectangles[i]);
+                    if (smallestContainer == null || rectangles[i].height * rectangles[i].width < smallestContainerSize){
+                        smallestContainer = rectangles[i];
+                        smallestContainerSize = rectangles[i].height * rectangles[i].width;
+                    }
+                }
+            }
+
+            if (smallestContainer === null) {
+                //console.log("No valid container found");
+                return null;
+            }
+            else {
+                //console.log(smallestContainer, " is the containing rectangle");
+                return smallestContainer.id;
+            }
+        }
+
+
+
         function assignRectangleToRectange(){
             console.log("Assigning rectangle to rectangle");
+
+            //console.log(graph.selected_rectangle);
+
+
+            if (!graph.selected_rectangle.lyph){
+                alert("Please save lyph before attempting to assign location" );
+                return;
+            }
+
+
             //console.log(graph.selected_rectangle);
             var smallestContainer =null;
             var smallestContainerSize =0;
@@ -2842,7 +3047,7 @@ function Graph(id, name, nodes, links, rectangles) {
             else {
                 console.log(smallestContainer, " is the containing rectangle");
                 graph.selected_rectangle.location = smallestContainer.id;
-                d3.select('#lyphLocation').property("value", graph.selected_rectangle.location);
+                d3.select('#lyphLocation').property("value", smallestContainer.lyph.name);
 
             }
 
@@ -2872,6 +3077,8 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                 });
             //}
+
+            restart();
         }
 
         function attachNodeToLyph(locationType){
@@ -3091,6 +3298,8 @@ function Graph(id, name, nodes, links, rectangles) {
             .on('keyup', keyup);
         restart();
     }
+
+
 
 }
 
