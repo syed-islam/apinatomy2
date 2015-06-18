@@ -338,6 +338,8 @@ var graphEditor = function () {
                 $('#thelist').append('<option value='+  lyphToSyncData.annots[i].obj +"|"+ lyphToSyncData.annots[i].pubmed.id +'> ' + lyphToSyncData.annots[i].obj +" | "+ lyphToSyncData.annots[i].pubmed.id +   "</option");
             }
         }
+
+        saveLyph();
     });
 
 
@@ -1022,43 +1024,53 @@ var graphEditor = function () {
 
 
         d3.select("#edgeSave").on("click", function() {
-            $('#graphSave').css('color','red');
-
-            //Perform validation  to ensure that the lyph name doesn't already exist.
-
-            var url =  "http://open-physiology.org:5056/lyphs_by_prefix/?prefix="+$("#edgeDescription").val().trim();
-
-            $.ajax
-            ({
-                url: url,
-
-                jsonp: "callback",
-
-                dataType: "jsonp",
+            saveLyph();
+    });
 
 
-                success: function (response) {
-                    response;
+    function saveLyph(){
+        $('#graphSave').css('color','red');
+
+        //Perform validation  to ensure that the lyph name doesn't already exist.
+
+        var url =  "http://open-physiology.org:5056/lyphs_by_prefix/?prefix="+$("#edgeDescription").val().trim();
+
+        $.ajax
+        ({
+            url: url,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
 
 
-                    if (response.hasOwnProperty("Error")) {
-                        console.log("Error in obtaining a list of lyphs:", response);
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Error in obtaining a list of lyphs:", response);
+                    return;
+                }
+
+
+                console.log(response);
+                for (var i =0; i < response.length; i++){
+                    if ($("#edgeDescription").val().trim() === response[i].name && $("#edgeID").val().trim() != response[i].id){
+                        //console.log(response[i].id , response[i].name, " already exists");
+                        alert("You moron. Lyph:"  + response[i].name + " already exists in the database!");
                         return;
                     }
-
-
-                    console.log(response);
-                    for (var i =0; i < response.length; i++){
-                        if ($("#edgeDescription").val().trim() === response[i].name && $("#edgeID").val().trim() != response[i].id){
-                            //console.log(response[i].id , response[i].name, " already exists");
-                            alert("You moron. Lyph:"  + response[i].name + " already exists in the database!");
-                            return;
-                        }
-                    }
-                    saveLyphData();
                 }
-            });
-    });
+                saveLyphData();
+            }
+        });
+    }
+
+
+
+
+
 
     function saveLyphData() {
 
