@@ -101,11 +101,10 @@ var graphEditor = function () {
 
             //selectedGraphNode = this;
             selectedGraph = d;
-            onSelectLink(selectedGraph.rectangles[selectedGraph.rectangles.length -1]);
-            graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
 
-            console.log(selectedGraph.rectangles[0])
-            syncSelectedGraph();
+            selectedGraph.reloadGraphFromServer(syncSelectedGraph);
+
+                //syncSelectedGraph();
         //}
     }
 
@@ -931,7 +930,16 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
-        //selectedGraph.reloadGraphFromServer();
+
+        console.log(selectedGraph);
+        selectedGraph.selected_rectangle =  selectedGraph.rectangles[selectedGraph.rectangles.length -1];
+        onSelectLink(selectedGraph.rectangles[selectedGraph.rectangles.length -1]);
+        graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
+
+        console.log(selectedGraph.rectangles[0])
+
+
+        console.log(selectedGraph);
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
         updateGraphParameters(selectedGraph);
     }
