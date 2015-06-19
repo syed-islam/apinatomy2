@@ -1081,7 +1081,7 @@ var graphEditor = function () {
 
         //Perform validation  to ensure that the lyph name doesn't already exist.
 
-        var url =  "http://open-physiology.org:5056/lyphs_by_prefix/?prefix="+$("#edgeDescription").val().trim();
+        var url =  "http://open-physiology.org:"+serverPort+"/lyphs_by_prefix/?prefix="+$("#edgeDescription").val().trim();
 
         $.ajax
         ({
