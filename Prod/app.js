@@ -910,6 +910,7 @@ var graphEditor = function () {
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Graph View Save error" , response);
+                    alert("Graph View Save error" , response);
                     return;
                 }
 
