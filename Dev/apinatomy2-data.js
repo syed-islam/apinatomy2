@@ -1771,6 +1771,78 @@ function Graph(id, name, nodes, links, rectangles) {
     }
 
 
+    this.saveGraphtoServer = function(refresh_graph, syncSelectedGraph){
+        $("#graphSave").css('color','');
+        this.name = graphName.value;
+
+        //console.log(actualSelectedGraphIndex);
+        //TODO There is copy of the save axax in the Graph DS. Start using that.
+        var query = "";
+
+        if (this.saved != null){
+            query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + this.id;
+            query += "&name=" + this.name;
+        } else {
+            query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+this.name
+        }
+
+        //var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
+        for (var i =0; i < this.nodes.length ; i++){
+            query += "&node" + (i + 1)+ "="+ encodeURIComponent(this.nodes[i].name);
+            query += "&x"+ (i + 1) +"="+ encodeURIComponent(this.nodes[i].x);
+            query += "&y"+ (i + 1) +"="+encodeURIComponent(this.nodes[i].y);
+        }
+
+        //console.log(this);
+
+        for (var i =0; i < this.rectangles.length; i++){
+            query += "&lyph"+ (i + 1) +"="+  (this.rectangles[i].lyph ? encodeURIComponent(this.rectangles[i].lyph.id) : "null");
+            query += "&lx"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].x)
+            query += "&ly"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].y)
+            query += "&width"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].width)
+            query += "&height"+ (i + 1) +"="+encodeURIComponent(this.rectangles[i].height);
+
+        }
+
+        console.log(query);
+
+        // ajax call to save graph view
+        $.ajax
+        ({
+            url:query,
+
+            jsonp: "callback",
+
+            dataType: "jsonp",
+
+            context:this,
+
+            success: function (response) {
+                response;
+
+
+                if (response.hasOwnProperty("Error")) {
+                    console.log("Graph View Save error" , response);
+                    alert("Graph View Save error" , response);
+                    return;
+                }
+
+                console.log(response);
+                this.id = response.id;
+                this.saved = null;
+                this.reloadGraphFromServer(syncSelectedGraph);
+                refresh_graph();
+                syncSelectedGraph();
+            }
+        });
+
+
+
+    }
+
+
+
+
     this.syncGraphLyphWithServer = function(rectangleToUpdate){
         return;
         console.log(rectangleToUpdate);
@@ -1935,7 +2007,7 @@ function Graph(id, name, nodes, links, rectangles) {
     };
 
 
-    this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle) {
+    this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph) {
 
         console.log(this);
         //console.log("caller is " + arguments.callee.caller.toString());
@@ -2853,9 +2925,10 @@ function Graph(id, name, nodes, links, rectangles) {
 
             //graph.reloadGraphFromServer(restart);
             console.log(graph.selected_rectangle);
-            graph.syncGraphLyphWithServer(graph.selected_rectangle)
+            //graph.syncGraphLyphWithServer(graph.selected_rectangle)
+            graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
 
-
+            graph.selected_rectangle = rectangles[rectangles.length-1];
 
             if (rectangle_draw){
                 console.log("4");
@@ -2867,7 +2940,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 rectangle_draw = false;
                 rectangle_draw_started = false;
-                $('#graphSave').css('color','red');
+
+
                 $('#userconsole').text("Rectangle draw done.");
 
             }
@@ -2876,7 +2950,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 graph.syncGraphLyphWithServer(graph.selected_rectangle);
                 console.log("Resizing done")
                 resize_rectangle = null;
-                $('#graphSave').css('color','red');
+
                 restart();
             }
 
@@ -2935,7 +3009,7 @@ function Graph(id, name, nodes, links, rectangles) {
             switch (d3.event.keyCode) {
                 case 88: // x
                 case 46: // delete
-                    $('#graphSave').css('color','red');
+                    graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
                     if (graph.selected_node) {
                         nodes.splice(nodes.indexOf(graph.selected_node), 1);
                         spliceLinksForNode(graph.selected_node);

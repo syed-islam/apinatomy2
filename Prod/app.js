@@ -287,7 +287,7 @@ var graphEditor = function () {
                     }
                 }
 
-                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
             }
         });
 
@@ -377,7 +377,7 @@ var graphEditor = function () {
                     console.log(response);
 
                     selectedGraph.rectangles.splice(selectedGraph.rectangles.indexOf(selectedGraph.selected_rectangle), 1);
-                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
                     load_all_lyphs();
                 }
             });
@@ -607,7 +607,7 @@ var graphEditor = function () {
                         }
                     }
 
-                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                    selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
 
                 }
 
@@ -641,7 +641,7 @@ var graphEditor = function () {
             //else
             //    selectedGraph.links[i].highlighted = false;
         }
-        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
     })
 
 
@@ -660,7 +660,7 @@ var graphEditor = function () {
         for (var i =0 ; i < selectedGraph.links.length; i++){
             selectedGraph.links[i].highlighted = false;
         }
-        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
     }
 
 
@@ -829,7 +829,7 @@ var graphEditor = function () {
 
 
                 selectedGraph = graphRepo.graphs[0];
-                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle,refresh_graph, syncSelectedGraph);
                 graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph,selectedGraph);
                 updateGraphParameters(selectedGraph);
 
@@ -853,76 +853,9 @@ var graphEditor = function () {
 
     //TODO - Thursday. >> Requested SAM for a single API call to support this.
     d3.select("#graphSave").on("click",function(){
-        $("#graphSave").css('color','');
-        var actualSelectedGraphIndex = graphRepo.getIndexByID(selectedGraph.id);
-        graphRepo.graphs[actualSelectedGraphIndex].name = graphName.value;
 
-
-
-
-
-
-        //console.log(actualSelectedGraphIndex);
-        //TODO There is copy of the save axax in the Graph DS. Start using that.
-        var query = "";
-
-        if (selectedGraph.saved != null){
-            query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + selectedGraph.id;
-            query += "&name=" + selectedGraph.name;
-        } else {
-
-            query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+selectedGraph.name
-        }
-
-        //var query = "http://open-physiology.org:"+serverPort+"/makeview/?"
-        for (var i =0; i < selectedGraph.nodes.length ; i++){
-            query += "&node" + (i + 1)+ "="+ encodeURIComponent(selectedGraph.nodes[i].name);
-            query += "&x"+ (i + 1) +"="+ encodeURIComponent(selectedGraph.nodes[i].x);
-            query += "&y"+ (i + 1) +"="+encodeURIComponent(selectedGraph.nodes[i].y);
-        }
-
-        console.log(selectedGraph);
-
-        for (var i =0; i < selectedGraph.rectangles.length; i++){
-            query += "&lyph"+ (i + 1) +"="+  (selectedGraph.rectangles[i].lyph ? encodeURIComponent(selectedGraph.rectangles[i].lyph.id) : "null");
-            query += "&lx"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].x)
-            query += "&ly"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].y)
-            query += "&width"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].width)
-            query += "&height"+ (i + 1) +"="+encodeURIComponent(selectedGraph.rectangles[i].height);
-
-        }
-
-        console.log(query);
-
-        // ajax call to save graph view
-        $.ajax
-        ({
-            url:query,
-
-            jsonp: "callback",
-
-            dataType: "jsonp",
-
-
-            success: function (response) {
-                response;
-
-
-                if (response.hasOwnProperty("Error")) {
-                    console.log("Graph View Save error" , response);
-                    alert("Graph View Save error" , response);
-                    return;
-                }
-
-                console.log(response);
-                graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
-                graphRepo.graphs[actualSelectedGraphIndex].saved = null;
-                refresh_graph();
-                syncSelectedGraph();
-            }
-        });
-
-
+        selectedGraph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
+        //selectedGraph.reloadGraphFromServer(syncSelectedGraph);
 
 
     })
@@ -942,7 +875,7 @@ var graphEditor = function () {
 
 
         console.log(selectedGraph);
-        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle,refresh_graph, syncSelectedGraph);
         updateGraphParameters(selectedGraph);
     }
 
@@ -951,7 +884,7 @@ var graphEditor = function () {
             for (var i =0; i < selectedGraph.multiple_selection.length; i ++){
                 console.log(selectedGraph.multiple_selection[i]);
                 selectedGraph.multiple_selection[i].au = selectedAU;
-                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+                selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle,refresh_graph, syncSelectedGraph);
 
                 $.ajax
                 ({
@@ -988,7 +921,7 @@ var graphEditor = function () {
 
         if (selectedGraph.selected_link){
             selectedGraph.selected_link.au = selectedAU;
-            selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+            selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
 
 
             console.log(selectedAU.id, selectedGraph.selected_link.edgeid);
@@ -1079,7 +1012,7 @@ var graphEditor = function () {
 
 
     function saveLyph(){
-        $('#graphSave').css('color','red');
+
 
         //Perform validation  to ensure that the lyph name doesn't already exist.
 
@@ -1321,6 +1254,8 @@ var graphEditor = function () {
                                 console.log("Response:", response);
                                 selectedGraph.selected_rectangle.lyph = response;
                                 selectedGraph.selected_rectangle.id = response.id;
+
+                                selectedGraph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
 
                                 //actualEdge.edgeid = response.id;
                                 refresh_graph();
@@ -1685,7 +1620,7 @@ var graphEditor = function () {
                 ////adding graph, selecting graph, drawing graphrepo and graph.
                 graphRepo.addAt(graphAjax,0);
                 selectedGraph = graphRepo.graphs[0];
-                selectedGraph.draw(svg, onSelectNode,onSelectLink,onSelectRectangle);
+                selectedGraph.draw(svg, onSelectNode,onSelectLink,onSelectRectangle, refresh_graph, syncSelectedGraph);
                 graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph,selectedGraph);
                 updateGraphParameters(selectedGraph);
 
@@ -1871,7 +1806,7 @@ var graphEditor = function () {
 
     refresh_graph = function refresh_graph(){
         //load_all_lyphs();
-        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle);
+        selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph);
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
 
     }
