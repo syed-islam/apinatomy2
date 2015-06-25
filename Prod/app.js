@@ -870,7 +870,7 @@ var graphEditor = function () {
             query = "http://open-physiology.org:"+serverPort+"/editview/?view=" + selectedGraph.id;
             query += "&name=" + selectedGraph.name;
         } else {
-            selectedGraph.saved = true;
+
             query = "http://open-physiology.org:"+serverPort+"/makeview/?name="+selectedGraph.name
         }
 
@@ -915,6 +915,7 @@ var graphEditor = function () {
 
                 console.log(response);
                 graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
+                graphRepo.graphs[actualSelectedGraphIndex].saved = null;
                 refresh_graph();
                 syncSelectedGraph();
             }
