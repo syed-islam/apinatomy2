@@ -7,7 +7,7 @@ var populateRectangleNames;
 var graphEditor = function () {
 
     var typingTimer;                //timer identifier
-    var doneTypingInterval = 500;  //time in ms, 5 second for example
+    var doneTypingInterval = 250;  //time in ms, 5 second for example
 
 
     var lyphRepo = new LyphRepo([]);
@@ -287,21 +287,24 @@ var graphEditor = function () {
 
     function applyFilter(){
         var searchTerm = filter.value;
-        var foundMatch  = false;
+
 
         for (var i = graphRepo.graphs.length -1 ; i >= 0 ; i--){
             if (searchTerm === null || searchTerm === ""){
                 graphRepo.graphs[i].hide = false;
                 selectedGraph = graphRepo.graphs[i];
                 onSelectGraph(selectedGraph);
-                foundMatch = true;
+
             } else {
                 //console.log(graphRepo.graphs[i]);
                 if (graphRepo.graphs[i].name.toString().toLocaleLowerCase().indexOf(searchTerm) > -1){
                     graphRepo.graphs[i].hide = false;
                     selectedGraph = graphRepo.graphs[i];
                     onSelectGraph(selectedGraph);
-                    foundMatch = true;
+                } else if (graphRepo.graphs[i].containsLyphWithName(searchTerm)){
+                    graphRepo.graphs[i].hide = false;
+                    selectedGraph = graphRepo.graphs[i];
+                    onSelectGraph(selectedGraph);
                 } else {
                     graphRepo.graphs[i].hide = true;
                 }

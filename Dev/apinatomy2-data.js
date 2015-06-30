@@ -1749,6 +1749,17 @@ function Graph(id, name, nodes, links, rectangles) {
 
     var colors = d3.scale.category10();
 
+
+
+
+    this.containsLyphWithName= function(name){
+        for (var i =0; i < this.rectangles.length;i++){
+            if (this.rectangles[i].lyph && this.rectangles[i].lyph.name.toString().toLocaleLowerCase().indexOf(name) > -1 ){
+                return true;
+            }
+        }
+        return false;
+    }
     //TODO: Add multiple select ability from the other code.
 
     this.clone = function () {
