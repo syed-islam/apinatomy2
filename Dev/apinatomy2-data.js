@@ -2958,7 +2958,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 rectangle_draw_started = false;
 
                 //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
-    
+
 
                 $('#userconsole').text("Rectangle draw done.");
 
