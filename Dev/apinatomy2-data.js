@@ -2026,7 +2026,7 @@ function Graph(id, name, nodes, links, rectangles) {
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph) {
 
         //console.log(this);
-        console.log("caller is " + arguments.callee.caller.toString());
+        //console.log("caller is " + arguments.callee.caller.toString());
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius = 8;
@@ -3029,7 +3029,7 @@ function Graph(id, name, nodes, links, rectangles) {
             switch (d3.event.keyCode) {
                 case 88: // x
                 case 46: // delete
-                    graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
+
                     if (graph.selected_node) {
                         nodes.splice(nodes.indexOf(graph.selected_node), 1);
                         spliceLinksForNode(graph.selected_node);
@@ -3041,10 +3041,12 @@ function Graph(id, name, nodes, links, rectangles) {
                         rectangles.splice(rectangles.indexOf(graph.selected_rectangle), 1)
                         console.log(rectangles);
                     }
+                    graph.selected_rectangle = null;
                     graph.selected_link = null;
                     graph.selected_node = null;
+                    graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
                     //lastNodeId--;
-                    restart();
+                    //restart();
                     break;
                 //case 66: // B
                 //    if (graph.selected_link) {
