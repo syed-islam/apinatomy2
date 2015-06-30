@@ -6,6 +6,10 @@ var populateRectangleNames;
 
 var graphEditor = function () {
 
+    var typingTimer;                //timer identifier
+    var doneTypingInterval = 500;  //time in ms, 5 second for example
+
+
     var lyphRepo = new LyphRepo([]);
     var graphViewerURL = "http://open-physiology.org:8810/dist/example/example.html";
 
@@ -42,6 +46,8 @@ var graphEditor = function () {
         customfocus('#graphName');
         customfocus('#lyphFMA');
         customfocus(('#lyphListBox'));
+        customfocus(('#filter'));
+
     }();
 
 
@@ -253,6 +259,56 @@ var graphEditor = function () {
             d3.select("#graphID").property("value", graph.id);
             d3.select("#graphName").property("value", graph.name? graph.name : "" );
         }
+    }
+
+
+    d3.select('#applyfilter').on('click', function(){
+       console.log("Applying Filter")
+        applyFilter();
+    });
+
+    d3.select('#clearfilter').on('click', function(){
+        console.log("Clear Filter")
+        d3.select("#filter").property("value", "");
+        applyFilter();
+    });
+
+    d3.select('#filter').on('keyup', function(){
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(applyFilter, doneTypingInterval);
+    })
+
+
+    d3.select('#filter').on('keydown', function(){
+        clearTimeout(typingTimer);
+    })
+
+
+
+    function applyFilter(){
+        var searchTerm = filter.value;
+        var foundMatch  = false;
+
+        for (var i = graphRepo.graphs.length -1 ; i >= 0 ; i--){
+            if (searchTerm === null || searchTerm === ""){
+                graphRepo.graphs[i].hide = false;
+                selectedGraph = graphRepo.graphs[i];
+                onSelectGraph(selectedGraph);
+                foundMatch = true;
+            } else {
+                //console.log(graphRepo.graphs[i]);
+                if (graphRepo.graphs[i].name.toString().toLocaleLowerCase().indexOf(searchTerm) > -1){
+                    graphRepo.graphs[i].hide = false;
+                    selectedGraph = graphRepo.graphs[i];
+                    onSelectGraph(selectedGraph);
+                    foundMatch = true;
+                } else {
+                    graphRepo.graphs[i].hide = true;
+                }
+            }
+
+        }
+        //refresh_graph();
     }
 
 
@@ -861,6 +917,11 @@ var graphEditor = function () {
     })
 
 
+
+    d3.select('#applymaterialfilter').on("click", function () {
+      console.log("Filtering");
+
+    })
 
 
 

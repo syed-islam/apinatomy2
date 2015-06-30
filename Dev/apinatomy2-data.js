@@ -1669,7 +1669,9 @@ function GraphRepo(graphs){
         if (graphRepo == null) return;
         var delta = 10; //distance between icons
         svg.selectAll("graphRepo")
-            .data(graphRepo.graphs)
+            .data(graphRepo.graphs.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("rect")
             .style("fill", function(d){
                 if (d === selectedGraph){
@@ -1697,15 +1699,24 @@ function GraphRepo(graphs){
         //d3.select(selectedGraphNode).style("stroke", "black");
 
         svg.selectAll("graphRepo")
-            .data(graphRepo.graphs)
+            .data(graphRepo.graphs.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("text")
             .attr("x", vp.lengthScale + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
             .text(function(d){return d.id + " - " + (d.name ?  d.name : "") ;})
 
         svg.attr("height", function(){
-            return 10 + (graphRepo.graphs.length * 30);
+            var visibleGraphCount = 0;
+            for (var i = 0; i < graphRepo.graphs.length; i++){
+                if (!graphRepo.graphs[i].hide || graphRepo.graphs[i].hide === false){
+                    visibleGraphCount++;
+                }
+            }
+            return 10 + (visibleGraphCount * 30);
         });
+
     }
 }
 
