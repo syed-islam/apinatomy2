@@ -1770,8 +1770,8 @@ function Graph(id, name, nodes, links, rectangles) {
         return -1;
     }
 
-
-    this.saveGraphtoServer = function(refresh_graph, syncSelectedGraph){
+    //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
+    this.saveGraphtoServer = function(refresh_graph, syncSelectedGraph, onSelectLink, selected_rectangle){
         $("#graphSave").css('color','');
         this.name = graphName.value;
 
@@ -1829,10 +1829,10 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 console.log(response);
                 this.id = response.id;
-                this.saved = null;
-                this.reloadGraphFromServer(syncSelectedGraph);
-                refresh_graph();
-                syncSelectedGraph();
+                this.saved = true;
+                this.reloadGraphFromServer(syncSelectedGraph, onSelectLink, selected_rectangle);
+                //refresh_graph();
+                //syncSelectedGraph();
             }
         });
 
@@ -1907,7 +1907,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-    this.reloadGraphFromServer = function (callBackAfterSuccess){
+    this.reloadGraphFromServer = function (callBackAfterSuccess, onSelectLink, selected_rectangle){
 
         $.ajax
         ({
@@ -1994,8 +1994,24 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 console.log(this);
 
-                if (callBackAfterSuccess)
+
+                this.selected_rectangle = this.rectangles[this.rectangles.length -1];
+
+                if (selected_rectangle){
+                    if (this.getRectangleIndexByID(selected_rectangle.id) > -1){
+                        this.selected_rectangle = this.rectangles[this.getRectangleIndexByID(selected_rectangle.id)];
+                    }
+                }
+
+
+
+                if (callBackAfterSuccess) {
                     callBackAfterSuccess();
+                }
+                if (onSelectLink){
+                    console.log(this.selected_rectangle);
+                    onSelectLink(this.selected_rectangle);
+                }
             }
         });
 
@@ -2009,8 +2025,8 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph) {
 
-        console.log(this);
-        //console.log("caller is " + arguments.callee.caller.toString());
+        //console.log(this);
+        console.log("caller is " + arguments.callee.caller.toString());
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
         var nodeRadius = 8;
@@ -2926,34 +2942,38 @@ function Graph(id, name, nodes, links, rectangles) {
             //graph.reloadGraphFromServer(restart);
             console.log(graph.selected_rectangle);
             //graph.syncGraphLyphWithServer(graph.selected_rectangle)
-            graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
 
-            graph.selected_rectangle = rectangles[rectangles.length-1];
+
+            //graph.selected_rectangle = rectangles[rectangles.length-1];
 
             if (rectangle_draw){
                 console.log("4");
                 console.log(rectangles);
                 graph.selected_rectangle = rectangles[rectangles.length-1];
 
-                onSelectLink(graph.selected_rectangle);
+                //onSelectLink(graph.selected_rectangle);
                 //graph.syncGraphLyphWithServer(graph.selected_rectangle);
 
                 rectangle_draw = false;
                 rectangle_draw_started = false;
 
+                //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
+    
 
                 $('#userconsole').text("Rectangle draw done.");
 
             }
 
             if (resize_rectangle){
-                graph.syncGraphLyphWithServer(graph.selected_rectangle);
+                //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
+                //graph.syncGraphLyphWithServer(graph.selected_rectangle);
                 console.log("Resizing done")
                 resize_rectangle = null;
 
-                restart();
+                //restart();
             }
 
+            graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
 
 
             if (mousedown_node) {

@@ -865,16 +865,16 @@ var graphEditor = function () {
 
 
     function syncSelectedGraph(){
-
-        console.log(selectedGraph);
-        selectedGraph.selected_rectangle =  selectedGraph.rectangles[selectedGraph.rectangles.length -1];
-        onSelectLink(selectedGraph.rectangles[selectedGraph.rectangles.length -1]);
+        console.log(selectedGraph.selected_rectangle);
+        if (selectedGraph.selected_rectangle === undefined)
+            selectedGraph.selected_rectangle =  selectedGraph.rectangles[selectedGraph.rectangles.length -1];
+        console.log(selectedGraph.selected_rectangle);
+        onSelectLink(selectedGraph.selected_rectangle);
         graphRepo.draw(graphRepoSvg, graphRepoVP, onSelectGraph, selectedGraph);
 
-        console.log(selectedGraph.rectangles[0])
-
-
-        console.log(selectedGraph);
+        //console.log(selectedGraph.rectangles[0])
+        //
+        //console.log(selectedGraph);
         selectedGraph.draw(svg, onSelectNode, onSelectLink, onSelectRectangle,refresh_graph, syncSelectedGraph);
         updateGraphParameters(selectedGraph);
     }
