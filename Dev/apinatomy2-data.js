@@ -3125,6 +3125,15 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     break;
                 case 82: // R - Rectangle
+                    console.log("r clicked", graph.rectangles);
+                    for (var rcounter = 0; rcounter < graph.rectangles.length; rcounter++){
+                        console.log("id", graph.rectangles[rcounter].id);
+                        if (graph.rectangles[rcounter].id === null || graph.rectangles[rcounter].id === ""){
+                            alert("You cannot have more than one undefined rectangle in the view" );
+                            return;
+                        }
+                    }
+
                     $('#userconsole').text("Rectangle draw enable, click and move mouse right, bottom to draw.");
                     rectangle_draw = true;
                     console.log("1", rectangle_draw);
