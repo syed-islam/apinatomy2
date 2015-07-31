@@ -1669,7 +1669,9 @@ function GraphRepo(graphs){
         if (graphRepo == null) return;
         var delta = 10; //distance between icons
         svg.selectAll("graphRepo")
-            .data(graphRepo.graphs)
+            .data(graphRepo.graphs.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("rect")
             .style("fill", function(d){
                 if (d === selectedGraph){
@@ -1697,15 +1699,24 @@ function GraphRepo(graphs){
         //d3.select(selectedGraphNode).style("stroke", "black");
 
         svg.selectAll("graphRepo")
-            .data(graphRepo.graphs)
+            .data(graphRepo.graphs.filter(function (el){
+                return !el.hide || el.hide === false;
+            }))
             .enter().append("text")
             .attr("x", vp.lengthScale + 5)
             .attr("y", function(d, i){return i * (vp.widthScale + delta) + vp.widthScale / 2;})
             .text(function(d){return d.id + " - " + (d.name ?  d.name : "") ;})
 
         svg.attr("height", function(){
-            return 10 + (graphRepo.graphs.length * 30);
+            var visibleGraphCount = 0;
+            for (var i = 0; i < graphRepo.graphs.length; i++){
+                if (!graphRepo.graphs[i].hide || graphRepo.graphs[i].hide === false){
+                    visibleGraphCount++;
+                }
+            }
+            return 10 + (visibleGraphCount * 30);
         });
+
     }
 }
 
@@ -1738,6 +1749,17 @@ function Graph(id, name, nodes, links, rectangles) {
 
     var colors = d3.scale.category10();
 
+
+
+
+    this.containsLyphWithName= function(name){
+        for (var i =0; i < this.rectangles.length;i++){
+            if (this.rectangles[i].lyph && this.rectangles[i].lyph.name.toString().toLocaleLowerCase().indexOf(name) > -1 ){
+                return true;
+            }
+        }
+        return false;
+    }
     //TODO: Add multiple select ability from the other code.
 
     this.clone = function () {
@@ -1770,8 +1792,8 @@ function Graph(id, name, nodes, links, rectangles) {
         return -1;
     }
 
-
-    this.saveGraphtoServer = function(refresh_graph, syncSelectedGraph){
+    //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
+    this.saveGraphtoServer = function(refresh_graph, syncSelectedGraph, onSelectLink, selected_rectangle){
         $("#graphSave").css('color','');
         this.name = graphName.value;
 
@@ -1829,10 +1851,10 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 console.log(response);
                 this.id = response.id;
-                this.saved = null;
-                this.reloadGraphFromServer(syncSelectedGraph);
-                refresh_graph();
-                syncSelectedGraph();
+                this.saved = true;
+                this.reloadGraphFromServer(syncSelectedGraph, onSelectLink, selected_rectangle);
+                //refresh_graph();
+                //syncSelectedGraph();
             }
         });
 
@@ -1907,7 +1929,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
 
 
-    this.reloadGraphFromServer = function (callBackAfterSuccess){
+    this.reloadGraphFromServer = function (callBackAfterSuccess, onSelectLink, selected_rectangle){
 
         $.ajax
         ({
@@ -1994,8 +2016,24 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 console.log(this);
 
-                if (callBackAfterSuccess)
+
+                this.selected_rectangle = this.rectangles[this.rectangles.length -1];
+
+                if (selected_rectangle){
+                    if (this.getRectangleIndexByID(selected_rectangle.id) > -1){
+                        this.selected_rectangle = this.rectangles[this.getRectangleIndexByID(selected_rectangle.id)];
+                    }
+                }
+
+
+
+                if (callBackAfterSuccess) {
                     callBackAfterSuccess();
+                }
+                if (onSelectLink){
+                    console.log(this.selected_rectangle);
+                    onSelectLink(this.selected_rectangle);
+                }
             }
         });
 
@@ -2009,7 +2047,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.draw = function (svg, onSelectNode, onSelectLink, onSelectRectangle, refresh_graph, syncSelectedGraph) {
 
-        console.log(this);
+        //console.log(this);
         //console.log("caller is " + arguments.callee.caller.toString());
         var width = parseInt(svg.attr("width"));
         var height = parseInt(svg.attr("height"));
@@ -2926,20 +2964,22 @@ function Graph(id, name, nodes, links, rectangles) {
             //graph.reloadGraphFromServer(restart);
             console.log(graph.selected_rectangle);
             //graph.syncGraphLyphWithServer(graph.selected_rectangle)
-            graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
 
-            graph.selected_rectangle = rectangles[rectangles.length-1];
+
+            //graph.selected_rectangle = rectangles[rectangles.length-1];
 
             if (rectangle_draw){
                 console.log("4");
                 console.log(rectangles);
                 graph.selected_rectangle = rectangles[rectangles.length-1];
 
-                onSelectLink(graph.selected_rectangle);
+                //onSelectLink(graph.selected_rectangle);
                 //graph.syncGraphLyphWithServer(graph.selected_rectangle);
 
                 rectangle_draw = false;
                 rectangle_draw_started = false;
+
+                //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
 
 
                 $('#userconsole').text("Rectangle draw done.");
@@ -2947,13 +2987,15 @@ function Graph(id, name, nodes, links, rectangles) {
             }
 
             if (resize_rectangle){
-                graph.syncGraphLyphWithServer(graph.selected_rectangle);
+                //graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
+                //graph.syncGraphLyphWithServer(graph.selected_rectangle);
                 console.log("Resizing done")
                 resize_rectangle = null;
 
-                restart();
+                //restart();
             }
 
+            graph.saveGraphtoServer(refresh_graph, syncSelectedGraph, onSelectLink, graph.selected_rectangle);
 
 
             if (mousedown_node) {
@@ -3009,7 +3051,7 @@ function Graph(id, name, nodes, links, rectangles) {
             switch (d3.event.keyCode) {
                 case 88: // x
                 case 46: // delete
-                    graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
+
                     if (graph.selected_node) {
                         nodes.splice(nodes.indexOf(graph.selected_node), 1);
                         spliceLinksForNode(graph.selected_node);
@@ -3021,10 +3063,12 @@ function Graph(id, name, nodes, links, rectangles) {
                         rectangles.splice(rectangles.indexOf(graph.selected_rectangle), 1)
                         console.log(rectangles);
                     }
+                    graph.selected_rectangle = null;
                     graph.selected_link = null;
                     graph.selected_node = null;
+                    graph.saveGraphtoServer(refresh_graph, syncSelectedGraph);
                     //lastNodeId--;
-                    restart();
+                    //restart();
                     break;
                 //case 66: // B
                 //    if (graph.selected_link) {
@@ -3105,6 +3149,15 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     break;
                 case 82: // R - Rectangle
+                    console.log("r clicked", graph.rectangles);
+                    for (var rcounter = 0; rcounter < graph.rectangles.length; rcounter++){
+                        console.log("id", graph.rectangles[rcounter].id);
+                        if (graph.rectangles[rcounter].id === null || graph.rectangles[rcounter].id === ""){
+                            alert("You cannot have more than one undefined rectangle in the view" );
+                            return;
+                        }
+                    }
+
                     $('#userconsole').text("Rectangle draw enable, click and move mouse right, bottom to draw.");
                     rectangle_draw = true;
                     console.log("1", rectangle_draw);
