@@ -3,6 +3,7 @@
 var refresh_graph;
 var selectedAU = null;
 var populateRectangleNames;
+var startTime = new Date();
 
 var graphEditor = function () {
 
@@ -1382,14 +1383,14 @@ var graphEditor = function () {
 
 
 
-
     var load_all_graphs = function load_all_graphs(){
         console.log("Loading existing views");
+        $.notify("Loading all views " + (new Date() - startTime)/1000 , "info");
 
         // ajax call to load all graph view
         $.ajax
         ({
-            url:"http://open-physiology.org:"+serverPort+"/all_lyphviews/",
+            url:"http://open-physiology.org:"+serverPort+"/all_lyphviews/?brief=yes",
 
             jsonp: "callback",
 
@@ -1402,9 +1403,10 @@ var graphEditor = function () {
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Node creation error:" , response);
+                    $.notify("Server error returning views " + (new Date() - startTime)/1000 , "error");
                     return;
                 }
-
+                $.notify("Server returned all views " + (new Date() - startTime)/1000 , "success");
 
                 console.log("Response:" , response);
                 for (var i =0; i < response.length; i++){
@@ -1507,6 +1509,8 @@ var graphEditor = function () {
                     selectedGraph.selected_rectangle = selectedGraph.rectangles[selectedGraph.rectangles.length -1];
                     onSelectLink(selectedGraph.selected_rectangle )
 
+
+
                 }
 
 
@@ -1525,6 +1529,7 @@ var graphEditor = function () {
                 //graphRepo.graphs[actualSelectedGraphIndex].id = response.id;
                 selectedGraph.reloadGraphFromServer(syncSelectedGraph);
                 //refresh_graph();
+                $.notify("Loaded Views " + (new Date() - startTime)/1000 , "success");
             }
         });
 
@@ -1722,6 +1727,8 @@ var graphEditor = function () {
 
     var load_all_materials = function load_all_materials (){
 
+        $.notify("Loading all templates " + (new Date() - startTime)/1000 , "info");
+
         console.log("Loading existing lyphs/materials")
         $.ajax
         ({
@@ -1740,10 +1747,11 @@ var graphEditor = function () {
                 if ( data.hasOwnProperty( "Error" ) )
                 {
                     console.log(response);
+                    $.notify("Server error in returning templates " + (new Date() - startTime)/1000 , "error");
                     return;
                 }
 
-                console.log("Lyph Loaded");
+                $.notify("Server returned all templates " + (new Date() - startTime)/1000 , "success");
 
 
 
@@ -1755,6 +1763,8 @@ var graphEditor = function () {
                         materialRepo.addAt(new Material(data[i].id, data[i].name, "#"+((1<<24)*Math.random()|0).toString(16), "simple", null, null, data[i].ont_term),0);
                     }
                 }
+
+                $.notify("All basic materials loaded " + (new Date() - startTime)/1000 , "success");
 
 
                 ////load all mix types
@@ -1834,6 +1844,7 @@ var graphEditor = function () {
                     //applyFilter();
                 }
 
+                $.notify("All shell types loaded " + (new Date() - startTime)/1000 , "success");
 
 
                 if (auRepo != null ) {
@@ -1881,6 +1892,7 @@ var graphEditor = function () {
 
     function load_all_lyphs (){
         lyphRepo.syncLyphsWithServer(syncLyphList);
+        $.notify("Loading lyphs from server " + (new Date() - startTime)/1000 , "info");
     }
 
     function syncLyphList(){
@@ -2007,6 +2019,7 @@ var graphEditor = function () {
             }
         });
     });
+
 
 
 
