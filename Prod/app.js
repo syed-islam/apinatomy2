@@ -1549,8 +1549,7 @@ var graphEditor = function () {
                 ({
 
                     context: this,
-                    url: "http://open-physiology.org:"+serverPort+"/lyph/" +
-                    rect.id,
+                    url: "http://open-physiology.org:"+serverPort+"/lyph/",
 
                     jsonp: "callback",
 
