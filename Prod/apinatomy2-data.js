@@ -286,7 +286,7 @@ function LyphRepo (lyphs){
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Error in getting all lyphs", response)
-                    $.notify("Error Loading Lyphs", "error");
+                    if (notification_enabled)  $.notify("Error Loading Lyphs", "error");
                     return;
                 }
 
@@ -294,7 +294,7 @@ function LyphRepo (lyphs){
                 this.lyphs = response;
                 //console.log(this.lyphs);
                 onSuccess();
-                $.notify("Lyphs Loaded " + (new Date() - startTime)/1000 , "success");
+                if(notification_enabled) $.notify("Lyphs Loaded " + (new Date() - startTime)/1000 , "success");
 
 
             }
@@ -1830,7 +1830,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
         console.log(query);
 
-        $.notify("Requesting server to save view", "info");
+        if (notification_enabled) $.notify("Requesting server to save view", "info");
 
         // ajax call to save graph view
         $.ajax
@@ -1850,11 +1850,11 @@ function Graph(id, name, nodes, links, rectangles) {
                 if (response.hasOwnProperty("Error")) {
                     console.log("Graph View Save error" , response);
                     alert("Graph View Save error" , response);
-                    $.notify("Error while saving view", "error");
+                    if (notification_enabled) $.notify("Error while saving view", "error");
                     return;
                 }
 
-                $.notify("View saved to server", "success");
+                if (notification_enabled) $.notify("View saved to server", "success");
 
                 console.log(response);
                 this.id = response.id;
@@ -1938,7 +1938,7 @@ function Graph(id, name, nodes, links, rectangles) {
 
     this.reloadGraphFromServer = function (callBackAfterSuccess, onSelectLink, selected_rectangle){
 
-        $.notify("Loading View "  + (new Date() - startTime)/1000 , "info");
+        if (notification_enabled) $.notify("Loading View "  + (new Date() - startTime)/1000 , "info");
 
         $.ajax
         ({
@@ -1957,11 +1957,11 @@ function Graph(id, name, nodes, links, rectangles) {
 
                 if (response.hasOwnProperty("Error")) {
                     console.log("Node creation error:" , response);
-                    $.notify("Server error", "error");
+                    if (notification_enabled) $.notify("Server error", "error");
                     return;
                 }
 
-                $.notify("Server returned view info " + (new Date() - startTime)/1000 , "success");
+                if (notification_enabled) $.notify("Server returned view info " + (new Date() - startTime)/1000 , "success");
 
 
                 //console.log(url)
@@ -2039,7 +2039,7 @@ function Graph(id, name, nodes, links, rectangles) {
                 }
 
 
-                $.notify("View loaded successfully " + (new Date() - startTime)/1000 , "success");
+                if (notification_enabled) $.notify("View loaded successfully " + (new Date() - startTime)/1000 , "success");
 
                 if (callBackAfterSuccess) {
                     callBackAfterSuccess();
@@ -3163,7 +3163,7 @@ function Graph(id, name, nodes, links, rectangles) {
                     }
                     break;
                 case 82: // R - Rectangle
-                    $.notify("Draw Rectangle active. Click and drag to draw rectangle", "info");
+                    if (notification_enabled) $.notify("Draw Rectangle active. Click and drag to draw rectangle", "info");
                     console.log("r clicked", graph.rectangles);
                     for (var rcounter = 0; rcounter < graph.rectangles.length; rcounter++){
                         console.log("id", graph.rectangles[rcounter].id);
